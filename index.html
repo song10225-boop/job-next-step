@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>이직 준비 매니저</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--line:#e2e8f0;--ink:#1e293b;--sub:#64748b;--navy:#16325c;--blue:#2563eb;--green:#059669;--red:#dc2626;--amber:#d97706;--violet:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+button,input,select,textarea{font:inherit}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 16px;min-height:54px;overflow-x:auto}
+.brand{font-weight:900;color:var(--navy);white-space:nowrap;font-size:1.05rem}
+#tabs{display:flex;gap:2px;flex:1}
+#tabs button{border:0;background:none;padding:0 12px;height:54px;color:var(--sub);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;font-weight:600}
+#tabs button.on{color:var(--navy);border-bottom-color:var(--blue);font-weight:800}
+.acct{font-size:.75rem;color:var(--sub);white-space:nowrap}
+main{padding:16px;max-width:1500px;margin:0 auto}
+.panel{display:none}.panel.on{display:block}
+.h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.h h2{margin:0;font-size:1.25rem;color:var(--navy);margin-right:auto}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;color:#334155;font-weight:600}
+.btn:hover{background:#f1f5f9}.btn.p{background:var(--blue);border-color:var(--blue);color:#fff}.btn.p:hover{background:#1d4ed8}
+.btn.d{color:#be123c;border-color:#fecdd3;background:#fff1f2}.btn.s{padding:3px 8px;font-size:.78rem}
+input,select,textarea{border:1px solid #cbd5e1;border-radius:8px;padding:7px 9px;background:#fff;min-width:0}
+textarea{width:100%;resize:vertical;min-height:70px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h3{margin:0 0 10px;font-size:.98rem;color:var(--navy);display:flex;align-items:center;gap:6px}
+.card h3 .btn{margin-left:auto}
+.sub{color:var(--sub);font-size:.8rem}
+.chip{display:inline-block;border-radius:999px;padding:1px 8px;font-size:.72rem;font-weight:700;background:#eef2f7;color:#475569;margin-right:3px}
+.row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f1f5f9}
+.row:last-child{border-bottom:0}.row .grow{flex:1;min-width:0;overflow-wrap:anywhere}
+.bar{height:9px;background:#e8edf4;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green);border-radius:9px}
+.big{font-size:1.7rem;font-weight:900;color:var(--navy);line-height:1.1}
+.al{padding:7px 10px;border-radius:8px;margin-bottom:6px;font-size:.84rem;cursor:pointer}
+.al.bad{background:#fef2f2;color:#991b1b}.al.warn{background:#fffbeb;color:#92400e}.al.info{background:#eff6ff;color:#1e40af}
+.kan{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(205px,1fr);gap:10px;overflow-x:auto;padding-bottom:10px;align-items:start}
+.kcol{background:#e9eef6;border-radius:12px;padding:8px;min-height:140px}
+.kcol h4{margin:2px 4px 8px;font-size:.84rem;display:flex;justify-content:space-between;color:#334155}
+.kcol.over{outline:2px dashed var(--blue)}
+.kc{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 9px;margin-bottom:7px;cursor:pointer;border-left:4px solid var(--c,#94a3b8)}
+.kc:hover{box-shadow:0 2px 8px #0f172a1a}
+.kc-t{font-weight:800;overflow-wrap:anywhere}.kc-s{color:var(--sub);font-size:.8rem;overflow-wrap:anywhere}
+.kc-m{display:flex;justify-content:space-between;margin-top:5px}.kc-m button{border:0;background:#f1f5f9;border-radius:6px;cursor:pointer;padding:1px 8px}
+.tw{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{padding:8px 10px;border-bottom:1px solid #eef2f7;text-align:left;vertical-align:top}
+th{background:#eef2f7;position:sticky;top:0;white-space:nowrap}
+tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cal .dw{background:#eef2f7;text-align:center;padding:6px;font-weight:800;font-size:.78rem}
+.cal .dc{background:#fff;min-height:104px;padding:4px;cursor:pointer;min-width:0}
+.cal .dc.o{background:#f8fafc;color:#94a3b8}.cal .dc.t{background:#eff6ff}
+.cal .dn{font-size:.78rem;font-weight:700;margin-bottom:2px}
+.cal .dc:nth-child(7n+8) .dn{color:#dc2626}.cal .dc:nth-child(7n+7) .dn{color:#2563eb}
+.ev{display:block;font-size:.72rem;border-radius:4px;padding:1px 5px;margin-bottom:2px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.ev.done{opacity:.45;text-decoration:line-through}
+.lg{display:flex;gap:10px;flex-wrap:wrap;font-size:.75rem;margin:8px 0}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.modal{position:fixed;inset:0;background:#0f172a88;z-index:50;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal[hidden]{display:none}
+.mc{background:#fff;border-radius:14px;width:min(680px,100%);max-height:90vh;overflow:auto;padding:18px}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:800;font-size:1.05rem}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;font-weight:700;color:#475569}
+.form .w{grid-column:1/-1}
+.stage-seg{display:flex;flex-wrap:wrap;gap:4px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:9px 16px;border-radius:9px;font-size:.84rem;opacity:0;pointer-events:none;transition:.25s;z-index:80}
+#toast.on{opacity:.95}
+.fb{display:flex;align-items:center;gap:8px;margin:5px 0}.fb .n{width:78px;font-size:.8rem}.fb .bar{flex:1;height:18px}.fb .bar i{background:var(--blue)}.fb .v{width:90px;font-size:.8rem;text-align:right}
+.wk{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:6px}.wk div{flex:1;text-align:center;font-size:.7rem;color:var(--sub)}.wk b{display:block;background:var(--blue);border-radius:4px 4px 0 0;min-height:2px;margin-bottom:3px}
+.qa{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:#fff}.qa.rdy{border-color:#86efac;background:#f0fdf4}
+.wkh{font-weight:800;margin:14px 0 4px;color:var(--navy)}.wkh.cur{color:var(--blue)}
+@media(max-width:720px){main{padding:9px}.form{grid-template-columns:1fr}.cal .dc{min-height:72px}.ev{font-size:.65rem}}
+@media print{.top,.h .btn,.btn,#dlg,#toast,.noprint{display:none!important}body{background:#fff}.panel{display:none!important}.panel.on{display:block!important}.card,.tw{break-inside:avoid}.kan{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">🧭 이직 준비 매니저</div><nav id="tabs"></nav><div class="acct" id="acct"></div></header>
+<main>
+<section class="panel" id="p-dash"></section>
+
+<section class="panel" id="p-board">
+ <div class="h"><h2>📋 지원 현황</h2>
+  <input id="bq" type="search" placeholder="🔎 회사·직무 검색" oninput="renderBoard()">
+  <select id="bp" onchange="renderBoard()"><option value="">우선순위 전체</option><option value="3">★★★ 높음</option><option value="2">★★ 보통</option><option value="1">★ 낮음</option></select>
+  <button class="btn" id="bv" onclick="toggleBoardView()">표로 보기</button>
+  <button class="btn" onclick="window.print()">🖨 인쇄</button>
+  <button class="btn p" onclick="openJob()">＋ 공고 추가</button></div>
+ <div id="boardBody"></div>
+ <div class="sub" style="margin-top:6px">※ 카드를 끌어서 다른 단계로 옮기거나 ◀ ▶ 버튼을 쓰세요. 카드를 누르면 상세·면접 일정·복기 메모를 적을 수 있어요.</div>
+</section>
+
+<section class="panel" id="p-cal">
+ <div class="h"><h2 id="calT">🗓️ 이직 달력</h2><button class="btn" onclick="calGo(-1)">◀</button><button class="btn" onclick="calGo(0)">오늘</button><button class="btn" onclick="calGo(1)">▶</button><button class="btn" onclick="window.print()">🖨 인쇄</button><button class="btn p" onclick="openEv(null,today())">＋ 일정 추가</button></div>
+ <div class="lg" id="calLg"></div><div id="calBody"></div>
+ <div class="sub" style="margin-top:6px">※ 공고 서류마감·면접 일정·헤드헌터/인맥 연락일·할 일 마감이 자동으로 표시돼요. 날짜 칸을 누르면 그날 일정을 보고 추가할 수 있어요.</div>
+</section>
+
+<section class="panel" id="p-road">
+ <div class="h"><h2>🛣️ 12주 이직 로드맵</h2><label class="sub">시작일 <input type="date" id="rStart" onchange="D.roadmap.start=this.value;save();renderRoad()"></label><button class="btn" onclick="addRoadItem()">＋ 항목</button><button class="btn d" onclick="resetRoad()">기본값으로</button></div>
+ <div class="grid" style="margin-bottom:12px"><div class="card" id="rProg"></div><div class="card"><h3>💡 단기간 이직 운영 원칙</h3><div class="sub" style="line-height:1.7;color:#334155">
+  • <b>경력직은 속도</b>: 이력서 완성 전에 헤드헌터·지인 채널부터 열어두기<br>
+  • <b>직무 적합도 &gt; 지원 수</b>: 공고별로 경력기술서 문구를 맞추되 뼈대는 재사용<br>
+  • <b>숫자로 말하기</b>: 결산 소요일, 신고 건수, 절세·오류 감소 같은 수치 성과<br>
+  • <b>주간 목표</b>를 정하고 매주 일요일 지원 현황·통계 점검<br>
+  • <b>현 직장 보호</b>: 이력서 공개 시 현 회사 열람 차단, 퇴직 통보는 오퍼 확정 후<br>
+  • 면접 후 <b>당일 복기</b>(질문·답변·아쉬운 점)를 공고 상세에 기록</div></div></div>
+ <div id="rBody"></div>
+</section>
+
+<section class="panel" id="p-prep">
+ <div class="h"><h2>🎤 이력서 · 면접 준비</h2></div>
+ <div id="prepBody"></div>
+</section>
+
+<section class="panel" id="p-people">
+ <div class="h"><h2>🤝 인맥 · 헤드헌터</h2><button class="btn" onclick="exportContacts()">📤 엑셀</button><button class="btn p" onclick="openContact()">＋ 추가</button></div>
+ <div id="peopleBody"></div>
+</section>
+
+<section class="panel" id="p-stats"><div class="h"><h2>📊 통계</h2><button class="btn" onclick="window.print()">🖨 인쇄</button></div><div id="statsBody"></div></section>
+
+<section class="panel" id="p-set">
+ <div class="h"><h2>⚙️ 설정 · 백업</h2></div>
+ <div class="grid">
+  <div class="card"><h3>💾 백업 / 복원</h3><div class="sub" style="margin-bottom:8px">데이터는 이 브라우저에 저장돼요(공개 저장소 파일에는 들어가지 않아요). 정기적으로 백업해 두세요.</div>
+   <button class="btn" onclick="exportJSON()">JSON 백업 받기</button> <button class="btn" onclick="$('restoreF').click()">JSON 복원</button><input type="file" id="restoreF" accept=".json" hidden onchange="importJSON(this)"> <button class="btn" onclick="exportJobs()">📤 지원현황 엑셀</button></div>
+  <div class="card"><h3>☁️ 여러 기기 동기화 (선택)</h3><div id="authBox"></div></div>
+  <div class="card"><h3>🧹 데이터 초기화</h3><div class="sub" style="margin-bottom:8px">이직이 끝나면 모든 기록을 비울 수 있어요. 로그인 중이면 클라우드 데이터도 함께 비워져요.</div><button class="btn d" onclick="resetAll()">전체 초기화</button></div>
+ </div>
+</section>
+</main>
+<div id="dlg" class="modal" hidden></div><div id="toast"></div>
+
+<script>
+/* ============ 유틸 ============ */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today=()=>iso(new Date());
+const parse=s=>new Date(s+'T12:00:00');
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const diff=(a,b)=>Math.round((parse(a)-parse(b))/864e5);
+const dLabel=s=>{const n=diff(s,today());return n===0?'D-Day':n>0?'D-'+n:'D+'+(-n)};
+const weekStart=s=>{const d=parse(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)};
+const md=s=>s?`${+s.slice(5,7)}/${+s.slice(8,10)}`:'';
+const val=id=>($(id)?.value||'').trim();
+let tT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2200)}
+function dlg(title,html){const d=$('dlg');d.innerHTML=`<div class="mc"><div class="mh"><span>${title}</span><button class="btn s" onclick="closeDlg()">닫기</button></div>${html}</div>`;d.hidden=false}
+function closeDlg(){$('dlg').hidden=true;$('dlg').innerHTML=''}
+$('dlg').addEventListener('mousedown',e=>{if(e.target.id==='dlg')closeDlg()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDlg()});
+const opts=(arr,v)=>arr.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');
+
+/* ============ 상수 ============ */
+const STAGES=['관심','지원예정','서류제출','서류합격','면접','최종','오퍼','종료'];
+const STC={'관심':'#94a3b8','지원예정':'#0ea5e9','서류제출':'#6366f1','서류합격':'#8b5cf6','면접':'#d97706','최종':'#ea580c','오퍼':'#059669','종료':'#64748b'};
+const SOURCES=['사람인','잡코리아','원티드','잡플래닛','링크드인','헤드헌터','지인추천','회사 홈페이지','기타'];
+const EVTYPES=['서류 발표','과제·테스트','1차 면접','2차 면접','최종 면접','오퍼 협의','기타'];
+const KC={'서류마감':'#dc2626','면접':'#7c3aed','네트워킹':'#059669','헤드헌터':'#0891b2','준비':'#0ea5e9','연락':'#10b981','할일':'#d97706','기타':'#64748b'};
+const PTYPES=['헤드헌터','지인·네트워킹','전 직장','기업 인사담당','기타'];
+const mx=j=>j.stage==='종료'?(j.maxStage??0):Math.max(j.maxStage??0,STAGES.indexOf(j.stage));
+
+function defaultRoadmap(){const R=[
+[1,'희망 직무·산업·연봉 하한·근무조건(우선순위 3가지) 정리'],[1,'이직 사유를 긍정적인 한 줄로 정리'],[1,'경력 타임라인 + 수치 성과 10개 뽑기'],
+[2,'이력서·경력기술서 완성 (직무별 1~2개 버전)'],[2,'사람인·잡코리아·링크드인 프로필 갱신 (현 직장 열람 차단 설정 확인)'],[2,'헤드헌터 3곳 이상 컨택'],
+[3,'공고 소싱 루틴 만들기 (매일 30분)'],[3,'주 5곳 지원 시작'],[3,'지인·전 직장 네트워킹 3명 연락'],
+[4,'예상질문 답변 10개 작성'],[4,'1분·3분 자기소개 완성'],[4,'지원 현황 점검 — 서류 통과율 낮으면 이력서 수정'],
+[5,'모의 면접 1회 (녹음 또는 지인)'],[5,'면접 후 당일 복기 노트 쓰는 습관 만들기'],
+[6,'누적 지원 20곳 점검, 지원 경로별 성과 확인'],[6,'2차 면접 대비: 직무 심화 질문 정리'],
+[7,'연봉 협상 기준 확정 (희망·최소·마지노선)'],[7,'면접 일정 집중 관리'],
+[8,'최종 면접 대비: 입사 후 포부·역질문 정리'],[8,'레퍼런스 체크 대비 (전 직장 연락 가능 여부 점검)'],
+[9,'오퍼 비교표 작성 (연봉·복지·근무조건·성장성)'],[10,'처우 협의·입사일 조율'],
+[11,'입사 확정 후 퇴직 통보 일정 계획 & 인수인계 문서 작성'],[12,'퇴직금·연차·4대보험 정산 확인'],[12,'입사 준비 (서류·건강검진 등)']];
+return R.map(([week,title])=>({id:uid(),week,title,done:false}))}
+function defaultQA(){return [
+['이직','이직 사유가 무엇인가요?'],['자기소개','1분 자기소개 해주세요.'],['자기소개','지금까지 경력을 한마디로 정리하면?'],
+['성과','가장 자랑스러운 성과 한 가지(숫자 포함)는?'],['직무','결산 업무에서 본인의 역할과 소요 기간을 설명해 주세요.'],
+['직무','세무조정·신고 업무에서 가장 어려웠던 사례와 해결 방법은?'],['직무','사용해 본 회계/ERP 프로그램과 숙련도는?'],
+['직무','업무 중 실수나 오류를 발견했을 때 어떻게 대처했나요?'],
+['연차·적응','연차(경력) 대비 직급·연봉 기대 수준은 어떻게 생각하세요?'],['연차·적응','새로운 시스템·방식에 빠르게 적응한 경험이 있나요?'],
+['연차·적응','연령대가 다른 팀원·상사와 협업한 경험과 방식은?'],['처우','희망 연봉과 그 근거는?'],
+['포부','입사 후 1년·3년 목표는?'],['역질문','면접관께 드릴 질문 3가지']].map(([cat,q])=>({id:uid(),cat,q,a:'',ready:false}))}
+function blank(){return {v:1,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:''},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA()},updatedAt:''}}
+
+/* ============ 저장 ============ */
+const LS='jobhunt-v1';
+function load(){try{const r=JSON.parse(localStorage.getItem(LS));return r?Object.assign(blank(),r):blank()}catch(e){return blank()}}
+let D=load();
+function save(){D.updatedAt=new Date().toISOString();try{localStorage.setItem(LS,JSON.stringify(D))}catch(e){toast('브라우저 저장 실패 — 백업을 받아두세요')}cloudSave()}
+function setStage(j,s){j.stage=s;const i=STAGES.indexOf(s);if(s!=='종료')j.maxStage=Math.max(j.maxStage??0,i);else j.maxStage=j.maxStage??0;if(i>=2&&s!=='종료'&&!j.appliedDate)j.appliedDate=today()}
+
+/* ============ 탭 ============ */
+const TABS=[['dash','🏠 대시보드',()=>renderDash()],['board','📋 지원현황',()=>renderBoard()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],['prep','🎤 이력서·면접',()=>renderPrep()],['people','🤝 인맥·헤드헌터',()=>renderPeople()],['stats','📊 통계',()=>renderStats()],['set','⚙️ 설정',()=>renderSet()]];
+let cur='dash';
+function show(t){cur=t;try{localStorage.setItem('jobhunt-tab',t)}catch(e){}
+ TABS.forEach(([k])=>$('p-'+k).classList.toggle('on',k===t));
+ $('tabs').innerHTML=TABS.map(([k,l])=>`<button class="${k===t?'on':''}" onclick="show('${k}')">${l}</button>`).join('');
+ TABS.find(x=>x[0]===t)[2]()}
+const refresh=()=>show(cur);
+
+/* ============ 일정 집계 ============ */
+function allEvents(){const L=[];
+ D.jobs.forEach(j=>{
+  if(j.deadline&&j.stage!=='종료'&&mx(j)<2)L.push({date:j.deadline,title:`${j.company} 서류마감`,kind:'서류마감',src:'job',id:j.id});
+  (j.events||[]).forEach(e=>e.date&&L.push({date:e.date,time:e.time,title:`${j.company} ${e.type}`,kind:/면접/.test(e.type)?'면접':'기타',src:'job',id:j.id}))});
+ D.events.forEach(e=>L.push({date:e.date,time:e.time,title:e.title,kind:e.kind,src:'ev',id:e.id,done:e.done}));
+ D.todos.forEach(t=>t.due&&L.push({date:t.due,title:t.title,kind:'할일',src:'todo',id:t.id,done:t.done}));
+ D.contacts.forEach(c=>c.nextDate&&L.push({date:c.nextDate,title:`연락: ${c.name}`,kind:'연락',src:'contact',id:c.id}));
+ return L.filter(e=>e.date).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')))}
+function evClick(src,id){if(src==='job')openJob(id);else if(src==='ev')openEv(id);else if(src==='contact')openContact(id);else if(src==='todo'){toggleTodo(id)}}
+
+/* ============ 대시보드 ============ */
+function weekCounts(){const a=weekStart(today()),b=addDays(a,6),inW=d=>d&&d>=a&&d<=b;
+ let net=0,hh=0;D.contacts.forEach(c=>(c.logs||[]).forEach(l=>{if(inW(l.date)){c.type==='헤드헌터'?hh++:net++}}));
+ return {apply:D.jobs.filter(j=>inW(j.appliedDate)).length,net,hh}}
+function curWeek(){const s=D.roadmap.start;if(!s)return null;return Math.floor(diff(today(),s)/7)+1}
+function alerts(){const t=today(),L=[];
+ D.jobs.forEach(j=>{if(j.stage==='종료')return;
+  if(j.deadline&&mx(j)<2){const n=diff(j.deadline,t);if(n<0)L.push({lv:'bad',txt:`${j.company} 서류마감이 ${-n}일 지났어요 (정리 필요)`,fn:`openJob('${j.id}')`});else if(n<=3)L.push({lv:'warn',txt:`${j.company} 서류마감 ${dLabel(j.deadline)}`,fn:`openJob('${j.id}')`})}
+  if(j.stage==='서류제출'&&j.appliedDate&&diff(t,j.appliedDate)>=10)L.push({lv:'info',txt:`${j.company} 지원 후 ${diff(t,j.appliedDate)}일째 무소식 — 팔로업 또는 다음 공고`,fn:`openJob('${j.id}')`});
+  (j.events||[]).forEach(e=>{if(e.date&&(e.date===t||e.date===addDays(t,1)))L.push({lv:'warn',txt:`${j.company} ${e.type} ${e.date===t?'오늘':'내일'} ${e.time||''}`,fn:`openJob('${j.id}')`})})});
+ D.contacts.forEach(c=>{if(c.nextDate&&c.nextDate<=t)L.push({lv:'warn',txt:`${c.name} 연락할 차례 (${dLabel(c.nextDate)})`,fn:`openContact('${c.id}')`})});
+ return L}
+function prog(label,v,goal){const p=goal?Math.min(100,Math.round(v/goal*100)):0;return `<div style="margin:8px 0"><div style="display:flex;justify-content:space-between"><span>${label}</span><b>${v} / ${goal}</b></div><div class="bar"><i style="width:${p}%"></i></div></div>`}
+function renderDash(){
+ const g=D.goal,w=weekCounts(),cw=curWeek(),t=today(),R=D.roadmap.items,rd=R.length?Math.round(R.filter(x=>x.done).length/R.length*100):0;
+ const act=D.jobs.filter(j=>j.stage!=='종료'),al=alerts();
+ const up=allEvents().filter(e=>e.date>=t&&e.date<=addDays(t,14)&&!e.done).slice(0,10);
+ const pipe=STAGES.map(s=>`<span class="chip" style="background:${STC[s]}22;color:${STC[s]}">${s} ${D.jobs.filter(j=>j.stage===s).length}</span>`).join('');
+ const todos=D.todos.filter(x=>!x.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9'));
+ $('p-dash').innerHTML=`<div class="h"><h2>🏠 대시보드</h2><button class="btn" onclick="openGoal()">🎯 목표 설정</button></div>
+ <div class="grid">
+ <div class="card"><h3>🎯 나의 이직 목표</h3>
+  ${g.role||g.target?`<div class="big">${g.target?(diff(g.target,t)>=0?'D-'+diff(g.target,t):'목표일 경과'):'목표일 미설정'}</div><div class="sub">목표 입사일 ${esc(g.target||'-')}</div>
+  <div style="margin-top:8px"><b>${esc(g.role||'희망 직무 미입력')}</b> ${g.industry?'· '+esc(g.industry):''}</div>
+  <div class="sub">희망 연봉 ${esc(g.salaryMin||'-')} ~ ${esc(g.salaryMax||'-')} ${g.region?'· 지역 '+esc(g.region):''}</div>
+  ${g.must?`<div class="sub">꼭 지킬 조건: ${esc(g.must)}</div>`:''}`:'<div class="sub">상단 "목표 설정"에서 희망 직무·연봉·목표 입사일을 먼저 정해 보세요.</div>'}
+  <div style="margin-top:10px" class="sub">로드맵 ${cw?`${Math.min(Math.max(cw,1),12)}주차 · `:'(시작일 미설정) · '}완료 ${rd}%</div><div class="bar"><i style="width:${rd}%"></i></div></div>
+ <div class="card"><h3>📆 이번 주 활동 <span class="sub">(${md(weekStart(t))}~${md(addDays(weekStart(t),6))})</span></h3>
+  ${prog('📨 지원',w.apply,D.targets.apply)}${prog('🤝 네트워킹 연락',w.net,D.targets.net)}${prog('📞 헤드헌터 연락',w.hh,D.targets.hh)}
+  <div class="sub">지원은 공고의 "지원일", 연락은 인맥 탭의 연락 기록으로 자동 집계돼요.</div></div>
+ <div class="card"><h3>🔔 챙길 것</h3>${al.length?al.map(a=>`<div class="al ${a.lv}" onclick="${a.fn}">${esc(a.txt)}</div>`).join(''):'<div class="sub">지금 급한 항목은 없어요 👍</div>'}</div>
+ <div class="card"><h3>🗓️ 다가오는 일정 (14일)</h3>${up.length?up.map(e=>`<div class="row"><span class="chip" style="background:${KC[e.kind]||'#64748b'};color:#fff">${esc(e.kind)}</span><div class="grow" style="cursor:pointer" onclick="evClick('${e.src}','${e.id}')">${esc(e.title)}</div><span class="sub">${md(e.date)} ${e.time||''} · ${dLabel(e.date)}</span></div>`).join(''):'<div class="sub">예정된 일정이 없어요.</div>'}</div>
+ <div class="card"><h3>✅ 할 일 <button class="btn s" onclick="addTodoDlg()">＋</button></h3>
+  ${todos.length?todos.map(x=>`<div class="row"><input type="checkbox" onchange="toggleTodo('${x.id}')"><div class="grow">${esc(x.title)}</div><span class="sub">${x.due?md(x.due)+' '+dLabel(x.due):''}</span><button class="btn s d" onclick="delTodo('${x.id}')">삭제</button></div>`).join(''):'<div class="sub">할 일이 없어요.</div>'}
+  ${D.todos.some(x=>x.done)?`<div class="sub" style="margin-top:6px">완료 ${D.todos.filter(x=>x.done).length}건 <a href="#" onclick="clearDoneTodos();return false">정리</a></div>`:''}</div>
+ <div class="card"><h3>📋 진행 중 공고 ${act.length}건</h3><div>${pipe}</div>
+  <div style="margin-top:8px">${act.filter(j=>mx(j)>=4).map(j=>`<div class="row"><span class="chip" style="background:${STC[j.stage]};color:#fff">${j.stage}</span><div class="grow" style="cursor:pointer" onclick="openJob('${j.id}')">${esc(j.company)} <span class="sub">${esc(j.role)}</span></div></div>`).join('')||'<div class="sub">면접 단계 이상 공고가 여기에 모여요.</div>'}</div></div>
+ </div>`}
+function openGoal(){const g=D.goal,t=D.targets;
+ dlg('🎯 이직 목표 설정',`<div class="form">
+ <label>희망 직무<input id="gRole" value="${esc(g.role)}" placeholder="예: 회계팀 과장/세무 담당"></label><label>산업·회사 규모<input id="gInd" value="${esc(g.industry)}" placeholder="예: 제조업, 중견기업 이상"></label>
+ <label>희망 연봉(하한)<input id="gMin" value="${esc(g.salaryMin)}" placeholder="예: 5,000만원"></label><label>희망 연봉(상한)<input id="gMax" value="${esc(g.salaryMax)}"></label>
+ <label>목표 입사일<input type="date" id="gTar" value="${esc(g.target)}"></label><label>희망 지역<input id="gReg" value="${esc(g.region)}"></label>
+ <label class="w">꼭 지킬 조건 (우선순위)<input id="gMust" value="${esc(g.must)}" placeholder="예: 정규직, 야근 적음, 결산 전 과정 경험"></label>
+ <label>주간 지원 목표(건)<input type="number" id="tA" min="0" value="${t.apply}"></label><label>주간 네트워킹 목표(회)<input type="number" id="tN" min="0" value="${t.net}"></label>
+ <label>주간 헤드헌터 연락(회)<input type="number" id="tH" min="0" value="${t.hh}"></label></div>
+ <div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveGoal()">저장</button></div>`)}
+function saveGoal(){D.goal={role:val('gRole'),industry:val('gInd'),salaryMin:val('gMin'),salaryMax:val('gMax'),target:val('gTar'),region:val('gReg'),must:val('gMust')};D.targets={apply:+val('tA')||0,net:+val('tN')||0,hh:+val('tH')||0};save();closeDlg();refresh()}
+function addTodoDlg(){dlg('✅ 할 일 추가',`<div class="form"><label class="w">할 일<input id="tdT" placeholder="예: 경력기술서 수치 보완"></label><label>마감일<input type="date" id="tdD"></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="addTodo()">추가</button></div>`);setTimeout(()=>$('tdT')?.focus(),50)}
+function addTodo(){const t=val('tdT');if(!t){toast('내용을 입력해 주세요');return}D.todos.push({id:uid(),title:t,due:val('tdD'),done:false});save();closeDlg();refresh()}
+function toggleTodo(id){const x=D.todos.find(t=>t.id===id);if(x){x.done=!x.done;save();refresh()}}
+function delTodo(id){D.todos=D.todos.filter(t=>t.id!==id);save();refresh()}
+function clearDoneTodos(){D.todos=D.todos.filter(t=>!t.done);save();refresh()}
+
+/* ============ 지원현황 ============ */
+let boardView='kan',dragId=null;
+function toggleBoardView(){boardView=boardView==='kan'?'tbl':'kan';renderBoard()}
+function nextEv(j){const t=today();return (j.events||[]).filter(e=>e.date&&e.date>=t).sort((a,b)=>a.date.localeCompare(b.date))[0]}
+function filteredJobs(){const q=val('bq').toLowerCase(),p=val('bp');return D.jobs.filter(j=>(!q||(j.company+j.role).toLowerCase().includes(q))&&(!p||String(j.priority)===p))}
+function renderBoard(){$('bv').textContent=boardView==='kan'?'표로 보기':'칸반으로 보기';
+ const L=filteredJobs();
+ if(!D.jobs.length){$('boardBody').innerHTML='<div class="card sub">아직 등록된 공고가 없어요. 오른쪽 위 "＋ 공고 추가"로 관심 있는 공고부터 쌓아보세요.</div>';return}
+ if(boardView==='kan'){
+  $('boardBody').innerHTML=`<div class="kan">${STAGES.map(s=>{const js=L.filter(j=>j.stage===s).sort((a,b)=>(a.deadline||'9').localeCompare(b.deadline||'9'));
+   return `<div class="kcol" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="this.classList.remove('over');dropTo('${s}')"><h4><span>${s}</span><span>${js.length}</span></h4>
+   ${js.map(j=>{const ne=nextEv(j);return `<div class="kc" style="--c:${STC[s]}" draggable="true" ondragstart="dragId='${j.id}'" onclick="openJob('${j.id}')">
+    <div class="kc-t">${'★'.repeat(j.priority||1)} ${esc(j.company)}</div><div class="kc-s">${esc(j.role)}</div>
+    <div style="margin-top:4px">${j.deadline&&mx(j)<2&&s!=='종료'?`<span class="chip" style="background:#fee2e2;color:#b91c1c">마감 ${md(j.deadline)} ${dLabel(j.deadline)}</span>`:''}${ne?`<span class="chip" style="background:#ede9fe;color:#6d28d9">${esc(ne.type)} ${md(ne.date)}</span>`:''}${j.source?`<span class="chip">${esc(j.source)}</span>`:''}${s==='종료'&&j.outcome?`<span class="chip">${esc(j.outcome)}</span>`:''}</div>
+    <div class="kc-m"><button onclick="event.stopPropagation();mv('${j.id}',-1)">◀</button><button onclick="event.stopPropagation();mv('${j.id}',1)">▶</button></div></div>`}).join('')}</div>`}).join('')}</div>`;
+ }else{
+  const S=[...L].sort((a,b)=>STAGES.indexOf(a.stage)-STAGES.indexOf(b.stage)||(a.deadline||'9').localeCompare(b.deadline||'9'));
+  $('boardBody').innerHTML=`<div class="tw"><table><thead><tr><th>회사</th><th>직무</th><th>단계</th><th>중요도</th><th>마감</th><th>지원일</th><th>경로</th><th>연봉</th><th>다음 일정</th><th>메모</th></tr></thead><tbody>${S.map(j=>{const ne=nextEv(j);return `<tr class="clk" onclick="openJob('${j.id}')"><td><b>${esc(j.company)}</b></td><td>${esc(j.role)}</td><td><span class="chip" style="background:${STC[j.stage]};color:#fff">${j.stage}${j.stage==='종료'&&j.outcome?' · '+esc(j.outcome):''}</span></td><td>${'★'.repeat(j.priority||1)}</td><td>${j.deadline?md(j.deadline):''}</td><td>${j.appliedDate?md(j.appliedDate):''}</td><td>${esc(j.source)}</td><td>${esc(j.salary)}</td><td>${ne?esc(ne.type)+' '+md(ne.date):''}</td><td>${esc((j.notes||'').slice(0,40))}</td></tr>`}).join('')}</tbody></table></div>`}}
+function dropTo(s){const j=D.jobs.find(x=>x.id===dragId);dragId=null;if(!j||j.stage===s)return;setStage(j,s);save();renderBoard()}
+function mv(id,d){const j=D.jobs.find(x=>x.id===id);if(!j)return;const i=Math.min(STAGES.length-1,Math.max(0,STAGES.indexOf(j.stage)+d));if(STAGES[i]===j.stage)return;setStage(j,STAGES[i]);save();renderBoard()}
+let JT=null;
+function openJob(id){const src=id&&D.jobs.find(j=>j.id===id);
+ JT=src?JSON.parse(JSON.stringify(src)):{id:uid(),company:'',role:'',stage:'관심',priority:2,deadline:'',source:'',url:'',salary:'',location:'',contact:'',resume:'',appliedDate:'',outcome:'',notes:'',events:[]};
+ const j=JT;
+ dlg(src?'공고 상세':'공고 추가',`<div class="form">
+ <label>회사명 *<input id="jC" value="${esc(j.company)}"></label><label>직무<input id="jR" value="${esc(j.role)}"></label>
+ <label>단계<select id="jS">${opts(STAGES,j.stage)}</select></label><label>중요도<select id="jP"><option value="3" ${j.priority==3?'selected':''}>★★★ 높음</option><option value="2" ${j.priority==2?'selected':''}>★★ 보통</option><option value="1" ${j.priority==1?'selected':''}>★ 낮음</option></select></label>
+ <label>서류 마감일<input type="date" id="jD" value="${esc(j.deadline)}"></label><label>지원일<input type="date" id="jA" value="${esc(j.appliedDate)}"></label>
+ <label>지원 경로<select id="jSrc"><option value="">선택</option>${opts(SOURCES,j.source)}</select></label><label>연봉(공고/제안)<input id="jSal" value="${esc(j.salary)}"></label>
+ <label>근무지<input id="jL" value="${esc(j.location)}"></label><label>담당자·헤드헌터<input id="jCt" value="${esc(j.contact)}"></label>
+ <label class="w">공고 링크<input id="jU" value="${esc(j.url)}" placeholder="https://">${j.url?`<a href="${esc(j.url)}" target="_blank" rel="noopener" class="sub">공고 열기 ↗</a>`:''}</label>
+ <label>제출한 이력서 버전<input id="jRs" value="${esc(j.resume)}" placeholder="예: 회계_v2"></label><label>종료 사유(종료 시)<select id="jO"><option value="">-</option>${opts(['불합격(서류)','불합격(면접)','내가 포기','공고 마감','보류','입사 확정'],j.outcome)}</select></label>
+ <label class="w">메모 · JD 핵심 · 지원동기 · 회사 조사<textarea id="jN" rows="4">${esc(j.notes)}</textarea></label></div>
+ <h4 style="margin:14px 0 6px">📅 면접·전형 일정 / 복기</h4><div id="jtEv"></div>
+ <div style="display:flex;justify-content:space-between;margin-top:14px">${src?`<button class="btn d" onclick="delJob('${j.id}')">삭제</button>`:'<span></span>'}<button class="btn p" onclick="saveJob()">저장</button></div>`);renderJT()}
+function renderJT(){$('jtEv').innerHTML=(JT.events||[]).sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(e=>`<div class="qa"><div style="display:flex;gap:8px;align-items:center"><b>${esc(e.type)}</b><span class="sub">${esc(e.date||'')} ${esc(e.time||'')}</span><button class="btn s d" style="margin-left:auto" onclick="jtDelEv('${e.id}')">삭제</button></div>
+ <textarea rows="2" placeholder="질문·답변·아쉬운 점 복기" onchange="jtEvNote('${e.id}',this.value)">${esc(e.note||'')}</textarea></div>`).join('')+
+ `<div style="display:flex;gap:6px;flex-wrap:wrap"><select id="jeT">${opts(EVTYPES,'1차 면접')}</select><input type="date" id="jeD"><input type="time" id="jeH"><button class="btn" onclick="jtAddEv()">＋ 일정 추가</button></div>`}
+function jtAddEv(){const d=val('jeD');if(!d){toast('날짜를 선택해 주세요');return}JT.events.push({id:uid(),type:val('jeT'),date:d,time:val('jeH'),note:''});renderJT()}
+function jtDelEv(id){JT.events=JT.events.filter(e=>e.id!==id);renderJT()}
+function jtEvNote(id,v){const e=JT.events.find(x=>x.id===id);if(e)e.note=v}
+function saveJob(){const c=val('jC');if(!c){toast('회사명을 입력해 주세요');return}
+ Object.assign(JT,{company:c,role:val('jR'),priority:+val('jP'),deadline:val('jD'),appliedDate:val('jA'),source:val('jSrc'),salary:val('jSal'),location:val('jL'),contact:val('jCt'),url:val('jU'),resume:val('jRs'),outcome:val('jO'),notes:$('jN').value});
+ setStage(JT,val('jS'));const i=D.jobs.findIndex(x=>x.id===JT.id);if(i>=0)D.jobs[i]=JT;else D.jobs.push(JT);save();closeDlg();refresh();toast('저장했어요')}
+function delJob(id){if(!confirm('이 공고를 삭제할까요?'))return;D.jobs=D.jobs.filter(j=>j.id!==id);save();closeDlg();refresh()}
+
+/* ============ 달력 ============ */
+let calY=new Date().getFullYear(),calM=new Date().getMonth();
+function calGo(n){if(n===0){calY=new Date().getFullYear();calM=new Date().getMonth()}else{calM+=n;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}}renderCal()}
+function renderCal(){$('calT').textContent=`🗓️ ${calY}년 ${calM+1}월`;
+ $('calLg').innerHTML=Object.entries(KC).map(([k,c])=>`<span><i style="background:${c}"></i>${k}</span>`).join('');
+ const by={};allEvents().forEach(e=>(by[e.date]=by[e.date]||[]).push(e));
+ const first=new Date(calY,calM,1),st=new Date(calY,calM,1-first.getDay()),t=today();
+ let h='<div class="cal">'+['일','월','화','수','목','금','토'].map(d=>`<div class="dw">${d}</div>`).join('');
+ for(let i=0;i<42;i++){const d=new Date(st);d.setDate(st.getDate()+i);const s=iso(d),L=by[s]||[];
+  h+=`<div class="dc ${d.getMonth()!==calM?'o':''} ${s===t?'t':''}" onclick="dayDlg('${s}')"><div class="dn">${d.getDate()}</div>${L.slice(0,3).map(e=>`<span class="ev ${e.done?'done':''}" style="background:${KC[e.kind]||'#64748b'}" onclick="event.stopPropagation();evClick('${e.src}','${e.id}')">${esc((e.time?e.time+' ':'')+e.title)}</span>`).join('')}${L.length>3?`<div class="sub">+${L.length-3}건</div>`:''}</div>`}
+ $('calBody').innerHTML=h+'</div>'}
+function dayDlg(s){const L=allEvents().filter(e=>e.date===s);
+ dlg(`${s} 일정`,`${L.length?L.map(e=>`<div class="row"><span class="chip" style="background:${KC[e.kind]||'#64748b'};color:#fff">${esc(e.kind)}</span><div class="grow" style="cursor:pointer" onclick="closeDlg();evClick('${e.src}','${e.id}')">${esc((e.time?e.time+' ':'')+e.title)}</div></div>`).join(''):'<div class="sub">등록된 일정이 없어요.</div>'}
+ <div style="margin-top:12px;text-align:right"><button class="btn p" onclick="openEv(null,'${s}')">＋ 이 날짜에 일정 추가</button></div>`)}
+function openEv(id,date){const e=id?D.events.find(x=>x.id===id):{id:uid(),title:'',kind:'면접',date:date||today(),time:'',note:'',done:false,isNew:true};if(!e)return;
+ dlg(id?'일정 수정':'일정 추가',`<div class="form"><label class="w">제목 *<input id="eT" value="${esc(e.title)}" placeholder="예: 헤드헌터 통화, 이력서 보완 마감"></label>
+ <label>종류<select id="eK">${opts(Object.keys(KC).filter(k=>!['연락','할일'].includes(k)),e.kind)}</select></label><label>날짜<input type="date" id="eD" value="${esc(e.date)}"></label><label>시간<input type="time" id="eH" value="${esc(e.time)}"></label>
+ <label style="justify-content:flex-end"><span><input type="checkbox" id="eX" ${e.done?'checked':''}> 완료</span></label><label class="w">메모<textarea id="eN" rows="3">${esc(e.note)}</textarea></label></div>
+ <div style="display:flex;justify-content:space-between;margin-top:12px">${id?`<button class="btn d" onclick="delEv('${e.id}')">삭제</button>`:'<span></span>'}<button class="btn p" onclick="saveEv('${e.id}',${id?1:0})">저장</button></div>`)}
+function saveEv(id,exists){const t=val('eT');if(!t||!val('eD')){toast('제목과 날짜를 입력해 주세요');return}
+ const o={id,title:t,kind:val('eK'),date:val('eD'),time:val('eH'),note:$('eN').value,done:$('eX').checked};
+ if(exists){const i=D.events.findIndex(x=>x.id===id);D.events[i]=o}else D.events.push(o);save();closeDlg();refresh()}
+function delEv(id){D.events=D.events.filter(e=>e.id!==id);save();closeDlg();refresh()}
+
+/* ============ 로드맵 ============ */
+function renderRoad(){$('rStart').value=D.roadmap.start||'';const R=D.roadmap.items,cw=curWeek(),done=R.filter(x=>x.done).length,p=R.length?Math.round(done/R.length*100):0;
+ $('rProg').innerHTML=`<h3>진행률</h3><div class="big">${p}%</div><div class="sub">${done} / ${R.length} 완료 ${cw?`· 현재 ${Math.min(Math.max(cw,1),12)}주차`:'· 시작일을 지정하면 현재 주차가 표시돼요'}</div><div class="bar" style="margin-top:8px"><i style="width:${p}%"></i></div>`;
+ const weeks=[...new Set(R.map(x=>x.week))].sort((a,b)=>a-b);
+ $('rBody').innerHTML=weeks.map(w=>{const items=R.filter(x=>x.week===w),s=D.roadmap.start,range=s?` <span class="sub">${md(addDays(s,(w-1)*7))} ~ ${md(addDays(s,w*7-1))}</span>`:'';
+  return `<div class="card" style="margin-bottom:8px"><div class="wkh ${cw===w?'cur':''}" style="margin-top:0">${w}주차${cw===w?' 👈 이번 주':''}${range} <span class="sub">${items.filter(x=>x.done).length}/${items.length}</span></div>
+  ${items.map(x=>`<div class="row"><input type="checkbox" ${x.done?'checked':''} onchange="roadDone('${x.id}',this.checked)"><input class="grow" style="border-color:transparent;${x.done?'text-decoration:line-through;color:#94a3b8':''}" value="${esc(x.title)}" onchange="roadTitle('${x.id}',this.value)"><select onchange="roadWeek('${x.id}',this.value)">${Array.from({length:12},(_,i)=>`<option value="${i+1}" ${x.week===i+1?'selected':''}>${i+1}주</option>`).join('')}</select><button class="btn s d" onclick="roadDel('${x.id}')">삭제</button></div>`).join('')}</div>`}).join('')}
+const rItem=id=>D.roadmap.items.find(x=>x.id===id);
+function roadDone(id,v){rItem(id).done=v;save();renderRoad()}
+function roadTitle(id,v){rItem(id).title=v;save()}
+function roadWeek(id,v){rItem(id).week=+v;save();renderRoad()}
+function roadDel(id){D.roadmap.items=D.roadmap.items.filter(x=>x.id!==id);save();renderRoad()}
+function addRoadItem(){const w=Math.min(12,Math.max(1,curWeek()||1));D.roadmap.items.push({id:uid(),week:w,title:'새 항목',done:false});save();renderRoad()}
+function resetRoad(){if(!confirm('로드맵을 기본 항목으로 되돌릴까요? (체크 상태·수정 내용이 사라져요)'))return;D.roadmap.items=defaultRoadmap();save();renderRoad()}
+
+/* ============ 이력서·면접 ============ */
+let qaCat='전체';
+function renderPrep(){const P=D.prep,cats=['전체',...new Set(P.qa.map(q=>q.cat))],rdy=P.qa.filter(q=>q.ready).length;
+ $('prepBody').innerHTML=`<div class="grid">
+ <div class="card"><h3>🗣️ 한 줄 소개 · 자기소개</h3>
+  <label class="sub">1분 자기소개</label><textarea rows="5" onchange="D.prep.pitch1=this.value;save()">${esc(P.pitch1)}</textarea>
+  <label class="sub">3분 자기소개 (경력 흐름 → 대표 성과 → 지원 동기)</label><textarea rows="6" onchange="D.prep.pitch3=this.value;save()">${esc(P.pitch3)}</textarea>
+  <label class="sub">핵심 강점 3가지 (직무 키워드 위주)</label><textarea rows="3" onchange="D.prep.strengths=this.value;save()">${esc(P.strengths)}</textarea></div>
+ <div class="card"><h3>🏆 성과 사례 (STAR) <button class="btn s" onclick="openAchv()">＋ 추가</button></h3>
+  <div class="sub" style="margin-bottom:6px">경력기술서·면접에서 재사용할 수치 성과를 모아두세요. (예: 결산 마감 7일→4일 단축)</div>
+  ${P.achv.map(a=>`<div class="qa"><b>${esc(a.title)}</b><div class="sub">상황 ${esc(a.s)}<br>행동 ${esc(a.a)}<br>결과 <b style="color:#047857">${esc(a.r)}</b></div><div style="margin-top:4px"><button class="btn s" onclick="openAchv('${a.id}')">수정</button> <button class="btn s d" onclick="delAchv('${a.id}')">삭제</button></div></div>`).join('')||'<div class="sub">아직 없어요.</div>'}</div>
+ </div>
+ <div class="h" style="margin-top:16px"><h2 style="font-size:1.1rem">❓ 예상 질문 은행 <span class="sub">준비 ${rdy}/${P.qa.length}</span></h2>
+  <select onchange="qaCat=this.value;renderPrep()">${cats.map(c=>`<option ${c===qaCat?'selected':''}>${esc(c)}</option>`).join('')}</select><button class="btn p" onclick="addQA()">＋ 질문 추가</button></div>
+ ${P.qa.filter(q=>qaCat==='전체'||q.cat===qaCat).map(q=>`<div class="qa ${q.ready?'rdy':''}"><div style="display:flex;gap:8px;align-items:center"><span class="chip">${esc(q.cat)}</span><b class="grow" style="flex:1">${esc(q.q)}</b><label class="sub"><input type="checkbox" ${q.ready?'checked':''} onchange="qaReady('${q.id}',this.checked)"> 준비완료</label><button class="btn s d" onclick="delQA('${q.id}')">삭제</button></div>
+  <textarea rows="3" placeholder="내 답변 (결론 → 근거/사례 → 마무리)" onchange="qaAns('${q.id}',this.value)">${esc(q.a)}</textarea></div>`).join('')}`}
+function openAchv(id){const a=id?D.prep.achv.find(x=>x.id===id):{id:uid(),title:'',s:'',a:'',r:''};
+ dlg('🏆 성과 사례',`<div class="form"><label class="w">제목<input id="aT" value="${esc(a.title)}" placeholder="예: 월 결산 마감 단축"></label><label class="w">상황 (Situation)<textarea id="aS" rows="2">${esc(a.s)}</textarea></label><label class="w">행동 (Action)<textarea id="aA" rows="3">${esc(a.a)}</textarea></label><label class="w">결과 (Result — 숫자로)<textarea id="aR" rows="2">${esc(a.r)}</textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveAchv('${a.id}')">저장</button></div>`)}
+function saveAchv(id){const o={id,title:val('aT'),s:val('aS'),a:val('aA'),r:val('aR')};if(!o.title){toast('제목을 입력해 주세요');return}const i=D.prep.achv.findIndex(x=>x.id===id);if(i>=0)D.prep.achv[i]=o;else D.prep.achv.push(o);save();closeDlg();renderPrep()}
+function delAchv(id){if(!confirm('삭제할까요?'))return;D.prep.achv=D.prep.achv.filter(x=>x.id!==id);save();renderPrep()}
+const qaItem=id=>D.prep.qa.find(x=>x.id===id);
+function qaAns(id,v){qaItem(id).a=v;save()}
+function qaReady(id,v){qaItem(id).ready=v;save();renderPrep()}
+function delQA(id){if(!confirm('이 질문을 삭제할까요?'))return;D.prep.qa=D.prep.qa.filter(x=>x.id!==id);save();renderPrep()}
+function addQA(){dlg('질문 추가',`<div class="form"><label>분류<input id="qC" value="${qaCat==='전체'?'직무':esc(qaCat)}"></label><label class="w">질문<input id="qQ"></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveQA()">추가</button></div>`)}
+function saveQA(){if(!val('qQ')){toast('질문을 입력해 주세요');return}D.prep.qa.push({id:uid(),cat:val('qC')||'기타',q:val('qQ'),a:'',ready:false});save();closeDlg();renderPrep()}
+
+/* ============ 인맥·헤드헌터 ============ */
+function renderPeople(){const C=[...D.contacts].sort((a,b)=>(a.nextDate||'9').localeCompare(b.nextDate||'9'));
+ $('peopleBody').innerHTML=C.length?`<div class="tw"><table><thead><tr><th>이름</th><th>구분</th><th>소속</th><th>연락처</th><th>최근 연락</th><th>다음 연락</th><th>메모</th><th></th></tr></thead><tbody>${C.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td><span class="chip">${esc(c.type)}</span></td><td>${esc(c.org)}</td><td>${esc(c.phone)}<br><span class="sub">${esc(c.email)}</span></td><td>${c.lastDate?md(c.lastDate):''}</td><td>${c.nextDate?`${md(c.nextDate)} <b style="color:${c.nextDate<=today()?'#dc2626':'#334155'}">${dLabel(c.nextDate)}</b>`:''}</td><td>${esc((c.notes||'').slice(0,50))}</td><td style="white-space:nowrap"><button class="btn s" onclick="logContact('${c.id}')">연락 기록</button> <button class="btn s" onclick="openContact('${c.id}')">수정</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="card sub">헤드헌터·지인·전 직장 동료를 등록하고 다음 연락일을 정해두면 대시보드에서 알려줘요.</div>'}
+function openContact(id){const c=id?D.contacts.find(x=>x.id===id):{id:uid(),name:'',type:'헤드헌터',org:'',phone:'',email:'',nextDate:'',notes:'',logs:[]};if(!c)return;
+ dlg(id?'연락처 수정':'연락처 추가',`<div class="form"><label>이름 *<input id="cN" value="${esc(c.name)}"></label><label>구분<select id="cT">${opts(PTYPES,c.type)}</select></label><label>소속<input id="cO" value="${esc(c.org)}"></label><label>전화<input id="cP" value="${esc(c.phone)}"></label><label>이메일<input id="cE" value="${esc(c.email)}"></label><label>다음 연락 예정일<input type="date" id="cD" value="${esc(c.nextDate)}"></label><label class="w">메모 (전문 분야·소개 가능한 회사 등)<textarea id="cM" rows="3">${esc(c.notes)}</textarea></label></div>
+ ${(c.logs||[]).length?`<h4 style="margin:12px 0 4px">연락 기록</h4>${c.logs.slice().reverse().map(l=>`<div class="row"><span class="sub">${esc(l.date)}</span><div class="grow">${esc(l.note)}</div></div>`).join('')}`:''}
+ <div style="display:flex;justify-content:space-between;margin-top:12px">${id?`<button class="btn d" onclick="delContact('${c.id}')">삭제</button>`:'<span></span>'}<button class="btn p" onclick="saveContact('${c.id}',${id?1:0})">저장</button></div>`)}
+function saveContact(id,ex){if(!val('cN')){toast('이름을 입력해 주세요');return}const old=ex?D.contacts.find(x=>x.id===id):null;
+ const o={...(old||{logs:[]}),id,name:val('cN'),type:val('cT'),org:val('cO'),phone:val('cP'),email:val('cE'),nextDate:val('cD'),notes:$('cM').value};
+ if(old)D.contacts[D.contacts.indexOf(old)]=o;else D.contacts.push(o);save();closeDlg();refresh()}
+function delContact(id){if(!confirm('삭제할까요?'))return;D.contacts=D.contacts.filter(c=>c.id!==id);save();closeDlg();refresh()}
+function logContact(id){dlg('연락 기록',`<div class="form"><label>날짜<input type="date" id="lD" value="${today()}"></label><label>다음 연락일<input type="date" id="lN"></label><label class="w">내용<textarea id="lM" rows="3" placeholder="통화 내용, 소개받은 공고 등"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveLog('${id}')">저장</button></div>`)}
+function saveLog(id){const c=D.contacts.find(x=>x.id===id);if(!c)return;c.logs=c.logs||[];c.logs.push({date:val('lD')||today(),note:$('lM').value.trim()});c.lastDate=val('lD')||today();c.nextDate=val('lN');save();closeDlg();refresh()}
+
+/* ============ 통계 ============ */
+function renderStats(){const J=D.jobs,n=J.length;
+ const lv=[['등록 공고',J.length],['지원(서류제출~)',J.filter(j=>mx(j)>=2).length],['서류 합격',J.filter(j=>mx(j)>=3).length],['면접 진행',J.filter(j=>mx(j)>=4).length],['최종 면접',J.filter(j=>mx(j)>=5).length],['오퍼',J.filter(j=>mx(j)>=6).length]];
+ const top=lv[0][1]||1;
+ const funnel=lv.map(([l,v],i)=>`<div class="fb"><span class="n">${l}</span><div class="bar"><i style="width:${Math.round(v/top*100)}%"></i></div><span class="v">${v}건${i>1&&lv[i-1][1]?` (${Math.round(v/lv[i-1][1]*100)}%)`:''}</span></div>`).join('');
+ const src={};J.forEach(j=>{const k=j.source||'미입력';const o=src[k]=src[k]||{n:0,ap:0,iv:0,of:0};o.n++;if(mx(j)>=2)o.ap++;if(mx(j)>=4)o.iv++;if(mx(j)>=6)o.of++});
+ const srows=Object.entries(src).sort((a,b)=>b[1].n-a[1].n).map(([k,o])=>`<tr><td>${esc(k)}</td><td>${o.n}</td><td>${o.ap}</td><td>${o.iv}</td><td>${o.of}</td><td>${o.ap?Math.round(o.iv/o.ap*100)+'%':'-'}</td></tr>`).join('');
+ const w0=weekStart(today()),wk=Array.from({length:8},(_,i)=>addDays(w0,-7*(7-i))),cnt=wk.map(w=>J.filter(j=>j.appliedDate&&weekStart(j.appliedDate)===w).length),mxw=Math.max(1,...cnt);
+ const outs={};J.filter(j=>j.stage==='종료').forEach(j=>{const k=j.outcome||'사유 미입력';outs[k]=(outs[k]||0)+1});
+ $('statsBody').innerHTML=!n?'<div class="card sub">공고를 등록하면 통계가 만들어져요.</div>':`<div class="grid">
+ <div class="card"><h3>🔻 전형 단계별 깔때기</h3>${funnel}<div class="sub">괄호는 직전 단계 대비 비율이에요.</div></div>
+ <div class="card"><h3>📨 주간 지원 수 (최근 8주)</h3><div class="wk">${cnt.map((c,i)=>`<div><b style="height:${Math.round(c/mxw*90)}px"></b>${c}<br>${md(wk[i])}</div>`).join('')}</div></div>
+ <div class="card"><h3>🧭 지원 경로별 성과</h3><div class="tw"><table><thead><tr><th>경로</th><th>공고</th><th>지원</th><th>면접</th><th>오퍼</th><th>면접 전환</th></tr></thead><tbody>${srows}</tbody></table></div><div class="sub">면접 전환율이 높은 경로에 시간을 더 쓰세요.</div></div>
+ <div class="card"><h3>📌 종료 사유</h3>${Object.keys(outs).length?Object.entries(outs).map(([k,v])=>`<div class="row"><div class="grow">${esc(k)}</div><b>${v}건</b></div>`).join(''):'<div class="sub">종료된 공고가 없어요.</div>'}</div></div>`}
+
+/* ============ 설정 / 백업 ============ */
+function renderSet(){renderAuthBox()}
+function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function exportJSON(){dl(`이직준비_백업_${today()}.json`,new Blob([JSON.stringify(D,null,1)],{type:'application/json'}))}
+function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!Array.isArray(o.jobs))throw 0;if(!confirm('현재 데이터를 백업 파일 내용으로 바꿀까요?'))return;D=Object.assign(blank(),o);save();refresh();toast('복원했어요')}catch(e){alert('올바른 백업 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
+function xl(sheets,name){if(typeof XLSX==='undefined'){alert('엑셀 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.');return}const wb=XLSX.utils.book_new();sheets.forEach(([n,rows])=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),n));XLSX.writeFile(wb,name)}
+function exportJobs(){xl([['지원현황',D.jobs.map(j=>({회사:j.company,직무:j.role,단계:j.stage,중요도:'★'.repeat(j.priority||1),서류마감:j.deadline,지원일:j.appliedDate,경로:j.source,연봉:j.salary,근무지:j.location,담당자:j.contact,이력서버전:j.resume,결과:j.outcome,링크:j.url,메모:j.notes,일정:(j.events||[]).map(e=>`${e.date} ${e.type}`).join(' / ')}))]],`이직_지원현황_${today()}.xlsx`)}
+function exportContacts(){xl([['인맥·헤드헌터',D.contacts.map(c=>({이름:c.name,구분:c.type,소속:c.org,전화:c.phone,이메일:c.email,최근연락:c.lastDate||'',다음연락:c.nextDate||'',메모:c.notes}))]],`이직_인맥_${today()}.xlsx`)}
+async function resetAll(){const t=prompt('모든 이직 준비 데이터를 삭제합니다. 되돌릴 수 없어요.\n계속하려면 "초기화"를 입력하세요.');if(t===null)return;if(t.trim()!=='초기화'){alert('취소했어요.');return}D=blank();save();if(cu&&cloudOK){try{await db.collection('users').doc(cu.uid).collection('appData').doc('jobhunt').delete()}catch(e){}}refresh();toast('초기화했어요')}
+
+/* ============ Firebase 동기화 (선택) ============ */
+const firebaseConfig={apiKey:"AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",authDomain:"taxdiary-calendar.firebaseapp.com",projectId:"taxdiary-calendar",storageBucket:"taxdiary-calendar.firebasestorage.app",messagingSenderId:"4033600838",appId:"1:4033600838:web:6d41b6767d129ad0845947"};
+let auth=null,db=null,cu=null,cloudOK=false,cloudMsg='',cloudTimer;
+function initFirebase(){if(typeof firebase==='undefined'){cloudMsg='오프라인(로컬 저장만)';renderAcct();return}
+ try{firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+  auth.onAuthStateChanged(async u=>{cu=u;cloudOK=false;renderAcct();if(u)await cloudLoad(u);renderAuthBox()})}catch(e){cloudMsg='동기화 사용 불가';renderAcct()}}
+const cref=()=>db.collection('users').doc(cu.uid).collection('appData').doc('jobhunt');
+async function cloudLoad(u){cloudMsg='클라우드 확인 중…';renderAcct();
+ try{const s=await cref().get();
+  if(s.exists){const c=s.data(),cd=JSON.parse(c.json);
+   if(!D.updatedAt||(c.updatedAt||'')>D.updatedAt){try{localStorage.setItem(LS+'-prev',JSON.stringify(D))}catch(e){}D=Object.assign(blank(),cd);try{localStorage.setItem(LS,JSON.stringify(D))}catch(e){}cloudMsg='클라우드 데이터 불러옴';refresh()}
+   else{cloudOK=true;await cloudPush();cloudMsg='동기화됨 (이 기기 데이터가 더 최신)'}}
+  else{cloudOK=true;await cloudPush();cloudMsg='클라우드에 처음 저장함'}
+  cloudOK=true}catch(e){cloudMsg='동기화 실패: '+(e.code||e.message||'')}renderAcct()}
+async function cloudPush(){await cref().set({json:JSON.stringify(D),updatedAt:D.updatedAt||new Date().toISOString()})}
+function cloudSave(){if(!cu||!cloudOK)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await cloudPush();cloudMsg='클라우드 저장 완료'}catch(e){cloudMsg='클라우드 저장 실패'}renderAcct()},600)}
+function renderAcct(){$('acct').textContent=cu?`☁️ ${cu.email} · ${cloudMsg}`:(cloudMsg?'💾 '+cloudMsg:'💾 이 브라우저에 저장')}
+function renderAuthBox(){const b=$('authBox');if(!b)return;
+ if(!auth){b.innerHTML='<div class="sub">동기화 기능을 불러오지 못했어요. 로컬 저장은 정상 작동해요.</div>';return}
+ b.innerHTML=cu?`<div>로그인: <b>${esc(cu.email)}</b></div><div class="sub" style="margin:6px 0">${esc(cloudMsg)}</div><button class="btn" onclick="auth.signOut()">로그아웃</button>`
+ :`<div class="sub" style="margin-bottom:8px">TaxDiary와 같은 계정으로 로그인하면 폰·PC에서 같은 데이터를 볼 수 있어요. 데이터는 별도 문서(jobhunt)에 저장돼요. 로그인하지 않아도 이 브라우저에서는 그대로 쓸 수 있어요.</div>
+ <div style="display:flex;flex-direction:column;gap:6px"><input id="aE" type="email" placeholder="이메일"><input id="aP" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()"><button class="btn p" onclick="doLogin()">로그인</button></div>`}
+async function doLogin(){try{await auth.signInWithEmailAndPassword(val('aE'),$('aP').value)}catch(e){alert('로그인에 실패했어요: '+(e.code||e.message))}}
+
+/* ============ 시작 ============ */
+let t0='dash';try{t0=localStorage.getItem('jobhunt-tab')||'dash'}catch(e){}
+show(TABS.some(x=>x[0]===t0)?t0:'dash');renderAcct();initFirebase();
+</script>
+</body>
+</html>
