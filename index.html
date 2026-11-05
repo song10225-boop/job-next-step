@@ -77,8 +77,18 @@ tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
 .wk{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:6px}.wk div{flex:1;text-align:center;font-size:.7rem;color:var(--sub)}.wk b{display:block;background:var(--blue);border-radius:4px 4px 0 0;min-height:2px;margin-bottom:3px}
 .qa{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:#fff}.qa.rdy{border-color:#86efac;background:#f0fdf4}
 .wkh{font-weight:800;margin:14px 0 4px;color:var(--navy)}.wkh.cur{color:var(--blue)}
+.pf{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.pf label{display:flex;flex-direction:column;gap:3px;font-size:.76rem;font-weight:700;color:#475569}
+.cr{border:1px solid var(--line);border-left:4px solid var(--c,#94a3b8);border-radius:10px;padding:10px;margin-bottom:8px;background:#fff}
+.lvl{display:inline-flex;gap:3px}.lvl button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:.74rem;color:#64748b}.lvl button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.cg{margin-bottom:10px}.cg h5{margin:0 0 4px;font-size:.84rem;color:var(--navy)}
+.cmp{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #f1f5f9}.cmp .n{flex:1;font-size:.84rem}
+.resume{font-size:.88rem;line-height:1.55}.resume h1{margin:0;font-size:1.5rem}.resume h2{font-size:1rem;border-bottom:2px solid var(--navy);padding-bottom:2px;margin:16px 0 6px;color:var(--navy)}.resume ul{margin:4px 0 4px 18px;padding:0}
+.tr{display:inline-block;border-radius:6px;padding:1px 7px;font-size:.72rem;font-weight:700;margin-right:3px}
+.sk .chip{background:#eef2ff;color:#3730a3;text-decoration:none}
+.chipx{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:0 6px 6px 0;background:#fff;cursor:pointer;font-size:.8rem}
 @media(max-width:720px){main{padding:9px}.form{grid-template-columns:1fr}.cal .dc{min-height:72px}.ev{font-size:.65rem}}
-@media print{.top,.h .btn,.btn,#dlg,#toast,.noprint{display:none!important}body{background:#fff}.panel{display:none!important}.panel.on{display:block!important}.card,.tw{break-inside:avoid}.kan{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}}
+@media print{.top,.h .btn,.btn,#dlg,#toast,.noprint{display:none!important}body{background:#fff}.panel{display:none!important}.panel.on{display:block!important}.card,.tw{break-inside:avoid}.kan{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}body.pr main{display:none!important}body.pr #dlg{display:block!important;position:static;background:#fff;padding:0}body.pr .mc{max-height:none;overflow:visible;width:100%;padding:0}body.pr .mh{display:none}}
 </style>
 </head>
 <body>
@@ -86,13 +96,20 @@ tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
 <main>
 <section class="panel" id="p-dash"></section>
 
+<section class="panel" id="p-profile">
+ <div class="h"><h2>👤 내 프로필 · 이력서</h2><button class="btn" onclick="copyCareerText()">📋 경력기술서 복사</button><button class="btn p" onclick="openResume()">🖨 이력서 보기·인쇄</button></div>
+ <div id="profBody"></div>
+</section>
+
 <section class="panel" id="p-board">
  <div class="h"><h2>📋 지원 현황</h2>
   <input id="bq" type="search" placeholder="🔎 회사·직무 검색" oninput="renderBoard()">
   <select id="bp" onchange="renderBoard()"><option value="">우선순위 전체</option><option value="3">★★★ 높음</option><option value="2">★★ 보통</option><option value="1">★ 낮음</option></select>
+  <select id="bt" onchange="renderBoard()"><option value="">트랙 전체</option><option>중소기업·경영지원</option><option>세무사사무실</option><option>회계사사무실</option><option>기타</option></select>
   <button class="btn" id="bv" onclick="toggleBoardView()">표로 보기</button>
   <button class="btn" onclick="window.print()">🖨 인쇄</button>
   <button class="btn p" onclick="openJob()">＋ 공고 추가</button></div>
+ <details class="card" style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:800">🔎 공고 찾기 바로가기 (트랙별 검색 키워드)</summary><div id="finder"></div></details>
  <div id="boardBody"></div>
  <div class="sub" style="margin-top:6px">※ 카드를 끌어서 다른 단계로 옮기거나 ◀ ▶ 버튼을 쓰세요. 카드를 누르면 상세·면접 일정·복기 메모를 적을 수 있어요.</div>
 </section>
@@ -111,7 +128,7 @@ tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
   • <b>숫자로 말하기</b>: 결산 소요일, 신고 건수, 절세·오류 감소 같은 수치 성과<br>
   • <b>주간 목표</b>를 정하고 매주 일요일 지원 현황·통계 점검<br>
   • <b>현 직장 보호</b>: 이력서 공개 시 현 회사 열람 차단, 퇴직 통보는 오퍼 확정 후<br>
-  • 면접 후 <b>당일 복기</b>(질문·답변·아쉬운 점)를 공고 상세에 기록</div></div></div>
+  • 면접 후 <b>당일 복기</b>(질문·답변·아쉬운 점)를 공고 상세에 기록</div></div><div class="card" id="rTips"></div></div>
  <div id="rBody"></div>
 </section>
 
@@ -168,12 +185,26 @@ const SOURCES=['사람인','잡코리아','원티드','잡플래닛','링크드�
 const EVTYPES=['서류 발표','과제·테스트','1차 면접','2차 면접','최종 면접','오퍼 협의','기타'];
 const KC={'서류마감':'#dc2626','면접':'#7c3aed','네트워킹':'#059669','헤드헌터':'#0891b2','준비':'#0ea5e9','연락':'#10b981','할일':'#d97706','기타':'#64748b'};
 const PTYPES=['헤드헌터','지인·네트워킹','전 직장','기업 인사담당','기타'];
+const TRACKS=['중소기업·경영지원','세무사사무실','회계사사무실','기타'];
+const TRC={'중소기업·경영지원':'#2563eb','세무사사무실':'#059669','회계사사무실':'#7c3aed','기타':'#64748b'};
+const trs=t=>({'중소기업·경영지원':'중소·경영지원','세무사사무실':'세무사','회계사사무실':'회계사'}[t]||t||'');
+const trChip=t=>t?`<span class="tr" style="background:${TRC[t]||'#64748b'}22;color:${TRC[t]||'#64748b'}">${esc(trs(t))}</span>`:'';
+const TRKW={'중소기업·경영지원':['경영지원 회계','재경 회계 담당','총무 회계 경리','회계 결산 세무'],'세무사사무실':['세무사사무실 기장','세무회계사무소 사무원','기장 부가세 법인세 신고','세무법인 세무사원'],'회계사사무실':['회계법인 감사 보조','회계법인 세무','회계법인 재무 회계','감사 보조 회계']};
+const SEARCH=[['사람인','https://www.saramin.co.kr/zf_user/search?searchword='],['잡코리아','https://www.jobkorea.co.kr/Search/?stext='],['원티드','https://www.wanted.co.kr/search?query=']];
+const COMP=[['회계',['전표입력·장부관리','월·분기 결산','연간 결산·재무제표 작성','원가계산','자금관리·자금일보','채권·미수금 관리','고정자산 관리']],['세무',['부가가치세 신고','원천세·지급명세서','법인세 신고·세무조정','종합소득세 신고','연말정산','세무조사·세무서 대응','세액공제·감면 검토']],['인사·총무',['급여계산·4대보험','퇴직금·연차 정산','인사·채용 관리','총무(계약·자산·시설)']],['기타',['외부감사 대응','감사조서 작성 보조','전자세금계산서·ERP 운영','정부지원금·보조금 정산','엑셀 고급(피벗·함수)']]];
+const LVLS=['','기초','실무','전문'];
+const PROGS=['더존 Smart A','더존 iCUBE','더존 Bizon','세무사랑 Pro','영림원 ERP','이카운트','홈택스','엑셀','SAP'];
+const CERTS=['전산세무 1급','전산세무 2급','전산회계 1급','재경관리사','FAT 1급','TAT 1급','컴퓨터활용능력 1급','세무사 1차 합격','공인회계사 1차 합격','운전면허 2종 보통'];
+const EDUS=['고졸','전문학사','학사','석사','박사','기타'];
+const TIPS={'중소기업·경영지원':['한 사람이 맡는 범위가 넓어서 <b>결산 전 과정 + 세무 신고 + 급여·4대보험 + 자금</b> 경험을 한 줄로 묶어 보여주세요','대표·임원 보고 경험, 자금 일정 관리, ERP 운영 경험을 수치와 함께','“세무사사무실과 어떻게 협업했는지”를 자주 물어봐요'],
+'세무사사무실':['<b>담당 거래처 수·업종·기장 방식</b>이 가장 중요한 지표예요','부가세·법인세·종소세·원천세 중 직접 신고한 범위를 명확히','신고 시즌(1·3·5·7월 전후) 업무 강도와 채용 수요가 사무실마다 달라서 지원 시기를 확인해 보세요','세무사 시험 등 자격 계획이 있다면 솔직하게 정리'],
+'회계사사무실':['<b>감사 보조·조서 작성·재무제표 이해</b> 경험이 핵심이에요','K-IFRS / 일반기업회계기준 이해 수준과 엑셀 분석 능력 강조','감사 시즌 업무 강도와 근무 형태를 미리 확인','공인회계사 시험 준비·합격 계획이 있으면 구체적으로']};
 const mx=j=>j.stage==='종료'?(j.maxStage??0):Math.max(j.maxStage??0,STAGES.indexOf(j.stage));
 
 function defaultRoadmap(){const R=[
 [1,'희망 직무·산업·연봉 하한·근무조건(우선순위 3가지) 정리'],[1,'이직 사유를 긍정적인 한 줄로 정리'],[1,'경력 타임라인 + 수치 성과 10개 뽑기'],
-[2,'이력서·경력기술서 완성 (직무별 1~2개 버전)'],[2,'사람인·잡코리아·링크드인 프로필 갱신 (현 직장 열람 차단 설정 확인)'],[2,'헤드헌터 3곳 이상 컨택'],
-[3,'공고 소싱 루틴 만들기 (매일 30분)'],[3,'주 5곳 지원 시작'],[3,'지인·전 직장 네트워킹 3명 연락'],
+[2,'내 프로필·경력 기간 정리 (경력·자격증·프로그램·역량 입력)'],[2,'이력서·경력기술서 완성 (트랙별 버전: 중소기업·세무사사무실·회계사사무실)'],[2,'사람인·잡코리아·링크드인 프로필 갱신 (현 직장 열람 차단 설정 확인)'],[2,'헤드헌터 3곳 이상 컨택'],
+[3,'공고 소싱 루틴 만들기 (매일 30분)'],[3,'세무사·회계사사무실은 신고·감사 시즌 일정 확인 후 지원 타이밍 조율'],[3,'주 5곳 지원 시작'],[3,'지인·전 직장 네트워킹 3명 연락'],
 [4,'예상질문 답변 10개 작성'],[4,'1분·3분 자기소개 완성'],[4,'지원 현황 점검 — 서류 통과율 낮으면 이력서 수정'],
 [5,'모의 면접 1회 (녹음 또는 지인)'],[5,'면접 후 당일 복기 노트 쓰는 습관 만들기'],
 [6,'누적 지원 20곳 점검, 지원 경로별 성과 확인'],[6,'2차 면접 대비: 직무 심화 질문 정리'],
@@ -182,25 +213,35 @@ function defaultRoadmap(){const R=[
 [9,'오퍼 비교표 작성 (연봉·복지·근무조건·성장성)'],[10,'처우 협의·입사일 조율'],
 [11,'입사 확정 후 퇴직 통보 일정 계획 & 인수인계 문서 작성'],[12,'퇴직금·연차·4대보험 정산 확인'],[12,'입사 준비 (서류·건강검진 등)']];
 return R.map(([week,title])=>({id:uid(),week,title,done:false}))}
-function defaultQA(){return [
-['이직','이직 사유가 무엇인가요?'],['자기소개','1분 자기소개 해주세요.'],['자기소개','지금까지 경력을 한마디로 정리하면?'],
-['성과','가장 자랑스러운 성과 한 가지(숫자 포함)는?'],['직무','결산 업무에서 본인의 역할과 소요 기간을 설명해 주세요.'],
-['직무','세무조정·신고 업무에서 가장 어려웠던 사례와 해결 방법은?'],['직무','사용해 본 회계/ERP 프로그램과 숙련도는?'],
-['직무','업무 중 실수나 오류를 발견했을 때 어떻게 대처했나요?'],
-['연차·적응','연차(경력) 대비 직급·연봉 기대 수준은 어떻게 생각하세요?'],['연차·적응','새로운 시스템·방식에 빠르게 적응한 경험이 있나요?'],
-['연차·적응','연령대가 다른 팀원·상사와 협업한 경험과 방식은?'],['처우','희망 연봉과 그 근거는?'],
-['포부','입사 후 1년·3년 목표는?'],['역질문','면접관께 드릴 질문 3가지']].map(([cat,q])=>({id:uid(),cat,q,a:'',ready:false}))}
-function blank(){return {v:1,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:''},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA()},updatedAt:''}}
+function defaultQA(){const Q=[
+['공통','이직','이직 사유가 무엇인가요?'],['공통','자기소개','1분 자기소개 해주세요.'],['공통','자기소개','지금까지 경력을 한마디로 정리하면?'],
+['공통','성과','가장 자랑스러운 성과 한 가지(숫자 포함)는?'],['공통','직무','결산 업무에서 본인의 역할과 소요 기간을 설명해 주세요.'],
+['공통','직무','세무조정·신고 업무에서 가장 어려웠던 사례와 해결 방법은?'],['공통','직무','사용해 본 회계/ERP 프로그램과 숙련도는?'],
+['공통','직무','업무 중 실수나 오류를 발견했을 때 어떻게 대처했나요?'],
+['공통','연차·적응','연차(경력) 대비 직급·연봉 기대 수준은 어떻게 생각하세요?'],['공통','연차·적응','새로운 시스템·방식에 빠르게 적응한 경험이 있나요?'],
+['공통','연차·적응','연령대가 다른 팀원·상사와 협업한 경험과 방식은?'],['공통','처우','희망 연봉과 그 근거는?'],
+['공통','포부','입사 후 1년·3년 목표는?'],['공통','역질문','면접관께 드릴 질문 3가지'],
+['중소기업·경영지원','직무','전표 입력부터 재무제표까지 결산 전 과정을 혼자 해본 경험은?'],['중소기업·경영지원','직무','자금 관리(자금일보·자금예측·은행 업무) 경험을 설명해 주세요.'],
+['중소기업·경영지원','직무','회계 외에 총무·인사·급여를 함께 맡아도 괜찮으신가요?'],['중소기업·경영지원','직무','세무 신고를 외부 세무사와 어떻게 협업했나요?'],['중소기업·경영지원','직무','대표·임원에게 재무 상황을 보고한 경험은?'],
+['세무사사무실','직무','담당했던 거래처 수와 업종·규모는 어땠나요?'],['세무사사무실','직무','부가세·법인세·종소세·원천세 중 직접 신고한 범위는?'],['세무사사무실','직무','신고 시즌의 높은 업무 강도를 어떻게 관리했나요?'],
+['세무사사무실','직무','자료 제출이 늦는 거래처는 어떻게 응대했나요?'],['세무사사무실','직무','세무조정·기장 프로그램 숙련도와 가산세·오류 사례는?'],['세무사사무실','포부','세무사 시험 등 자격 취득 계획이 있나요?'],
+['회계사사무실','직무','감사 보조 또는 조서 작성 경험이 있나요?'],['회계사사무실','직무','재무제표와 주석 이해 수준, 적용 회계기준(K-IFRS 등) 경험은?'],['회계사사무실','직무','감사 시즌 야근·출장 등 업무 강도를 감당할 수 있나요?'],
+['회계사사무실','직무','클라이언트 자료 요청과 소통은 어떻게 했나요?'],['회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?']];
+return Q.map(([track,cat,q])=>({id:uid(),track,cat,q,a:'',ready:false}))}
+function blank(){return {v:2,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA()},profile:{name:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},updatedAt:''}}
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+ if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
+ return o}
 
 /* ============ 저장 ============ */
 const LS='jobhunt-v1';
-function load(){try{const r=JSON.parse(localStorage.getItem(LS));return r?Object.assign(blank(),r):blank()}catch(e){return blank()}}
+function load(){try{const r=JSON.parse(localStorage.getItem(LS));return r?norm(r):blank()}catch(e){return blank()}}
 let D=load();
 function save(){D.updatedAt=new Date().toISOString();try{localStorage.setItem(LS,JSON.stringify(D))}catch(e){toast('브라우저 저장 실패 — 백업을 받아두세요')}cloudSave()}
 function setStage(j,s){j.stage=s;const i=STAGES.indexOf(s);if(s!=='종료')j.maxStage=Math.max(j.maxStage??0,i);else j.maxStage=j.maxStage??0;if(i>=2&&s!=='종료'&&!j.appliedDate)j.appliedDate=today()}
 
 /* ============ 탭 ============ */
-const TABS=[['dash','🏠 대시보드',()=>renderDash()],['board','📋 지원현황',()=>renderBoard()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],['prep','🎤 이력서·면접',()=>renderPrep()],['people','🤝 인맥·헤드헌터',()=>renderPeople()],['stats','📊 통계',()=>renderStats()],['set','⚙️ 설정',()=>renderSet()]];
+const TABS=[['dash','🏠 대시보드',()=>renderDash()],['profile','👤 내 프로필',()=>renderProfile()],['board','📋 지원현황',()=>renderBoard()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],['prep','🎤 이력서·면접',()=>renderPrep()],['people','🤝 인맥·헤드헌터',()=>renderPeople()],['stats','📊 통계',()=>renderStats()],['set','⚙️ 설정',()=>renderSet()]];
 let cur='dash';
 function show(t){cur=t;try{localStorage.setItem('jobhunt-tab',t)}catch(e){}
  TABS.forEach(([k])=>$('p-'+k).classList.toggle('on',k===t));
@@ -241,12 +282,12 @@ function renderDash(){
  $('p-dash').innerHTML=`<div class="h"><h2>🏠 대시보드</h2><button class="btn" onclick="openGoal()">🎯 목표 설정</button></div>
  <div class="grid">
  <div class="card"><h3>🎯 나의 이직 목표</h3>
-  ${g.role||g.target?`<div class="big">${g.target?(diff(g.target,t)>=0?'D-'+diff(g.target,t):'목표일 경과'):'목표일 미설정'}</div><div class="sub">목표 입사일 ${esc(g.target||'-')}</div>
-  <div style="margin-top:8px"><b>${esc(g.role||'희망 직무 미입력')}</b> ${g.industry?'· '+esc(g.industry):''}</div>
-  <div class="sub">희망 연봉 ${esc(g.salaryMin||'-')} ~ ${esc(g.salaryMax||'-')} ${g.region?'· 지역 '+esc(g.region):''}</div>
+  ${g.role||g.target||(g.tracks||[]).length?`<div class="big">${g.target?(diff(g.target,t)>=0?'D-'+diff(g.target,t):'목표일 경과'):'목표일 미설정'}</div><div class="sub">목표 입사일 ${esc(g.target||'-')}</div>
+  <div style="margin-top:8px">${(g.tracks||[]).map(trChip).join('')}<b>${esc(g.role||'희망 직무 미입력')}</b> ${g.industry?'· '+esc(g.industry):''}</div>
+  ${g.salaryMin||g.salaryMax||g.region?`<div class="sub">${g.salaryMin||g.salaryMax?'희망 연봉 '+esc(g.salaryMin||'-')+' ~ '+esc(g.salaryMax||'-'):''} ${g.region?'· 지역 '+esc(g.region):''}</div>`:''}
   ${g.must?`<div class="sub">꼭 지킬 조건: ${esc(g.must)}</div>`:''}`:'<div class="sub">상단 "목표 설정"에서 희망 직무·연봉·목표 입사일을 먼저 정해 보세요.</div>'}
   <div style="margin-top:10px" class="sub">로드맵 ${cw?`${Math.min(Math.max(cw,1),12)}주차 · `:'(시작일 미설정) · '}완료 ${rd}%</div><div class="bar"><i style="width:${rd}%"></i></div></div>
- <div class="card"><h3>📆 이번 주 활동 <span class="sub">(${md(weekStart(t))}~${md(addDays(weekStart(t),6))})</span></h3>
+ ${careerCardHTML()}<div class="card"><h3>📆 이번 주 활동 <span class="sub">(${md(weekStart(t))}~${md(addDays(weekStart(t),6))})</span></h3>
   ${prog('📨 지원',w.apply,D.targets.apply)}${prog('🤝 네트워킹 연락',w.net,D.targets.net)}${prog('📞 헤드헌터 연락',w.hh,D.targets.hh)}
   <div class="sub">지원은 공고의 "지원일", 연락은 인맥 탭의 연락 기록으로 자동 집계돼요.</div></div>
  <div class="card"><h3>🔔 챙길 것</h3>${al.length?al.map(a=>`<div class="al ${a.lv}" onclick="${a.fn}">${esc(a.txt)}</div>`).join(''):'<div class="sub">지금 급한 항목은 없어요 👍</div>'}</div>
@@ -254,7 +295,7 @@ function renderDash(){
  <div class="card"><h3>✅ 할 일 <button class="btn s" onclick="addTodoDlg()">＋</button></h3>
   ${todos.length?todos.map(x=>`<div class="row"><input type="checkbox" onchange="toggleTodo('${x.id}')"><div class="grow">${esc(x.title)}</div><span class="sub">${x.due?md(x.due)+' '+dLabel(x.due):''}</span><button class="btn s d" onclick="delTodo('${x.id}')">삭제</button></div>`).join(''):'<div class="sub">할 일이 없어요.</div>'}
   ${D.todos.some(x=>x.done)?`<div class="sub" style="margin-top:6px">완료 ${D.todos.filter(x=>x.done).length}건 <a href="#" onclick="clearDoneTodos();return false">정리</a></div>`:''}</div>
- <div class="card"><h3>📋 진행 중 공고 ${act.length}건</h3><div>${pipe}</div>
+ <div class="card"><h3>📋 진행 중 공고 ${act.length}건</h3><div>${pipe}</div><div style="margin-top:6px">${TRACKS.slice(0,3).map(t=>trChip(t)+act.filter(j=>j.track===t).length+' ').join(' ')}</div>
   <div style="margin-top:8px">${act.filter(j=>mx(j)>=4).map(j=>`<div class="row"><span class="chip" style="background:${STC[j.stage]};color:#fff">${j.stage}</span><div class="grow" style="cursor:pointer" onclick="openJob('${j.id}')">${esc(j.company)} <span class="sub">${esc(j.role)}</span></div></div>`).join('')||'<div class="sub">면접 단계 이상 공고가 여기에 모여요.</div>'}</div></div>
  </div>`}
 function openGoal(){const g=D.goal,t=D.targets;
@@ -262,11 +303,12 @@ function openGoal(){const g=D.goal,t=D.targets;
  <label>희망 직무<input id="gRole" value="${esc(g.role)}" placeholder="예: 회계팀 과장/세무 담당"></label><label>산업·회사 규모<input id="gInd" value="${esc(g.industry)}" placeholder="예: 제조업, 중견기업 이상"></label>
  <label>희망 연봉(하한)<input id="gMin" value="${esc(g.salaryMin)}" placeholder="예: 5,000만원"></label><label>희망 연봉(상한)<input id="gMax" value="${esc(g.salaryMax)}"></label>
  <label>목표 입사일<input type="date" id="gTar" value="${esc(g.target)}"></label><label>희망 지역<input id="gReg" value="${esc(g.region)}"></label>
+ <div class="w"><div class="sub" style="font-weight:700;margin-bottom:4px">지원할 곳 (복수 선택)</div>${TRACKS.slice(0,3).map(t=>`<label style="flex-direction:row;display:inline-flex;gap:4px;margin-right:12px"><input type="checkbox" class="gTr" value="${t}" ${(g.tracks||[]).includes(t)?'checked':''}>${t}</label>`).join('')}</div>
  <label class="w">꼭 지킬 조건 (우선순위)<input id="gMust" value="${esc(g.must)}" placeholder="예: 정규직, 야근 적음, 결산 전 과정 경험"></label>
  <label>주간 지원 목표(건)<input type="number" id="tA" min="0" value="${t.apply}"></label><label>주간 네트워킹 목표(회)<input type="number" id="tN" min="0" value="${t.net}"></label>
  <label>주간 헤드헌터 연락(회)<input type="number" id="tH" min="0" value="${t.hh}"></label></div>
  <div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveGoal()">저장</button></div>`)}
-function saveGoal(){D.goal={role:val('gRole'),industry:val('gInd'),salaryMin:val('gMin'),salaryMax:val('gMax'),target:val('gTar'),region:val('gReg'),must:val('gMust')};D.targets={apply:+val('tA')||0,net:+val('tN')||0,hh:+val('tH')||0};save();closeDlg();refresh()}
+function saveGoal(){D.goal={role:val('gRole'),industry:val('gInd'),salaryMin:val('gMin'),salaryMax:val('gMax'),target:val('gTar'),region:val('gReg'),must:val('gMust'),tracks:[...document.querySelectorAll('.gTr:checked')].map(x=>x.value)};D.targets={apply:+val('tA')||0,net:+val('tN')||0,hh:+val('tH')||0};save();closeDlg();refresh()}
 function addTodoDlg(){dlg('✅ 할 일 추가',`<div class="form"><label class="w">할 일<input id="tdT" placeholder="예: 경력기술서 수치 보완"></label><label>마감일<input type="date" id="tdD"></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="addTodo()">추가</button></div>`);setTimeout(()=>$('tdT')?.focus(),50)}
 function addTodo(){const t=val('tdT');if(!t){toast('내용을 입력해 주세요');return}D.todos.push({id:uid(),title:t,due:val('tdD'),done:false});save();closeDlg();refresh()}
 function toggleTodo(id){const x=D.todos.find(t=>t.id===id);if(x){x.done=!x.done;save();refresh()}}
@@ -277,8 +319,11 @@ function clearDoneTodos(){D.todos=D.todos.filter(t=>!t.done);save();refresh()}
 let boardView='kan',dragId=null;
 function toggleBoardView(){boardView=boardView==='kan'?'tbl':'kan';renderBoard()}
 function nextEv(j){const t=today();return (j.events||[]).filter(e=>e.date&&e.date>=t).sort((a,b)=>a.date.localeCompare(b.date))[0]}
-function filteredJobs(){const q=val('bq').toLowerCase(),p=val('bp');return D.jobs.filter(j=>(!q||(j.company+j.role).toLowerCase().includes(q))&&(!p||String(j.priority)===p))}
-function renderBoard(){$('bv').textContent=boardView==='kan'?'표로 보기':'칸반으로 보기';
+function filteredJobs(){const q=val('bq').toLowerCase(),p=val('bp'),t=val('bt');return D.jobs.filter(j=>(!q||(j.company+j.role).toLowerCase().includes(q))&&(!p||String(j.priority)===p)&&(!t||j.track===t))}
+function renderFinder(){const tr=D.goal.tracks.length?D.goal.tracks.filter(t=>TRKW[t]):Object.keys(TRKW);
+ $('finder').innerHTML=tr.map(t=>`<div style="margin-top:10px">${trChip(t)}${(TRKW[t]||[]).map(k=>`<div class="row sk"><b class="grow">${esc(k)}</b>${SEARCH.map(([n,u])=>`<a class="chip" target="_blank" rel="noopener" href="${u}${encodeURIComponent(k)}">${n} ↗</a>`).join('')}</div>`).join('')}</div>`).join('')+
+ `<div class="sub" style="margin-top:10px">업계 채널: 한국세무사회(kacpta.or.kr), 한국공인회계사회(kicpa.or.kr)의 구인 게시판, 헤드헌터, 지인 소개도 함께 활용해 보세요. (사이트 주소는 바뀔 수 있어요)</div>`}
+function renderBoard(){renderFinder();$('bv').textContent=boardView==='kan'?'표로 보기':'칸반으로 보기';
  const L=filteredJobs();
  if(!D.jobs.length){$('boardBody').innerHTML='<div class="card sub">아직 등록된 공고가 없어요. 오른쪽 위 "＋ 공고 추가"로 관심 있는 공고부터 쌓아보세요.</div>';return}
  if(boardView==='kan'){
@@ -286,20 +331,22 @@ function renderBoard(){$('bv').textContent=boardView==='kan'?'표로 보기':'�
    return `<div class="kcol" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="this.classList.remove('over');dropTo('${s}')"><h4><span>${s}</span><span>${js.length}</span></h4>
    ${js.map(j=>{const ne=nextEv(j);return `<div class="kc" style="--c:${STC[s]}" draggable="true" ondragstart="dragId='${j.id}'" onclick="openJob('${j.id}')">
     <div class="kc-t">${'★'.repeat(j.priority||1)} ${esc(j.company)}</div><div class="kc-s">${esc(j.role)}</div>
-    <div style="margin-top:4px">${j.deadline&&mx(j)<2&&s!=='종료'?`<span class="chip" style="background:#fee2e2;color:#b91c1c">마감 ${md(j.deadline)} ${dLabel(j.deadline)}</span>`:''}${ne?`<span class="chip" style="background:#ede9fe;color:#6d28d9">${esc(ne.type)} ${md(ne.date)}</span>`:''}${j.source?`<span class="chip">${esc(j.source)}</span>`:''}${s==='종료'&&j.outcome?`<span class="chip">${esc(j.outcome)}</span>`:''}</div>
+    <div style="margin-top:4px">${j.deadline&&mx(j)<2&&s!=='종료'?`<span class="chip" style="background:#fee2e2;color:#b91c1c">마감 ${md(j.deadline)} ${dLabel(j.deadline)}</span>`:''}${ne?`<span class="chip" style="background:#ede9fe;color:#6d28d9">${esc(ne.type)} ${md(ne.date)}</span>`:''}${trChip(j.track)}${j.source?`<span class="chip">${esc(j.source)}</span>`:''}${s==='종료'&&j.outcome?`<span class="chip">${esc(j.outcome)}</span>`:''}</div>
     <div class="kc-m"><button onclick="event.stopPropagation();mv('${j.id}',-1)">◀</button><button onclick="event.stopPropagation();mv('${j.id}',1)">▶</button></div></div>`}).join('')}</div>`}).join('')}</div>`;
  }else{
   const S=[...L].sort((a,b)=>STAGES.indexOf(a.stage)-STAGES.indexOf(b.stage)||(a.deadline||'9').localeCompare(b.deadline||'9'));
-  $('boardBody').innerHTML=`<div class="tw"><table><thead><tr><th>회사</th><th>직무</th><th>단계</th><th>중요도</th><th>마감</th><th>지원일</th><th>경로</th><th>연봉</th><th>다음 일정</th><th>메모</th></tr></thead><tbody>${S.map(j=>{const ne=nextEv(j);return `<tr class="clk" onclick="openJob('${j.id}')"><td><b>${esc(j.company)}</b></td><td>${esc(j.role)}</td><td><span class="chip" style="background:${STC[j.stage]};color:#fff">${j.stage}${j.stage==='종료'&&j.outcome?' · '+esc(j.outcome):''}</span></td><td>${'★'.repeat(j.priority||1)}</td><td>${j.deadline?md(j.deadline):''}</td><td>${j.appliedDate?md(j.appliedDate):''}</td><td>${esc(j.source)}</td><td>${esc(j.salary)}</td><td>${ne?esc(ne.type)+' '+md(ne.date):''}</td><td>${esc((j.notes||'').slice(0,40))}</td></tr>`}).join('')}</tbody></table></div>`}}
+  $('boardBody').innerHTML=`<div class="tw"><table><thead><tr><th>회사</th><th>직무</th><th>트랙</th><th>단계</th><th>중요도</th><th>마감</th><th>지원일</th><th>경로</th><th>연봉</th><th>다음 일정</th><th>메모</th></tr></thead><tbody>${S.map(j=>{const ne=nextEv(j);return `<tr class="clk" onclick="openJob('${j.id}')"><td><b>${esc(j.company)}</b></td><td>${esc(j.role)}</td><td>${trChip(j.track)}</td><td><span class="chip" style="background:${STC[j.stage]};color:#fff">${j.stage}${j.stage==='종료'&&j.outcome?' · '+esc(j.outcome):''}</span></td><td>${'★'.repeat(j.priority||1)}</td><td>${j.deadline?md(j.deadline):''}</td><td>${j.appliedDate?md(j.appliedDate):''}</td><td>${esc(j.source)}</td><td>${esc(j.salary)}</td><td>${ne?esc(ne.type)+' '+md(ne.date):''}</td><td>${esc((j.notes||'').slice(0,40))}</td></tr>`}).join('')}</tbody></table></div>`}}
 function dropTo(s){const j=D.jobs.find(x=>x.id===dragId);dragId=null;if(!j||j.stage===s)return;setStage(j,s);save();renderBoard()}
 function mv(id,d){const j=D.jobs.find(x=>x.id===id);if(!j)return;const i=Math.min(STAGES.length-1,Math.max(0,STAGES.indexOf(j.stage)+d));if(STAGES[i]===j.stage)return;setStage(j,STAGES[i]);save();renderBoard()}
 let JT=null;
 function openJob(id){const src=id&&D.jobs.find(j=>j.id===id);
- JT=src?JSON.parse(JSON.stringify(src)):{id:uid(),company:'',role:'',stage:'관심',priority:2,deadline:'',source:'',url:'',salary:'',location:'',contact:'',resume:'',appliedDate:'',outcome:'',notes:'',events:[]};
+ JT=src?JSON.parse(JSON.stringify(src)):{id:uid(),company:'',role:'',stage:'관심',priority:2,track:(D.goal.tracks.length===1?D.goal.tracks[0]:''),jtype:'',scope:'',deadline:'',source:'',url:'',salary:'',location:'',contact:'',resume:'',appliedDate:'',outcome:'',notes:'',events:[]};
  const j=JT;
  dlg(src?'공고 상세':'공고 추가',`<div class="form">
  <label>회사명 *<input id="jC" value="${esc(j.company)}"></label><label>직무<input id="jR" value="${esc(j.role)}"></label>
  <label>단계<select id="jS">${opts(STAGES,j.stage)}</select></label><label>중요도<select id="jP"><option value="3" ${j.priority==3?'selected':''}>★★★ 높음</option><option value="2" ${j.priority==2?'selected':''}>★★ 보통</option><option value="1" ${j.priority==1?'selected':''}>★ 낮음</option></select></label>
+ <label>트랙<select id="jTr"><option value="">선택</option>${opts(TRACKS,j.track)}</select></label><label>고용형태<select id="jTy"><option value="">선택</option>${opts(['정규직','계약직','수습·인턴','파트타임','프리랜서'],j.jtype)}</select></label>
+ <label class="w">업무 범위 · 거래처 수 · 팀 규모<input id="jSc" value="${esc(j.scope)}" placeholder="예: 기장 거래처 40곳 / 회계 1인 + 총무 겸임"></label>
  <label>서류 마감일<input type="date" id="jD" value="${esc(j.deadline)}"></label><label>지원일<input type="date" id="jA" value="${esc(j.appliedDate)}"></label>
  <label>지원 경로<select id="jSrc"><option value="">선택</option>${opts(SOURCES,j.source)}</select></label><label>연봉(공고/제안)<input id="jSal" value="${esc(j.salary)}"></label>
  <label>근무지<input id="jL" value="${esc(j.location)}"></label><label>담당자·헤드헌터<input id="jCt" value="${esc(j.contact)}"></label>
@@ -315,7 +362,7 @@ function jtAddEv(){const d=val('jeD');if(!d){toast('날짜를 선택해 주세�
 function jtDelEv(id){JT.events=JT.events.filter(e=>e.id!==id);renderJT()}
 function jtEvNote(id,v){const e=JT.events.find(x=>x.id===id);if(e)e.note=v}
 function saveJob(){const c=val('jC');if(!c){toast('회사명을 입력해 주세요');return}
- Object.assign(JT,{company:c,role:val('jR'),priority:+val('jP'),deadline:val('jD'),appliedDate:val('jA'),source:val('jSrc'),salary:val('jSal'),location:val('jL'),contact:val('jCt'),url:val('jU'),resume:val('jRs'),outcome:val('jO'),notes:$('jN').value});
+ Object.assign(JT,{company:c,role:val('jR'),priority:+val('jP'),track:val('jTr'),jtype:val('jTy'),scope:val('jSc'),deadline:val('jD'),appliedDate:val('jA'),source:val('jSrc'),salary:val('jSal'),location:val('jL'),contact:val('jCt'),url:val('jU'),resume:val('jRs'),outcome:val('jO'),notes:$('jN').value});
  setStage(JT,val('jS'));const i=D.jobs.findIndex(x=>x.id===JT.id);if(i>=0)D.jobs[i]=JT;else D.jobs.push(JT);save();closeDlg();refresh();toast('저장했어요')}
 function delJob(id){if(!confirm('이 공고를 삭제할까요?'))return;D.jobs=D.jobs.filter(j=>j.id!==id);save();closeDlg();refresh()}
 
@@ -344,7 +391,8 @@ function saveEv(id,exists){const t=val('eT');if(!t||!val('eD')){toast('제목과
 function delEv(id){D.events=D.events.filter(e=>e.id!==id);save();closeDlg();refresh()}
 
 /* ============ 로드맵 ============ */
-function renderRoad(){$('rStart').value=D.roadmap.start||'';const R=D.roadmap.items,cw=curWeek(),done=R.filter(x=>x.done).length,p=R.length?Math.round(done/R.length*100):0;
+function tipsHTML(){const tr=D.goal.tracks.length?D.goal.tracks.filter(t=>TIPS[t]):Object.keys(TIPS);return '<h3>🎯 트랙별 포인트</h3>'+tr.map(t=>`<div style="margin-bottom:8px">${trChip(t)}<ul class="sub" style="margin:4px 0 0 18px;padding:0;line-height:1.6">${TIPS[t].map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')+'<div class="sub">※ 목표 설정에서 지원할 곳을 고르면 해당 트랙만 보여요.</div>'}
+function renderRoad(){$('rTips').innerHTML=tipsHTML();$('rStart').value=D.roadmap.start||'';const R=D.roadmap.items,cw=curWeek(),done=R.filter(x=>x.done).length,p=R.length?Math.round(done/R.length*100):0;
  $('rProg').innerHTML=`<h3>진행률</h3><div class="big">${p}%</div><div class="sub">${done} / ${R.length} 완료 ${cw?`· 현재 ${Math.min(Math.max(cw,1),12)}주차`:'· 시작일을 지정하면 현재 주차가 표시돼요'}</div><div class="bar" style="margin-top:8px"><i style="width:${p}%"></i></div>`;
  const weeks=[...new Set(R.map(x=>x.week))].sort((a,b)=>a-b);
  $('rBody').innerHTML=weeks.map(w=>{const items=R.filter(x=>x.week===w),s=D.roadmap.start,range=s?` <span class="sub">${md(addDays(s,(w-1)*7))} ~ ${md(addDays(s,w*7-1))}</span>`:'';
@@ -359,11 +407,11 @@ function addRoadItem(){const w=Math.min(12,Math.max(1,curWeek()||1));D.roadmap.i
 function resetRoad(){if(!confirm('로드맵을 기본 항목으로 되돌릴까요? (체크 상태·수정 내용이 사라져요)'))return;D.roadmap.items=defaultRoadmap();save();renderRoad()}
 
 /* ============ 이력서·면접 ============ */
-let qaCat='전체';
+let qaCat='전체',qaTrack='전체';
 function renderPrep(){const P=D.prep,cats=['전체',...new Set(P.qa.map(q=>q.cat))],rdy=P.qa.filter(q=>q.ready).length;
  $('prepBody').innerHTML=`<div class="grid">
  <div class="card"><h3>🗣️ 한 줄 소개 · 자기소개</h3>
-  <label class="sub">1분 자기소개</label><textarea rows="5" onchange="D.prep.pitch1=this.value;save()">${esc(P.pitch1)}</textarea>
+  <label class="sub">1분 자기소개 <button class="btn s" onclick="draftPitch()">프로필로 초안 만들기</button></label><textarea rows="5" onchange="D.prep.pitch1=this.value;save()">${esc(P.pitch1)}</textarea>
   <label class="sub">3분 자기소개 (경력 흐름 → 대표 성과 → 지원 동기)</label><textarea rows="6" onchange="D.prep.pitch3=this.value;save()">${esc(P.pitch3)}</textarea>
   <label class="sub">핵심 강점 3가지 (직무 키워드 위주)</label><textarea rows="3" onchange="D.prep.strengths=this.value;save()">${esc(P.strengths)}</textarea></div>
  <div class="card"><h3>🏆 성과 사례 (STAR) <button class="btn s" onclick="openAchv()">＋ 추가</button></h3>
@@ -371,8 +419,8 @@ function renderPrep(){const P=D.prep,cats=['전체',...new Set(P.qa.map(q=>q.cat
   ${P.achv.map(a=>`<div class="qa"><b>${esc(a.title)}</b><div class="sub">상황 ${esc(a.s)}<br>행동 ${esc(a.a)}<br>결과 <b style="color:#047857">${esc(a.r)}</b></div><div style="margin-top:4px"><button class="btn s" onclick="openAchv('${a.id}')">수정</button> <button class="btn s d" onclick="delAchv('${a.id}')">삭제</button></div></div>`).join('')||'<div class="sub">아직 없어요.</div>'}</div>
  </div>
  <div class="h" style="margin-top:16px"><h2 style="font-size:1.1rem">❓ 예상 질문 은행 <span class="sub">준비 ${rdy}/${P.qa.length}</span></h2>
-  <select onchange="qaCat=this.value;renderPrep()">${cats.map(c=>`<option ${c===qaCat?'selected':''}>${esc(c)}</option>`).join('')}</select><button class="btn p" onclick="addQA()">＋ 질문 추가</button></div>
- ${P.qa.filter(q=>qaCat==='전체'||q.cat===qaCat).map(q=>`<div class="qa ${q.ready?'rdy':''}"><div style="display:flex;gap:8px;align-items:center"><span class="chip">${esc(q.cat)}</span><b class="grow" style="flex:1">${esc(q.q)}</b><label class="sub"><input type="checkbox" ${q.ready?'checked':''} onchange="qaReady('${q.id}',this.checked)"> 준비완료</label><button class="btn s d" onclick="delQA('${q.id}')">삭제</button></div>
+  <select onchange="qaTrack=this.value;renderPrep()">${['전체','공통',...TRACKS.slice(0,3)].map(c=>`<option ${c===qaTrack?'selected':''}>${esc(c)}</option>`).join('')}</select><select onchange="qaCat=this.value;renderPrep()">${cats.map(c=>`<option ${c===qaCat?'selected':''}>${esc(c)}</option>`).join('')}</select><button class="btn p" onclick="addQA()">＋ 질문 추가</button></div>
+ ${P.qa.filter(q=>(qaCat==='전체'||q.cat===qaCat)&&(qaTrack==='전체'||(q.track||'공통')==='공통'||q.track===qaTrack)).map(q=>`<div class="qa ${q.ready?'rdy':''}"><div style="display:flex;gap:8px;align-items:center"><span class="chip">${esc(q.cat)}</span>${q.track&&q.track!=='공통'?trChip(q.track):''}<b class="grow" style="flex:1">${esc(q.q)}</b><label class="sub"><input type="checkbox" ${q.ready?'checked':''} onchange="qaReady('${q.id}',this.checked)"> 준비완료</label><button class="btn s d" onclick="delQA('${q.id}')">삭제</button></div>
   <textarea rows="3" placeholder="내 답변 (결론 → 근거/사례 → 마무리)" onchange="qaAns('${q.id}',this.value)">${esc(q.a)}</textarea></div>`).join('')}`}
 function openAchv(id){const a=id?D.prep.achv.find(x=>x.id===id):{id:uid(),title:'',s:'',a:'',r:''};
  dlg('🏆 성과 사례',`<div class="form"><label class="w">제목<input id="aT" value="${esc(a.title)}" placeholder="예: 월 결산 마감 단축"></label><label class="w">상황 (Situation)<textarea id="aS" rows="2">${esc(a.s)}</textarea></label><label class="w">행동 (Action)<textarea id="aA" rows="3">${esc(a.a)}</textarea></label><label class="w">결과 (Result — 숫자로)<textarea id="aR" rows="2">${esc(a.r)}</textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveAchv('${a.id}')">저장</button></div>`)}
@@ -382,8 +430,8 @@ const qaItem=id=>D.prep.qa.find(x=>x.id===id);
 function qaAns(id,v){qaItem(id).a=v;save()}
 function qaReady(id,v){qaItem(id).ready=v;save();renderPrep()}
 function delQA(id){if(!confirm('이 질문을 삭제할까요?'))return;D.prep.qa=D.prep.qa.filter(x=>x.id!==id);save();renderPrep()}
-function addQA(){dlg('질문 추가',`<div class="form"><label>분류<input id="qC" value="${qaCat==='전체'?'직무':esc(qaCat)}"></label><label class="w">질문<input id="qQ"></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveQA()">추가</button></div>`)}
-function saveQA(){if(!val('qQ')){toast('질문을 입력해 주세요');return}D.prep.qa.push({id:uid(),cat:val('qC')||'기타',q:val('qQ'),a:'',ready:false});save();closeDlg();renderPrep()}
+function addQA(){dlg('질문 추가',`<div class="form"><label>분류<input id="qC" value="${qaCat==='전체'?'직무':esc(qaCat)}"></label><label>트랙<select id="qT"><option>공통</option>${opts(TRACKS.slice(0,3),'')}</select></label><label class="w">질문<input id="qQ"></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveQA()">추가</button></div>`)}
+function saveQA(){if(!val('qQ')){toast('질문을 입력해 주세요');return}D.prep.qa.push({id:uid(),track:val('qT')||'공통',cat:val('qC')||'기타',q:val('qQ'),a:'',ready:false});save();closeDlg();renderPrep()}
 
 /* ============ 인맥·헤드헌터 ============ */
 function renderPeople(){const C=[...D.contacts].sort((a,b)=>(a.nextDate||'9').localeCompare(b.nextDate||'9'));
@@ -399,6 +447,106 @@ function delContact(id){if(!confirm('삭제할까요?'))return;D.contacts=D.cont
 function logContact(id){dlg('연락 기록',`<div class="form"><label>날짜<input type="date" id="lD" value="${today()}"></label><label>다음 연락일<input type="date" id="lN"></label><label class="w">내용<textarea id="lM" rows="3" placeholder="통화 내용, 소개받은 공고 등"></textarea></label></div><div style="text-align:right;margin-top:12px"><button class="btn p" onclick="saveLog('${id}')">저장</button></div>`)}
 function saveLog(id){const c=D.contacts.find(x=>x.id===id);if(!c)return;c.logs=c.logs||[];c.logs.push({date:val('lD')||today(),note:$('lM').value.trim()});c.lastDate=val('lD')||today();c.nextDate=val('lN');save();closeDlg();refresh()}
 
+/* ============ 내 프로필 · 이력서 ============ */
+const ym=x=>x?x.replace('-','.'):'';
+const DAYMS=30.4375;
+function fmtM(days){const m=Math.round(days/DAYMS),y=Math.floor(m/12),r=m%12;return ((y?y+'년 ':'')+((r||!y)?r+'개월':'')).trim()}
+function lastDay(x){const [y,m]=x.split('-');return iso(new Date(+y,+m,0))}
+function careerRange(c){if(!c.start)return null;const a=c.start+'-01',b=c.current?today():(c.end?lastDay(c.end):null);if(!b||b<a)return null;return [a,b]}
+function mergeDays(rs){rs=rs.filter(Boolean).sort((a,b)=>a[0].localeCompare(b[0]));let tot=0,cs=null,ce=null;for(const [a,b] of rs){if(!cs){cs=a;ce=b}else if(a<=ce){if(b>ce)ce=b}else{tot+=diff(ce,cs)+1;cs=a;ce=b}}if(cs)tot+=diff(ce,cs)+1;return tot}
+function careerSummary(){const C=D.profile.career,byType={};
+ const total=mergeDays(C.map(careerRange));
+ [...new Set(C.map(c=>c.type||'기타'))].forEach(t=>{const d=mergeDays(C.filter(c=>(c.type||'기타')===t).map(careerRange));if(d)byType[t]=d});
+ const sr=C.map(careerRange).filter(Boolean).sort((a,b)=>a[0].localeCompare(b[0])),gaps=[];let end='';
+ sr.forEach((r,i)=>{if(i>0){const g=diff(r[0],end)-1;if(g>=31)gaps.push({from:addDays(end,1),to:addDays(r[0],-1),days:g})}if(r[1]>end)end=r[1]});
+ return {total,byType,gaps}}
+function profileCompleteness(){const P=D.profile,chk=[['연락처',P.name&&P.phone&&P.email],['자기소개',P.summary],['경력',P.career.length],['학력',P.edu.length],['자격증',P.certs.length],['프로그램',P.skills.length],['업무 역량',Object.values(P.comp).some(v=>v)]];const miss=chk.filter(x=>!x[1]).map(x=>x[0]);return {pct:Math.round((chk.length-miss.length)/chk.length*100),miss}}
+function careerCardHTML(){const cs=careerSummary(),pc=profileCompleteness();
+ return `<div class="card"><h3>👤 내 경력 요약 <button class="btn s" onclick="show('profile')">프로필 열기</button></h3>
+ ${cs.total?`<div class="big">${fmtM(cs.total)}</div><div class="sub">총 경력 (겹치는 기간 제외)</div><div style="margin-top:6px">${Object.entries(cs.byType).map(([k,v])=>`<span class="tr" style="background:${TRC[k]||'#64748b'}22;color:${TRC[k]||'#64748b'}">${esc(trs(k))} ${fmtM(v)}</span>`).join('')}</div>`:'<div class="sub">내 프로필에 경력을 입력하면 총 경력 기간이 자동 계산돼요.</div>'}
+ <div class="sub" style="margin-top:8px">프로필 완성도 ${pc.pct}%${pc.miss.length?' · 비어있음: '+pc.miss.join(', '):''}</div><div class="bar"><i style="width:${pc.pct}%"></i></div></div>`}
+const sortedCareer=()=>[...D.profile.career].sort((a,b)=>(b.start||'').localeCompare(a.start||''));
+function pset(k,v){D.profile[k]=v;save()}
+function keepScroll(f){const y=window.scrollY;f();window.scrollTo(0,y)}
+function renderProfile(){const P=D.profile,cs=careerSummary(),pc=profileCompleteness();
+ const cc={전문:0,실무:0,기초:0};Object.values(P.comp).forEach(v=>{if(cc[v]!==undefined)cc[v]++});
+ const row=(t,b,edit)=>`<div class="row"><div class="grow">${t}</div><button class="btn s" onclick="${edit}">수정</button></div>`;
+ $('profBody').innerHTML=`<div class="grid">
+ <div class="card"><h3>📇 기본 정보 <span class="sub">완성도 ${pc.pct}%</span></h3><div class="pf">
+  <label>이름<input value="${esc(P.name)}" onchange="pset('name',this.value.trim())"></label>
+  <label>연락처<input value="${esc(P.phone)}" onchange="pset('phone',this.value.trim())"></label>
+  <label>이메일<input value="${esc(P.email)}" onchange="pset('email',this.value.trim())"></label>
+  <label>거주 지역<input value="${esc(P.area)}" placeholder="예: 서울 마포구" onchange="pset('area',this.value.trim())"></label></div>
+  <div class="sub" style="margin-top:10px;font-weight:700">자기소개 / 경력 요약 (이력서 상단 문구)</div><textarea rows="4" onchange="pset('summary',this.value)">${esc(P.summary)}</textarea></div>
+ <div class="card"><h3>⏱️ 경력 기간 요약</h3>
+  ${cs.total?`<div class="big">${fmtM(cs.total)}</div><div class="sub">총 경력 (겹치는 기간은 한 번만 계산 · 재직 중이면 오늘까지)</div><div style="margin-top:8px">${Object.entries(cs.byType).map(([k,v])=>`<span class="tr" style="background:${TRC[k]||'#64748b'}22;color:${TRC[k]||'#64748b'}">${esc(k)} ${fmtM(v)}</span>`).join('')}</div>`:'<div class="sub">아래 "경력"에 입사·퇴사 월을 입력하면 자동으로 계산돼요.</div>'}
+  ${cs.gaps.map(g=>`<div class="al warn" style="margin-top:8px">공백기 ${ym(g.from.slice(0,7))} ~ ${ym(g.to.slice(0,7))} (${fmtM(g.days)}) — 면접에서 사유를 물을 수 있어요. 한 줄 답변을 준비해 두세요.</div>`).join('')}
+  <div class="sub" style="margin-top:10px">자격증 ${P.certs.length}개 · 업무 역량 전문 ${cc.전문} / 실무 ${cc.실무} / 기초 ${cc.기초}</div></div></div>
+ <div class="card" style="margin-top:12px"><h3>💼 경력 <button class="btn s p" onclick="openCareer()">＋ 경력 추가</button></h3>
+  ${sortedCareer().map(c=>{const r=careerRange(c);return `<div class="cr" style="--c:${TRC[c.type]||'#94a3b8'}"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b>${esc(c.company)}</b>${trChip(c.type)}<span class="sub">${ym(c.start)} ~ ${c.current?'재직중':(ym(c.end)||'?')}${r?' · '+fmtM(diff(r[1],r[0])+1):''}</span><span class="sub">${esc([c.dept,c.rank].filter(Boolean).join(' · '))}</span><button class="btn s" style="margin-left:auto" onclick="openCareer('${c.id}')">수정</button></div>${c.scale?`<div class="sub">${esc(c.scale)}</div>`:''}<div style="white-space:pre-wrap;margin-top:4px">${esc(c.tasks)}</div>${c.achv?`<div style="white-space:pre-wrap;color:#047857;margin-top:4px">★ ${esc(c.achv)}</div>`:''}${c.reason?`<div class="sub" style="margin-top:4px">퇴사 사유: ${esc(c.reason)}</div>`:''}</div>`}).join('')||'<div class="sub">아직 없어요. 현재(또는 최근) 직장부터 입력해 보세요.</div>'}</div>
+ <div class="grid" style="margin-top:12px">
+  <div class="card"><h3>🎓 학력 <button class="btn s p" onclick="openEdu()">＋</button></h3>${P.edu.map(e=>row(`<b>${esc(e.school)}</b> ${esc(e.major)} <span class="sub">${esc(e.degree)} · ${ym(e.start)}~${ym(e.end)} ${esc(e.status)}</span>`,'',`openEdu('${e.id}')`)).join('')||'<div class="sub">없음</div>'}</div>
+  <div class="card"><h3>📜 자격증 <button class="btn s p" onclick="openCert()">＋</button></h3>${[...P.certs].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>row(`<b>${esc(e.name)}</b> <span class="sub">${esc(e.org)} ${ym(e.date)} ${esc(e.note)}</span>`,'',`openCert('${e.id}')`)).join('')||'<div class="sub">없음</div>'}</div>
+  <div class="card"><h3>💻 프로그램 · 툴 <button class="btn s p" onclick="openSkill()">＋</button></h3>${P.skills.map(k=>`<span class="chipx" onclick="openSkill('${k.id}')">${esc(k.name)} · ${esc(k.level)}</span>`).join('')||'<div class="sub">더존·세무사랑·ERP 등 사용해 본 프로그램을 추가하세요.</div>'}</div>
+ </div>
+ <div class="card" style="margin-top:12px"><h3>🧩 업무 역량 체크 <span class="sub">경험 수준을 눌러 표시하세요 (전문 = 혼자 리드 가능)</span></h3><div class="grid">${COMP.map(([g,L])=>`<div class="cg"><h5>${g}</h5>${L.map(n=>`<div class="cmp"><span class="n">${esc(n)}</span><span class="lvl">${LVLS.map(l=>`<button class="${(P.comp[n]||'')===l?'on':''}" onclick="setComp('${n}','${l}')">${l||'없음'}</button>`).join('')}</span></div>`).join('')}</div>`).join('')}</div></div>
+ <datalist id="dlProg">${PROGS.map(x=>`<option value="${x}">`).join('')}</datalist><datalist id="dlCert">${CERTS.map(x=>`<option value="${x}">`).join('')}</datalist>`}
+function setComp(n,l){if(l)D.profile.comp[n]=l;else delete D.profile.comp[n];save();keepScroll(renderProfile)}
+function upsert(arr,o){const i=arr.findIndex(x=>x.id===o.id);if(i>=0)arr[i]=o;else arr.push(o)}
+function delItem(k,id){if(!confirm('삭제할까요?'))return;D.profile[k]=D.profile[k].filter(x=>x.id!==id);save();closeDlg();refresh()}
+const delBtn=(k,id,ex)=>ex?`<button class="btn d" onclick="delItem('${k}','${id}')">삭제</button>`:'<span></span>';
+function openCareer(id){const c=id?D.profile.career.find(x=>x.id===id):{id:uid(),company:'',type:'',dept:'',rank:'',start:'',end:'',current:false,scale:'',tasks:'',achv:'',reason:''};if(!c)return;
+ dlg(id?'경력 수정':'경력 추가',`<div class="form"><label>회사(사무실)명 *<input id="cmC" value="${esc(c.company)}"></label><label>구분<select id="cmT"><option value="">선택</option>${opts(TRACKS,c.type)}</select></label>
+ <label>부서<input id="cmD" value="${esc(c.dept)}"></label><label>직급·직책<input id="cmR" value="${esc(c.rank)}"></label>
+ <label>입사 (년-월) *<input type="month" id="cmS" value="${esc(c.start)}"></label><label>퇴사 (년-월)<input type="month" id="cmE" value="${esc(c.end)}" ${c.current?'disabled':''}></label>
+ <label style="justify-content:flex-end"><span><input type="checkbox" id="cmCur" ${c.current?'checked':''} onchange="$('cmE').disabled=this.checked"> 현재 재직 중</span></label>
+ <label>회사 규모 · 담당 거래처 수<input id="cmSc" value="${esc(c.scale)}" placeholder="예: 직원 30명 제조업 / 기장 거래처 40곳"></label>
+ <label class="w">담당 업무 (줄바꿈으로 구분)<textarea id="cmTk" rows="5" placeholder="월 결산 및 재무제표 작성&#10;부가세·원천세 신고&#10;급여·4대보험">${esc(c.tasks)}</textarea></label>
+ <label class="w">주요 성과 (숫자로)<textarea id="cmA" rows="3" placeholder="예: 월 결산 마감 7일 → 4일 단축">${esc(c.achv)}</textarea></label>
+ <label class="w">퇴사(이직) 사유 — 면접 대비 한 줄<input id="cmRe" value="${esc(c.reason)}"></label></div>
+ <div style="display:flex;justify-content:space-between;margin-top:12px">${delBtn('career',c.id,id)}<button class="btn p" onclick="saveCareer('${c.id}')">저장</button></div>`)}
+function saveCareer(id){if(!val('cmC')||!val('cmS')){toast('회사명과 입사 월은 필수예요');return}const cur=$('cmCur').checked;
+ const o={id,company:val('cmC'),type:val('cmT'),dept:val('cmD'),rank:val('cmR'),start:val('cmS'),end:cur?'':val('cmE'),current:cur,scale:val('cmSc'),tasks:$('cmTk').value.trim(),achv:$('cmA').value.trim(),reason:val('cmRe')};
+ if(!cur&&o.end&&o.end<o.start){toast('퇴사 월이 입사 월보다 빨라요');return}
+ upsert(D.profile.career,o);save();closeDlg();refresh()}
+function openEdu(id){const e=id?D.profile.edu.find(x=>x.id===id):{id:uid(),school:'',major:'',degree:'학사',start:'',end:'',status:'졸업'};if(!e)return;
+ dlg(id?'학력 수정':'학력 추가',`<div class="form"><label>학교 *<input id="edS" value="${esc(e.school)}"></label><label>전공<input id="edM" value="${esc(e.major)}"></label><label>학위<select id="edD">${opts(EDUS,e.degree)}</select></label><label>상태<select id="edT">${opts(['졸업','재학','수료','중퇴'],e.status)}</select></label><label>입학<input type="month" id="edA" value="${esc(e.start)}"></label><label>졸업<input type="month" id="edB" value="${esc(e.end)}"></label></div>
+ <div style="display:flex;justify-content:space-between;margin-top:12px">${delBtn('edu',e.id,id)}<button class="btn p" onclick="saveEdu('${e.id}')">저장</button></div>`)}
+function saveEdu(id){if(!val('edS')){toast('학교명을 입력해 주세요');return}upsert(D.profile.edu,{id,school:val('edS'),major:val('edM'),degree:val('edD'),status:val('edT'),start:val('edA'),end:val('edB')});save();closeDlg();refresh()}
+function openCert(id){const e=id?D.profile.certs.find(x=>x.id===id):{id:uid(),name:'',org:'',date:'',note:''};if(!e)return;
+ dlg(id?'자격증 수정':'자격증 추가',`<div class="form"><label>자격증명 *<input id="ceN" list="dlCert" value="${esc(e.name)}"></label><label>발급 기관<input id="ceO" value="${esc(e.org)}" placeholder="예: 한국세무사회"></label><label>취득(합격) 월<input type="month" id="ceD" value="${esc(e.date)}"></label><label>비고<input id="ceM" value="${esc(e.note)}" placeholder="예: 시험 준비 중"></label></div>
+ <div style="display:flex;justify-content:space-between;margin-top:12px">${delBtn('certs',e.id,id)}<button class="btn p" onclick="saveCert('${e.id}')">저장</button></div>`)}
+function saveCert(id){if(!val('ceN')){toast('자격증명을 입력해 주세요');return}upsert(D.profile.certs,{id,name:val('ceN'),org:val('ceO'),date:val('ceD'),note:val('ceM')});save();closeDlg();refresh()}
+function openSkill(id){const k=id?D.profile.skills.find(x=>x.id===id):{id:uid(),name:'',level:'실무'};if(!k)return;
+ dlg(id?'프로그램 수정':'프로그램 추가',`<div class="form"><label>이름 *<input id="skN" list="dlProg" value="${esc(k.name)}"></label><label>숙련도<select id="skL">${opts(['기초','실무','전문'],k.level)}</select></label></div>
+ <div style="display:flex;justify-content:space-between;margin-top:12px">${delBtn('skills',k.id,id)}<button class="btn p" onclick="saveSkill('${k.id}')">저장</button></div>`)}
+function saveSkill(id){if(!val('skN')){toast('이름을 입력해 주세요');return}upsert(D.profile.skills,{id,name:val('skN'),level:val('skL')});save();closeDlg();refresh()}
+const taskLines=t=>(t||'').split('\n').map(x=>x.trim().replace(/^[-•·]\s*/,'')).filter(Boolean);
+function resumeHTML(){const P=D.profile,cs=careerSummary();
+ const lv=l=>Object.entries(P.comp).filter(([,v])=>v===l).map(([k])=>k);
+ return `<div class="resume"><h1>${esc(P.name||'이름')}</h1><div class="sub">${esc([P.phone,P.email,P.area].filter(Boolean).join(' · '))}</div>
+ ${cs.total?`<h2>경력 요약</h2><div><b>총 경력 ${fmtM(cs.total)}</b> ${Object.entries(cs.byType).map(([k,v])=>`· ${esc(k)} ${fmtM(v)}`).join(' ')}</div>`:''}
+ ${P.summary?`<div style="margin-top:6px;white-space:pre-wrap">${esc(P.summary)}</div>`:''}
+ ${P.career.length?`<h2>경력사항</h2>${sortedCareer().map(c=>`<div style="margin-bottom:10px"><b>${esc(c.company)}</b>${c.type?` (${esc(c.type)})`:''} &nbsp;<span class="sub">${ym(c.start)} ~ ${c.current?'재직중':ym(c.end)} ${esc([c.dept,c.rank].filter(Boolean).join(' / '))}</span>${c.scale?`<div class="sub">${esc(c.scale)}</div>`:''}<ul>${taskLines(c.tasks).map(l=>`<li>${esc(l)}</li>`).join('')}</ul>${c.achv?`<div>▶ 성과: ${esc(c.achv).replace(/\n/g,'<br>')}</div>`:''}</div>`).join('')}`:''}
+ ${P.edu.length?`<h2>학력</h2>${P.edu.map(e=>`<div>${ym(e.start)} ~ ${ym(e.end)} &nbsp;${esc(e.school)} ${esc(e.major)} ${esc(e.degree)} ${esc(e.status)}</div>`).join('')}`:''}
+ ${P.certs.length?`<h2>자격증</h2>${P.certs.map(e=>`<div>${ym(e.date)} &nbsp;${esc(e.name)} ${esc(e.org)} ${esc(e.note)}</div>`).join('')}`:''}
+ ${P.skills.length?`<h2>보유 프로그램</h2><div>${P.skills.map(k=>`${esc(k.name)}(${esc(k.level)})`).join(', ')}</div>`:''}
+ ${lv('전문').length||lv('실무').length?`<h2>핵심 업무 역량</h2>${lv('전문').length?`<div><b>전문</b> ${lv('전문').map(esc).join(', ')}</div>`:''}${lv('실무').length?`<div><b>실무</b> ${lv('실무').map(esc).join(', ')}</div>`:''}`:''}</div>`}
+function openResume(){dlg('📄 이력서 미리보기',`<div class="noprint" style="text-align:right;margin-bottom:8px"><button class="btn p" onclick="printResume()">🖨 인쇄 · PDF 저장</button></div>${resumeHTML()}`)}
+function printResume(){document.body.classList.add('pr');window.print();setTimeout(()=>document.body.classList.remove('pr'),800)}
+window.addEventListener('afterprint',()=>document.body.classList.remove('pr'));
+function careerText(){const P=D.profile,cs=careerSummary();let t=`[경력 요약] 총 ${fmtM(cs.total)} (${Object.entries(cs.byType).map(([k,v])=>k+' '+fmtM(v)).join(' / ')})\n`;
+ sortedCareer().forEach(c=>{t+=`\n■ ${c.company}${c.type?' ('+c.type+')':''} | ${ym(c.start)} ~ ${c.current?'재직중':ym(c.end)}${[c.dept,c.rank].filter(Boolean).length?' | '+[c.dept,c.rank].filter(Boolean).join(' / '):''}\n`;if(c.scale)t+=`  - 규모: ${c.scale}\n`;taskLines(c.tasks).forEach(l=>t+=`  - ${l}\n`);if(c.achv)t+=`  ▶ 성과: ${c.achv.replace(/\n/g,' / ')}\n`});return t}
+function copyCareerText(){const t=careerText();if(!D.profile.career.length){toast('경력을 먼저 입력해 주세요');return}
+ const ok=()=>toast('경력기술서 텍스트를 복사했어요');
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,()=>fb(t))}else fb(t);
+ function fb(t){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){toast('복사 실패')}a.remove()}}
+function draftPitch(){const P=D.profile,cs=careerSummary();if(!P.career.length){toast('내 프로필에 경력을 먼저 입력해 주세요');return}
+ if(D.prep.pitch1.trim()&&!confirm('작성해 둔 1분 자기소개를 초안으로 덮어쓸까요?'))return;
+ const last=sortedCareer()[0],ex=Object.entries(P.comp).filter(([,v])=>v==='전문').map(([k])=>k).slice(0,3),tk=taskLines(last.tasks).slice(0,3);
+ D.prep.pitch1=`안녕하세요. 회계·세무 분야에서 총 ${fmtM(cs.total)}의 경력을 쌓아온 ${P.name||'지원자'}입니다. ${last.company}에서 ${tk.length?tk.join(', ')+' 업무를 ':'실무를 '}담당했습니다.${ex.length?' 특히 '+ex.join('·')+' 업무에 강점이 있고,':''}${P.certs.length?' '+P.certs.slice(0,3).map(c=>c.name).join('·')+' 자격을 보유하고 있습니다.':''} 이러한 경험을 바탕으로 입사 후 바로 실무에 기여하겠습니다.`;
+ save();renderPrep();toast('초안을 채웠어요. 내 말투로 다듬어 보세요')}
+
 /* ============ 통계 ============ */
 function renderStats(){const J=D.jobs,n=J.length;
  const lv=[['등록 공고',J.length],['지원(서류제출~)',J.filter(j=>mx(j)>=2).length],['서류 합격',J.filter(j=>mx(j)>=3).length],['면접 진행',J.filter(j=>mx(j)>=4).length],['최종 면접',J.filter(j=>mx(j)>=5).length],['오퍼',J.filter(j=>mx(j)>=6).length]];
@@ -408,19 +556,24 @@ function renderStats(){const J=D.jobs,n=J.length;
  const srows=Object.entries(src).sort((a,b)=>b[1].n-a[1].n).map(([k,o])=>`<tr><td>${esc(k)}</td><td>${o.n}</td><td>${o.ap}</td><td>${o.iv}</td><td>${o.of}</td><td>${o.ap?Math.round(o.iv/o.ap*100)+'%':'-'}</td></tr>`).join('');
  const w0=weekStart(today()),wk=Array.from({length:8},(_,i)=>addDays(w0,-7*(7-i))),cnt=wk.map(w=>J.filter(j=>j.appliedDate&&weekStart(j.appliedDate)===w).length),mxw=Math.max(1,...cnt);
  const outs={};J.filter(j=>j.stage==='종료').forEach(j=>{const k=j.outcome||'사유 미입력';outs[k]=(outs[k]||0)+1});
+ const trows=[...TRACKS,''].map(t=>{const L=J.filter(j=>(j.track||'')===t);if(!L.length)return '';const ap=L.filter(j=>mx(j)>=2).length,iv=L.filter(j=>mx(j)>=4).length,of=L.filter(j=>mx(j)>=6).length;return `<tr><td>${t?trChip(t):'미지정'}</td><td>${L.length}</td><td>${ap}</td><td>${iv}</td><td>${of}</td><td>${ap?Math.round(iv/ap*100)+'%':'-'}</td></tr>`}).join('');
+ const off=J.filter(j=>j.stage==='오퍼'||j.outcome==='입사 확정');
+ const offT=off.length?`<div class="tw"><table><thead><tr><th>회사</th><th>트랙</th><th>연봉</th><th>형태</th><th>근무지</th><th>업무 범위</th></tr></thead><tbody>${off.map(j=>`<tr class="clk" onclick="openJob('${j.id}')"><td><b>${esc(j.company)}</b></td><td>${trChip(j.track)}</td><td>${esc(j.salary)}</td><td>${esc(j.jtype)}</td><td>${esc(j.location)}</td><td>${esc(j.scope)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="sub">오퍼 단계 공고가 생기면 조건을 나란히 비교해 보여줘요.</div>';
  $('statsBody').innerHTML=!n?'<div class="card sub">공고를 등록하면 통계가 만들어져요.</div>':`<div class="grid">
  <div class="card"><h3>🔻 전형 단계별 깔때기</h3>${funnel}<div class="sub">괄호는 직전 단계 대비 비율이에요.</div></div>
  <div class="card"><h3>📨 주간 지원 수 (최근 8주)</h3><div class="wk">${cnt.map((c,i)=>`<div><b style="height:${Math.round(c/mxw*90)}px"></b>${c}<br>${md(wk[i])}</div>`).join('')}</div></div>
  <div class="card"><h3>🧭 지원 경로별 성과</h3><div class="tw"><table><thead><tr><th>경로</th><th>공고</th><th>지원</th><th>면접</th><th>오퍼</th><th>면접 전환</th></tr></thead><tbody>${srows}</tbody></table></div><div class="sub">면접 전환율이 높은 경로에 시간을 더 쓰세요.</div></div>
- <div class="card"><h3>📌 종료 사유</h3>${Object.keys(outs).length?Object.entries(outs).map(([k,v])=>`<div class="row"><div class="grow">${esc(k)}</div><b>${v}건</b></div>`).join(''):'<div class="sub">종료된 공고가 없어요.</div>'}</div></div>`}
+ <div class="card"><h3>📌 종료 사유</h3>${Object.keys(outs).length?Object.entries(outs).map(([k,v])=>`<div class="row"><div class="grow">${esc(k)}</div><b>${v}건</b></div>`).join(''):'<div class="sub">종료된 공고가 없어요.</div>'}</div>
+ <div class="card"><h3>🏢 트랙별 성과</h3><div class="tw"><table><thead><tr><th>트랙</th><th>공고</th><th>지원</th><th>면접</th><th>오퍼</th><th>면접 전환</th></tr></thead><tbody>${trows}</tbody></table></div></div>
+ <div class="card"><h3>⚖️ 오퍼 비교</h3>${offT}</div></div>`}
 
 /* ============ 설정 / 백업 ============ */
 function renderSet(){renderAuthBox()}
 function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 function exportJSON(){dl(`이직준비_백업_${today()}.json`,new Blob([JSON.stringify(D,null,1)],{type:'application/json'}))}
-function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!Array.isArray(o.jobs))throw 0;if(!confirm('현재 데이터를 백업 파일 내용으로 바꿀까요?'))return;D=Object.assign(blank(),o);save();refresh();toast('복원했어요')}catch(e){alert('올바른 백업 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
+function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!Array.isArray(o.jobs))throw 0;if(!confirm('현재 데이터를 백업 파일 내용으로 바꿀까요?'))return;D=norm(o);save();refresh();toast('복원했어요')}catch(e){alert('올바른 백업 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
 function xl(sheets,name){if(typeof XLSX==='undefined'){alert('엑셀 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.');return}const wb=XLSX.utils.book_new();sheets.forEach(([n,rows])=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),n));XLSX.writeFile(wb,name)}
-function exportJobs(){xl([['지원현황',D.jobs.map(j=>({회사:j.company,직무:j.role,단계:j.stage,중요도:'★'.repeat(j.priority||1),서류마감:j.deadline,지원일:j.appliedDate,경로:j.source,연봉:j.salary,근무지:j.location,담당자:j.contact,이력서버전:j.resume,결과:j.outcome,링크:j.url,메모:j.notes,일정:(j.events||[]).map(e=>`${e.date} ${e.type}`).join(' / ')}))]],`이직_지원현황_${today()}.xlsx`)}
+function exportJobs(){xl([['지원현황',D.jobs.map(j=>({회사:j.company,직무:j.role,트랙:j.track||'',단계:j.stage,고용형태:j.jtype||'',업무범위:j.scope||'',중요도:'★'.repeat(j.priority||1),서류마감:j.deadline,지원일:j.appliedDate,경로:j.source,연봉:j.salary,근무지:j.location,담당자:j.contact,이력서버전:j.resume,결과:j.outcome,링크:j.url,메모:j.notes,일정:(j.events||[]).map(e=>`${e.date} ${e.type}`).join(' / ')}))]],`이직_지원현황_${today()}.xlsx`)}
 function exportContacts(){xl([['인맥·헤드헌터',D.contacts.map(c=>({이름:c.name,구분:c.type,소속:c.org,전화:c.phone,이메일:c.email,최근연락:c.lastDate||'',다음연락:c.nextDate||'',메모:c.notes}))]],`이직_인맥_${today()}.xlsx`)}
 async function resetAll(){const t=prompt('모든 이직 준비 데이터를 삭제합니다. 되돌릴 수 없어요.\n계속하려면 "초기화"를 입력하세요.');if(t===null)return;if(t.trim()!=='초기화'){alert('취소했어요.');return}D=blank();save();if(cu&&cloudOK){try{await db.collection('users').doc(cu.uid).collection('appData').doc('jobhunt').delete()}catch(e){}}refresh();toast('초기화했어요')}
 
@@ -434,7 +587,7 @@ const cref=()=>db.collection('users').doc(cu.uid).collection('appData').doc('job
 async function cloudLoad(u){cloudMsg='클라우드 확인 중…';renderAcct();
  try{const s=await cref().get();
   if(s.exists){const c=s.data(),cd=JSON.parse(c.json);
-   if(!D.updatedAt||(c.updatedAt||'')>D.updatedAt){try{localStorage.setItem(LS+'-prev',JSON.stringify(D))}catch(e){}D=Object.assign(blank(),cd);try{localStorage.setItem(LS,JSON.stringify(D))}catch(e){}cloudMsg='클라우드 데이터 불러옴';refresh()}
+   if(!D.updatedAt||(c.updatedAt||'')>D.updatedAt){try{localStorage.setItem(LS+'-prev',JSON.stringify(D))}catch(e){}D=norm(cd);try{localStorage.setItem(LS,JSON.stringify(D))}catch(e){}cloudMsg='클라우드 데이터 불러옴';refresh()}
    else{cloudOK=true;await cloudPush();cloudMsg='동기화됨 (이 기기 데이터가 더 최신)'}}
   else{cloudOK=true;await cloudPush();cloudMsg='클라우드에 처음 저장함'}
   cloudOK=true}catch(e){cloudMsg='동기화 실패: '+(e.code||e.message||'')}renderAcct()}
