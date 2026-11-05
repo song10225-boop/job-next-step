@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>이직 준비 매니저</title>
+<title>업무 노트</title>
+<link rel="icon" id="fav" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E📒%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -92,7 +93,7 @@ tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
 </style>
 </head>
 <body>
-<header class="top"><div class="brand">🧭 이직 준비 매니저</div><nav id="tabs"></nav><div class="acct" id="acct"></div></header>
+<header class="top"><div class="brand" id="brand">📒 업무 노트</div><nav id="tabs"></nav><div class="acct" id="acct"></div></header>
 <main>
 <section class="panel" id="p-dash"></section>
 
@@ -147,6 +148,7 @@ tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
 <section class="panel" id="p-set">
  <div class="h"><h2>⚙️ 설정 · 백업</h2></div>
  <div class="grid">
+  <div class="card"><h3>🏷️ 앱 이름 · 아이콘</h3><div class="sub" style="margin-bottom:8px">상단 제목, 브라우저 탭 제목, 탭 아이콘이 함께 바뀌어요.</div><div style="display:flex;gap:6px;flex-wrap:wrap"><input id="uiI" style="width:56px;text-align:center" maxlength="4"><input id="uiN" style="flex:1;min-width:140px" maxlength="20"><button class="btn p" onclick="setBrand()">적용</button></div><div class="sub" style="margin-top:8px">예: 📒 업무 노트 · 📊 자료 정리 · 🗂️ 개인 메모</div></div>
   <div class="card"><h3>💾 백업 / 복원</h3><div class="sub" style="margin-bottom:8px">데이터는 이 브라우저에 저장돼요(공개 저장소 파일에는 들어가지 않아요). 정기적으로 백업해 두세요.</div>
    <button class="btn" onclick="exportJSON()">JSON 백업 받기</button> <button class="btn" onclick="$('restoreF').click()">JSON 복원</button><input type="file" id="restoreF" accept=".json" hidden onchange="importJSON(this)"> <button class="btn" onclick="exportJobs()">📤 지원현황 엑셀</button></div>
   <div class="card"><h3>☁️ 여러 기기 동기화 (선택)</h3><div id="authBox"></div></div>
@@ -228,8 +230,8 @@ function defaultQA(){const Q=[
 ['회계사사무실','직무','감사 보조 또는 조서 작성 경험이 있나요?'],['회계사사무실','직무','재무제표와 주석 이해 수준, 적용 회계기준(K-IFRS 등) 경험은?'],['회계사사무실','직무','감사 시즌 야근·출장 등 업무 강도를 감당할 수 있나요?'],
 ['회계사사무실','직무','클라이언트 자료 요청과 소통은 어떻게 했나요?'],['회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?']];
 return Q.map(([track,cat,q])=>({id:uid(),track,cat,q,a:'',ready:false}))}
-function blank(){return {v:2,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA()},profile:{name:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},updatedAt:''}}
-function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+function blank(){return {v:2,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA()},profile:{name:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒'},updatedAt:''}}
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  return o}
 
@@ -243,11 +245,14 @@ function setStage(j,s){j.stage=s;const i=STAGES.indexOf(s);if(s!=='종료')j.max
 /* ============ 탭 ============ */
 const TABS=[['dash','🏠 대시보드',()=>renderDash()],['profile','👤 내 프로필',()=>renderProfile()],['board','📋 지원현황',()=>renderBoard()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],['prep','🎤 이력서·면접',()=>renderPrep()],['people','🤝 인맥·헤드헌터',()=>renderPeople()],['stats','📊 통계',()=>renderStats()],['set','⚙️ 설정',()=>renderSet()]];
 let cur='dash';
-function show(t){cur=t;try{localStorage.setItem('jobhunt-tab',t)}catch(e){}
+function show(t){cur=t;applyBrand();try{localStorage.setItem('jobhunt-tab',t)}catch(e){}
  TABS.forEach(([k])=>$('p-'+k).classList.toggle('on',k===t));
  $('tabs').innerHTML=TABS.map(([k,l])=>`<button class="${k===t?'on':''}" onclick="show('${k}')">${l}</button>`).join('');
  TABS.find(x=>x[0]===t)[2]()}
 const refresh=()=>show(cur);
+function applyBrand(){const u=D.ui||{name:'업무 노트',icon:'📒'};$('brand').textContent=u.icon+' '+u.name;document.title=u.name;
+ $('fav').href='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${u.icon}</text></svg>`)}
+function setBrand(){D.ui={name:val('uiN')||'업무 노트',icon:val('uiI')||'📒'};save();applyBrand();toast('이름을 바꿨어요')}
 
 /* ============ 일정 집계 ============ */
 function allEvents(){const L=[];
@@ -568,7 +573,7 @@ function renderStats(){const J=D.jobs,n=J.length;
  <div class="card"><h3>⚖️ 오퍼 비교</h3>${offT}</div></div>`}
 
 /* ============ 설정 / 백업 ============ */
-function renderSet(){renderAuthBox()}
+function renderSet(){renderAuthBox();$('uiI').value=D.ui.icon;$('uiN').value=D.ui.name}
 function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 function exportJSON(){dl(`이직준비_백업_${today()}.json`,new Blob([JSON.stringify(D,null,1)],{type:'application/json'}))}
 function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!Array.isArray(o.jobs))throw 0;if(!confirm('현재 데이터를 백업 파일 내용으로 바꿀까요?'))return;D=norm(o);save();refresh();toast('복원했어요')}catch(e){alert('올바른 백업 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
