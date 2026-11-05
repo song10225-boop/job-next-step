@@ -235,7 +235,7 @@ body.locked #gate{display:flex}
  <div class="grid">
   <div class="card"><h3>🏷️ 앱 이름 · 아이콘</h3><div class="sub" style="margin-bottom:8px">상단 제목, 브라우저 탭 제목, 탭 아이콘이 함께 바뀌어요.</div><div style="display:flex;gap:6px;flex-wrap:wrap"><input id="uiI" style="width:56px;text-align:center" maxlength="4"><input id="uiN" style="flex:1;min-width:140px" maxlength="20"><button class="btn p" onclick="setBrand()">적용</button></div><div class="sub" style="margin-top:8px">예: 📒 업무 노트 · 📊 자료 정리 · 🗂️ 개인 메모</div></div>
   <div class="card"><h3>💾 백업 / 복원</h3><div class="sub" style="margin-bottom:8px">데이터는 내 계정 클라우드에 저장되고, 로그아웃하면 이 기기에서는 지워져요. 가끔 백업도 받아두세요.</div>
-   <button class="btn" onclick="exportJSON()">JSON 백업 받기</button> <button class="btn" onclick="$('restoreF').click()">JSON 복원</button><input type="file" id="restoreF" accept=".json" hidden onchange="importJSON(this)"> <button class="btn" onclick="exportJobs()">📤 지원현황 엑셀</button></div>
+   <button class="btn" onclick="exportJSON()">JSON 백업 받기</button> <button class="btn" onclick="$('restoreF').click()">JSON 복원</button> <button class="btn p" onclick="$('mergeF').click()">📥 프로필 파일 합치기</button><input type="file" id="mergeF" accept=".json" hidden onchange="mergeProfileFile(this)"><input type="file" id="restoreF" accept=".json" hidden onchange="importJSON(this)"> <button class="btn" onclick="exportJobs()">📤 지원현황 엑셀</button></div>
   <div class="card"><h3>🔐 계정</h3><div id="authBox"></div></div>
   <div class="card"><h3>🧹 데이터 초기화</h3><div class="sub" style="margin-bottom:8px">이직이 끝나면 모든 기록을 비울 수 있어요. 로그인 중이면 클라우드 데이터도 함께 비워져요.</div><button class="btn d" onclick="resetAll()">전체 초기화</button></div>
  </div>
@@ -315,8 +315,8 @@ function defaultQA(){const Q=[
 ['회계사사무실','직무','감사 보조 또는 조서 작성 경험이 있나요?'],['회계사사무실','직무','재무제표와 주석 이해 수준, 적용 회계기준(K-IFRS 등) 경험은?'],['회계사사무실','직무','감사 시즌 야근·출장 등 업무 강도를 감당할 수 있나요?'],
 ['회계사사무실','직무','클라이언트 자료 요청과 소통은 어떻게 했나요?'],['회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?']];
 return Q.map(([track,cat,q])=>({id:uid(),track,cat,q,a:'',ready:false}))}
-function blank(){return {v:2,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA()},profile:{name:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒'},myQuotes:[],updatedAt:''}}
-function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+function blank(){return {v:2,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒'},myQuotes:[],updatedAt:''}}
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  return o}
 
@@ -632,15 +632,23 @@ function resetRoad(){if(!confirm('로드맵을 기본 항목으로 되돌릴까�
 
 /* ============ 이력서·면접 ============ */
 let qaCat='전체',qaTrack='전체';
+const COVER=[['growth','성장배경'],['pros','성격의 장단점'],['motive','지원동기'],['plan','입사 후 포부']];
+const coverText=()=>COVER.filter(([k])=>(D.prep.cover[k]||'').trim()).map(([k,l])=>`[${l}]\n${D.prep.cover[k].trim()}`).join('\n\n');
+function copyCover(){const t=coverText();if(!t){toast('자기소개서를 먼저 써주세요');return}copyText(t,'자기소개서를 복사했어요')}
+function copyText(t,msg){const ok=()=>toast(msg);if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,()=>fb())}else fb();
+ function fb(){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){toast('복사 실패')}a.remove()}}
 function renderPrep(){const P=D.prep,cats=['전체',...new Set(P.qa.map(q=>q.cat))],rdy=P.qa.filter(q=>q.ready).length;
  $('prepBody').innerHTML=`<div class="grid">
  <div class="card"><h3>🗣️ 한 줄 소개 · 자기소개</h3>
   <label class="sub">1분 자기소개 <button class="btn s" onclick="draftPitch()">프로필로 초안 만들기</button></label><textarea rows="5" onchange="D.prep.pitch1=this.value;save()">${esc(P.pitch1)}</textarea>
   <label class="sub">3분 자기소개 (경력 흐름 → 대표 성과 → 지원 동기)</label><textarea rows="6" onchange="D.prep.pitch3=this.value;save()">${esc(P.pitch3)}</textarea>
   <label class="sub">핵심 강점 3가지 (직무 키워드 위주)</label><textarea rows="3" onchange="D.prep.strengths=this.value;save()">${esc(P.strengths)}</textarea></div>
- <div class="card"><h3>🏆 성과 사례 (STAR) <button class="btn s" onclick="openAchv()">＋ 추가</button></h3>
+  <div class="card"><h3>🏆 성과 사례 (STAR) <button class="btn s" onclick="openAchv()">＋ 추가</button></h3>
   <div class="sub" style="margin-bottom:6px">경력기술서·면접에서 재사용할 수치 성과를 모아두세요. (예: 결산 마감 7일→4일 단축)</div>
   ${P.achv.map(a=>`<div class="qa"><b>${esc(a.title)}</b><div class="sub">상황 ${esc(a.s)}<br>행동 ${esc(a.a)}<br>결과 <b style="color:#047857">${esc(a.r)}</b></div><div style="margin-top:4px"><button class="btn s" onclick="openAchv('${a.id}')">수정</button> <button class="btn s d" onclick="delAchv('${a.id}')">삭제</button></div></div>`).join('')||'<div class="sub">아직 없어요.</div>'}</div>
+ <div class="card" style="grid-column:1/-1"><h3>📝 자기소개서 <button class="btn s" onclick="copyCover()">📋 전체 복사</button></h3>
+  <div class="sub" style="margin-bottom:8px">항목별로 써두면 지원할 때 복사해서 붙여넣거나, 공고에 맞게 고쳐 쓰기 편해요. 이력서 인쇄에도 함께 들어가요.</div>
+  <div class="grid">${COVER.map(([k,l])=>`<label class="sub" style="display:flex;flex-direction:column;gap:4px;font-weight:700">${l} <span style="font-weight:400">${(P.cover[k]||'').length}자</span><textarea rows="9" style="font-weight:400;line-height:1.65" onchange="D.prep.cover['${k}']=this.value;save();renderPrep()">${esc(P.cover[k])}</textarea></label>`).join('')}</div></div>
  </div>
  <div class="h" style="margin-top:16px"><h2 style="font-size:1.1rem">❓ 예상 질문 은행 <span class="sub">준비 ${rdy}/${P.qa.length}</span></h2>
   <select onchange="qaTrack=this.value;renderPrep()">${['전체','공통',...TRACKS.slice(0,3)].map(c=>`<option ${c===qaTrack?'selected':''}>${esc(c)}</option>`).join('')}</select><select onchange="qaCat=this.value;renderPrep()">${cats.map(c=>`<option ${c===qaCat?'selected':''}>${esc(c)}</option>`).join('')}</select><button class="btn p" onclick="addQA()">＋ 질문 추가</button></div>
@@ -755,7 +763,8 @@ function resumeHTML(){const P=D.profile,cs=careerSummary();
  ${P.edu.length?`<h2>학력</h2>${P.edu.map(e=>`<div>${ym(e.start)} ~ ${ym(e.end)} &nbsp;${esc(e.school)} ${esc(e.major)} ${esc(e.degree)} ${esc(e.status)}</div>`).join('')}`:''}
  ${P.certs.length?`<h2>자격증</h2>${P.certs.map(e=>`<div>${ym(e.date)} &nbsp;${esc(e.name)} ${esc(e.org)} ${esc(e.note)}</div>`).join('')}`:''}
  ${P.skills.length?`<h2>보유 프로그램</h2><div>${P.skills.map(k=>`${esc(k.name)}(${esc(k.level)})`).join(', ')}</div>`:''}
- ${lv('전문').length||lv('실무').length?`<h2>핵심 업무 역량</h2>${lv('전문').length?`<div><b>전문</b> ${lv('전문').map(esc).join(', ')}</div>`:''}${lv('실무').length?`<div><b>실무</b> ${lv('실무').map(esc).join(', ')}</div>`:''}`:''}</div>`}
+ ${lv('전문').length||lv('실무').length?`<h2>핵심 업무 역량</h2>${lv('전문').length?`<div><b>전문</b> ${lv('전문').map(esc).join(', ')}</div>`:''}${lv('실무').length?`<div><b>실무</b> ${lv('실무').map(esc).join(', ')}</div>`:''}`:''}
+ ${coverText()?`<h2>자기소개서</h2>${COVER.filter(([k])=>(D.prep.cover[k]||'').trim()).map(([k,l])=>`<div style="margin-top:8px"><b>[${l}]</b><div style="white-space:pre-wrap">${esc(D.prep.cover[k].trim())}</div></div>`).join('')}`:''}</div>`}
 function openResume(){dlg('📄 이력서 미리보기',`<div class="noprint" style="text-align:right;margin-bottom:8px"><button class="btn p" onclick="printResume()">🖨 인쇄 · PDF 저장</button></div>${resumeHTML()}`)}
 function printResume(){document.body.classList.add('pr');window.print();setTimeout(()=>document.body.classList.remove('pr'),800)}
 window.addEventListener('afterprint',()=>document.body.classList.remove('pr'));
@@ -795,7 +804,20 @@ function renderStats(){const J=D.jobs,n=J.length;
 function renderSet(){renderAuthBox();$('uiI').value=D.ui.icon;$('uiN').value=D.ui.name}
 function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 function exportJSON(){dl(`이직준비_백업_${today()}.json`,new Blob([JSON.stringify(D,null,1)],{type:'application/json'}))}
-function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!Array.isArray(o.jobs))throw 0;if(!confirm('현재 데이터를 백업 파일 내용으로 바꿀까요?'))return;D=norm(o);save();refresh();toast('복원했어요')}catch(e){alert('올바른 백업 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
+function mergeProfile(o){const P=D.profile,F=o.profile||{},n={career:0,edu:0,certs:0,skills:0,comp:0,etc:0};
+ ['name','phone','email','area','summary'].forEach(k=>{if(F[k]&&!String(P[k]||'').trim()){P[k]=F[k];n.etc++}});
+ const add=(k,key)=>(F[k]||[]).forEach(x=>{if(!P[k].some(y=>key(y)===key(x))){P[k].push(Object.assign({},x,{id:uid()}));n[k]++}});
+ add('career',x=>normCo(x.company)+'|'+x.start);add('edu',x=>normCo(x.school));add('certs',x=>normCo(x.name));add('skills',x=>normCo(x.name));
+ Object.entries(F.comp||{}).forEach(([k,v])=>{if(!P.comp[k]){P.comp[k]=v;n.comp++}});
+ const R=o.prep||{};['pitch1','pitch3','strengths'].forEach(k=>{if(R[k]&&!String(D.prep[k]||'').trim()){D.prep[k]=R[k];n.etc++}});
+ Object.entries(R.cover||{}).forEach(([k,v])=>{if(v&&!String(D.prep.cover[k]||'').trim()){D.prep.cover[k]=v;n.etc++}});
+ (R.achv||[]).forEach(a=>{if(!D.prep.achv.some(x=>x.title===a.title)){D.prep.achv.push(Object.assign({},a,{id:uid()}));n.etc++}});
+ Object.entries(o.goal||{}).forEach(([k,v])=>{if(v&&!Array.isArray(v)&&!String(D.goal[k]||'').trim()){D.goal[k]=v;n.etc++}});
+ return n}
+function mergeProfileFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!o.profile)throw 0;
+ if(!confirm('이 파일의 프로필·경력·자기소개서를 지금 데이터에 합칠까요?\n이미 입력된 칸은 그대로 두고, 비어 있는 칸과 없는 항목만 채워요. 지원현황은 건드리지 않아요.'))return;
+ const n=mergeProfile(o);save();refresh();alert(`합쳤어요 🌼\n경력 ${n.career}건 · 학력 ${n.edu}건 · 자격증 ${n.certs}개 · 프로그램 ${n.skills}개 · 업무역량 ${n.comp}개 · 기타 ${n.etc}칸`)}catch(e){alert('프로필 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
+function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(o&&o.type==='profile-import'){inp.value='';const n=mergeProfile(o);save();refresh();alert('프로필 파일이라 합치기로 처리했어요 🌼');return}if(!o||!Array.isArray(o.jobs))throw 0;if(!confirm('현재 데이터를 백업 파일 내용으로 바꿀까요?'))return;D=norm(o);save();refresh();toast('복원했어요')}catch(e){alert('올바른 백업 파일이 아니에요.')}inp.value=''};r.readAsText(f)}
 function xl(sheets,name){if(typeof XLSX==='undefined'){alert('엑셀 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.');return}const wb=XLSX.utils.book_new();sheets.forEach(([n,rows])=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),n));XLSX.writeFile(wb,name)}
 function exportJobs(){xl([['지원현황',D.jobs.map(j=>({회사:j.company,직무:j.role,트랙:j.track||'',단계:j.stage,고용형태:j.jtype||'',업무범위:j.scope||'',중요도:'★'.repeat(j.priority||1),서류마감:j.deadline,지원일:j.appliedDate,경로:j.source,연봉:j.salary,근무지:j.location,담당자:j.contact,이력서버전:j.resume,결과:j.outcome,링크:j.url,메모:j.notes,일정:(j.events||[]).map(e=>`${e.date} ${e.type}`).join(' / ')}))]],`이직_지원현황_${today()}.xlsx`)}
 function exportContacts(){xl([['인맥·헤드헌터',D.contacts.map(c=>({이름:c.name,구분:c.type,소속:c.org,전화:c.phone,이메일:c.email,최근연락:c.lastDate||'',다음연락:c.nextDate||'',메모:c.notes}))]],`이직_인맥_${today()}.xlsx`)}
