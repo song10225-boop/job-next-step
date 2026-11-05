@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>업무 노트</title>
 <link rel="icon" id="fav" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E📒%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -149,6 +149,34 @@ tr.clk{cursor:pointer}tr.clk:hover{background:#f8fafc}
 .qcard .tip{background:#fff9db;border-radius:9px;padding:8px 11px;font-size:.88rem;margin-top:6px;line-height:1.6}
 .starbtn{border:0;background:none;cursor:pointer;font-size:1.15rem;opacity:.35}.starbtn.on{opacity:1}
 .pr-q{font-size:1.35rem;font-weight:800;line-height:1.5;margin:6px 0 14px;word-break:keep-all}
+
+/* ---- 이력서 (업체 제출용) ---- */
+.rs{font-family:"Noto Sans KR","Noto Sans CJK KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#1f2329;font-size:13.5px;line-height:1.62;background:#fff;padding:6px 4px}
+.rs-head{display:flex;gap:24px;align-items:flex-end;padding-bottom:16px;border-bottom:3px solid #1f2a44}
+.rs-title{font-size:14px;color:#4a5872;font-weight:600;margin-bottom:6px;word-break:keep-all}
+.rs-name{font-size:32px;font-weight:800;letter-spacing:.12em;color:#1f2a44;line-height:1.15}
+.rs-info{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:4px 12px;margin-top:12px;font-size:13px}
+.rs-info span{color:#7b8496}.rs-info b{font-weight:600;overflow-wrap:anywhere}
+.rs-photo{width:108px;height:139px;object-fit:cover;border:1px solid #d5dae3;flex:none}
+.rs-sum{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #d5dae3;border-top:0;background:#f6f8fb}
+.rs-sum div{padding:10px 12px;border-right:1px solid #e3e7ee;display:flex;flex-direction:column;gap:1px;min-width:0}.rs-sum div:last-child{border-right:0}
+.rs-sum span{font-size:11.5px;color:#7b8496}.rs-sum b{font-size:14px;color:#1f2a44;overflow-wrap:anywhere}.rs-sum i{font-style:normal;font-size:11.5px;color:#4a5872}
+.rs-intro{margin:16px 0 4px;padding:12px 16px;border-left:4px solid #1f2a44;background:#f6f8fb;white-space:pre-wrap;word-break:keep-all}
+.rs h2{font-size:16px;color:#1f2a44;margin:26px 0 10px;padding-bottom:5px;border-bottom:1.5px solid #1f2a44;display:flex;align-items:baseline;gap:10px;break-after:avoid}
+.rs h2 small{font-size:13px;color:#c0392b;font-weight:700}
+.rs-kw{display:flex;flex-wrap:wrap;gap:6px}.rs-kw span{border:1px solid #cfd6e2;background:#f6f8fb;border-radius:4px;padding:2px 10px;font-size:12.5px}.rs-kw em{font-style:normal;color:#7b8496;font-size:11.5px}
+.rs-tb{width:100%;border-collapse:collapse;font-size:13px}.rs-tb th{background:#f0f3f8;color:#3a4458;font-weight:700;text-align:left;padding:7px 10px;border-top:1px solid #c9d1de;border-bottom:1px solid #c9d1de;position:static}
+.rs-tb td{padding:7px 10px;border-bottom:1px solid #e6e9ef}.rs-tb tr{break-inside:avoid}
+.rs-job{display:grid;grid-template-columns:130px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid #e6e9ef;break-inside:avoid}
+.rs-job .per{font-weight:700;font-size:13px}.rs-job .dur{color:#c0392b;font-size:12px;font-weight:600}
+.rs-job .co{font-size:15px;font-weight:800;color:#1f2a44}.rs-job .pos{font-size:12.5px;font-weight:500;color:#6b7487;margin-left:4px}
+.rs-job .scale{font-size:12.5px;color:#4a5872;margin-top:2px}
+.rs-job ul{margin:6px 0 0;padding-left:17px}.rs-job li{margin:1px 0}.rs-job .achv{margin-top:6px;color:#1f2a44;font-weight:600}
+.rs-cover{break-before:page;margin-top:30px}.rs-cover h3{font-size:14px;color:#1f2a44;margin:18px 0 6px;padding-left:9px;border-left:3px solid #1f2a44}
+.rs-cover .ct{white-space:pre-wrap;word-break:keep-all;text-align:justify}
+.rs-sign{text-align:center;margin-top:34px;font-size:14px;break-inside:avoid}.rs-sign div{margin-top:6px;font-size:13px;color:#4a5872}
+@media(max-width:600px){.rs-head{flex-direction:column-reverse;align-items:flex-start}.rs-info{grid-template-columns:auto 1fr}.rs-sum{grid-template-columns:1fr 1fr}.rs-job{grid-template-columns:1fr;gap:4px}}
+@media print{body.pr .rs{padding:0;font-size:10pt}body.pr .rs-name{font-size:24pt}}
 /* ---- 로그인 잠금 화면 ---- */
 body.locked .top,body.locked main{display:none!important}
 #gate{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 15%,#fff3bf 0,#fffdf5 45%),#fffdf5}
@@ -185,7 +213,8 @@ body.locked #gate{display:flex}
  main{padding:14px 12px 40px}.hero{padding:20px 18px}.hero .q{font-size:1.2rem;max-width:none}.hero .deco{position:static;text-align:left;font-size:1.4rem;margin-bottom:4px}.hero .deco br{display:none}}
 @media(prefers-reduced-motion:reduce){.hero .deco span{animation:none}}
 @media(max-width:720px){main{padding:12px}.form{grid-template-columns:1fr}.cal .dc{min-height:72px}.ev{font-size:.65rem}}
-@media print{.hero,.top,.h .btn,.btn,#dlg,#toast,.noprint{display:none!important}body{background:#fff}.panel{display:none!important}.panel.on{display:block!important}.card,.tw{break-inside:avoid}.kan{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}body.pr main{display:none!important}body.pr #dlg{display:block!important;position:static;background:#fff;padding:0}body.pr .mc{max-height:none;overflow:visible;width:100%;padding:0}body.pr .mh{display:none}}
+@page{size:A4;margin:13mm 12mm}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.panel.on textarea,.panel.on input[type=text],.panel.on input:not([type]),.panel.on input[type=search],.qtabs,.starbtn{display:none!important}.pv{white-space:pre-wrap;border:1px solid #e5e5e5;border-radius:6px;padding:6px 9px;min-height:2.2em;font-size:.92em;line-height:1.6}.qcard,.qa,.cr{break-inside:avoid}main{padding:0!important;max-width:none}.hero,.top,.h .btn,.btn,#dlg,#toast,.noprint{display:none!important}body{background:#fff}.panel{display:none!important}.panel.on{display:block!important}.card,.tw{break-inside:avoid}.kan{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}body.pr main{display:none!important}body.pr #dlg{display:block!important;position:static;background:#fff;padding:0}body.pr .mc{max-height:none;overflow:visible;width:100%;padding:0}body.pr .mh{display:none}}
 </style>
 </head>
 <body class="locked">
@@ -195,7 +224,7 @@ body.locked #gate{display:flex}
 <section class="panel" id="p-dash"></section>
 
 <section class="panel" id="p-profile">
- <div class="h"><h2>👤 내 프로필 · 이력서</h2><button class="btn" onclick="copyCareerText()">📋 경력기술서 복사</button><button class="btn p" onclick="openResume()">🖨 이력서 보기·인쇄</button></div>
+ <div class="h"><h2>👤 내 프로필 · 이력서</h2><button class="btn" onclick="window.print()">🖨 화면 인쇄</button><button class="btn" onclick="copyCareerText()">📋 경력기술서 복사</button><button class="btn p" onclick="openResume()">🖨 이력서 보기·인쇄</button></div>
  <div id="profBody"></div>
 </section>
 
@@ -219,7 +248,7 @@ body.locked #gate{display:flex}
 </section>
 
 <section class="panel" id="p-road">
- <div class="h"><h2>🛣️ 12주 이직 로드맵</h2><label class="sub">시작일 <input type="date" id="rStart" onchange="D.roadmap.start=this.value;save();renderRoad()"></label><button class="btn" onclick="addRoadItem()">＋ 항목</button><button class="btn d" onclick="resetRoad()">기본값으로</button></div>
+ <div class="h"><h2>🛣️ 12주 이직 로드맵</h2><button class="btn" onclick="window.print()">🖨 인쇄</button><label class="sub">시작일 <input type="date" id="rStart" onchange="D.roadmap.start=this.value;save();renderRoad()"></label><button class="btn" onclick="addRoadItem()">＋ 항목</button><button class="btn d" onclick="resetRoad()">기본값으로</button></div>
  <div class="grid" style="margin-bottom:12px"><div class="card" id="rProg"></div><div class="card"><h3>💡 단기간 이직 운영 원칙</h3><div class="sub" style="line-height:1.7;color:#334155">
   • <b>경력직은 속도</b>: 이력서 완성 전에 헤드헌터·지인 채널부터 열어두기<br>
   • <b>직무 적합도 &gt; 지원 수</b>: 공고별로 경력기술서 문구를 맞추되 뼈대는 재사용<br>
@@ -231,17 +260,17 @@ body.locked #gate{display:flex}
 </section>
 
 <section class="panel" id="p-prep">
- <div class="h"><h2>🎤 이력서 · 면접 준비</h2></div>
+ <div class="h"><h2>🎤 이력서 · 면접 준비</h2><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
  <div id="prepBody"></div>
 </section>
 
 <section class="panel" id="p-qa">
- <div class="h"><h2>❓ 면접 예상 질문</h2><button class="btn" onclick="practice()">🎲 랜덤 연습</button><button class="btn p" onclick="addQA()">＋ 질문 추가</button></div>
+ <div class="h"><h2>❓ 면접 예상 질문</h2><span class="sub">지금 보이는 질문만 인쇄돼요</span><button class="btn" onclick="window.print()">🖨 인쇄</button><button class="btn" onclick="practice()">🎲 랜덤 연습</button><button class="btn p" onclick="addQA()">＋ 질문 추가</button></div>
  <div id="qaBody"></div>
 </section>
 
 <section class="panel" id="p-people">
- <div class="h"><h2>🤝 인맥 · 헤드헌터</h2><button class="btn" onclick="exportContacts()">📤 엑셀</button><button class="btn p" onclick="openContact()">＋ 추가</button></div>
+ <div class="h"><h2>🤝 인맥 · 헤드헌터</h2><button class="btn" onclick="window.print()">🖨 인쇄</button><button class="btn" onclick="exportContacts()">📤 엑셀</button><button class="btn p" onclick="openContact()">＋ 추가</button></div>
  <div id="peopleBody"></div>
 </section>
 
@@ -373,7 +402,7 @@ function defaultQA(){const Q=[
 ['트랙별','회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?','계획이 없다면 실무 보조로서의 강점과 배우고 싶은 분야로']];
 return Q.map(([group,track,cat,q,tip])=>({id:uid(),group,track,cat,q,tip,a:'',ready:false,star:false}))}
 const qaGroup=q=>q.group||((q.track||'공통')!=='공통'?'트랙별':'공통');
-function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒'},myQuotes:[],updatedAt:''}}
+function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒'},myQuotes:[],updatedAt:''}}
 function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  if(!(r&&r.v>=3)){const def=defaultQA(),by=new Map(def.map(q=>[q.q,q]));o.prep.qa.forEach(q=>{const d=by.get(q.q);if(d){q.tip=q.tip||d.tip;q.group=q.group||d.group;q.cat=d.cat}});const have=new Set(o.prep.qa.map(q=>q.q));def.filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=3}
@@ -517,7 +546,7 @@ function renderDash(){
   (up.length?`<div class="sub" style="font-weight:700;margin:${al.length?'14px':'0'} 0 2px">다가오는 일정 (2주)</div>`+up.map(e=>`<div class="row"><span class="chip" style="background:${KC[e.kind]||'#64748b'};color:#fff">${esc(e.kind)}</span><div class="grow" style="cursor:pointer" onclick="evClick('${e.src}','${e.id}')">${esc(e.title)}</div><span class="sub" style="white-space:nowrap">${md(e.date)} ${e.time||''} · <b>${dLabel(e.date)}</b></span></div>`).join(''):'')
   :`<div class="empty"><b>🌷</b>지금 급한 일도, 2주 안 일정도 없어요. 숨 한 번 돌려요</div>`;
 
- $('p-dash').innerHTML=`<div class="h"><h2>🌼 대시보드</h2><span class="sub" style="margin-right:6px">${+t.slice(5,7)}월 ${+t.slice(8,10)}일 (${wd})</span><button class="btn" onclick="openGoal()">🎯 목표 설정</button></div>
+ $('p-dash').innerHTML=`<div class="h"><h2>🌼 대시보드</h2><span class="sub" style="margin-right:6px">${+t.slice(5,7)}월 ${+t.slice(8,10)}일 (${wd})</span><button class="btn" onclick="openGoal()">🎯 목표 설정</button><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
  ${heroHTML()}
  <div class="kpis">
   ${kpi('🎯 목표 입사일',dd===null?'—':dd>=0?'D-'+dd:'경과',g.target?esc(g.target):'목표일을 정해보세요',"openGoal()")}
@@ -781,7 +810,7 @@ const ym=x=>x?x.replace('-','.'):'';
 const DAYMS=30.4375;
 function fmtM(days){const m=Math.round(days/DAYMS),y=Math.floor(m/12),r=m%12;return ((y?y+'년 ':'')+((r||!y)?r+'개월':'')).trim()}
 function lastDay(x){const [y,m]=x.split('-');return iso(new Date(+y,+m,0))}
-function careerRange(c){if(!c.start)return null;const a=c.start+'-01',b=c.current?today():(c.end?lastDay(c.end):null);if(!b||b<a)return null;return [a,b]}
+function careerRange(c){if(!c.start)return null;const a=c.start+'-01',b=c.current?lastDay(today().slice(0,7)):(c.end?lastDay(c.end):null);if(!b||b<a)return null;return [a,b]}
 function mergeDays(rs){rs=rs.filter(Boolean).sort((a,b)=>a[0].localeCompare(b[0]));let tot=0,cs=null,ce=null;for(const [a,b] of rs){if(!cs){cs=a;ce=b}else if(a<=ce){if(b>ce)ce=b}else{tot+=diff(ce,cs)+1;cs=a;ce=b}}if(cs)tot+=diff(ce,cs)+1;return tot}
 function careerSummary(){const C=D.profile.career,byType={};
  const total=mergeDays(C.map(careerRange));
@@ -796,6 +825,7 @@ function careerCardHTML(){const cs=careerSummary(),pc=profileCompleteness();
  <div class="sub" style="margin-top:8px">프로필 완성도 ${pc.pct}%${pc.miss.length?' · 비어있음: '+pc.miss.join(', '):''}</div><div class="bar"><i style="width:${pc.pct}%"></i></div></div>`}
 const sortedCareer=()=>[...D.profile.career].sort((a,b)=>(b.start||'').localeCompare(a.start||''));
 function pset(k,v){D.profile[k]=v;save()}
+function setPhoto(inp){const f=inp.files[0];if(!f)return;const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const W=300,H=385,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),r=Math.max(W/img.width,H/img.height),w=img.width*r,h=img.height*r;x.fillStyle='#fff';x.fillRect(0,0,W,H);x.drawImage(img,(W-w)/2,(H-h)/2,w,h);pset('photo',c.toDataURL('image/jpeg',.85));URL.revokeObjectURL(u);renderProfile();toast('사진을 넣었어요')};img.src=u;inp.value=''}
 function keepScroll(f){const y=window.scrollY;f();window.scrollTo(0,y)}
 function renderProfile(){const P=D.profile,cs=careerSummary(),pc=profileCompleteness();
  const cc={전문:0,실무:0,기초:0};Object.values(P.comp).forEach(v=>{if(cc[v]!==undefined)cc[v]++});
@@ -805,10 +835,15 @@ function renderProfile(){const P=D.profile,cs=careerSummary(),pc=profileComplete
   <label>이름<input value="${esc(P.name)}" onchange="pset('name',this.value.trim())"></label>
   <label>연락처<input value="${esc(P.phone)}" onchange="pset('phone',this.value.trim())"></label>
   <label>이메일<input value="${esc(P.email)}" onchange="pset('email',this.value.trim())"></label>
-  <label>거주 지역<input value="${esc(P.area)}" placeholder="예: 서울 마포구" onchange="pset('area',this.value.trim())"></label></div>
+  <label>거주 지역<input value="${esc(P.area)}" placeholder="예: 서울 마포구" onchange="pset('area',this.value.trim())"></label>
+  <label>출생연도<input value="${esc(P.birth)}" placeholder="예: 1993" onchange="pset('birth',this.value.trim())"></label>
+  <label style="grid-column:1/-1">이력서 제목 (맨 위 한 줄)<input value="${esc(P.title)}" placeholder="예: 더존·세무사랑 능숙, 회계·세무 경력 6년 차" onchange="pset('title',this.value.trim())"></label></div>
+  <div style="display:flex;gap:12px;align-items:center;margin-top:12px">${P.photo?`<img src="${P.photo}" style="width:60px;height:77px;object-fit:cover;border-radius:6px;border:1px solid var(--line)">`:'<div style="width:60px;height:77px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:.75rem">사진</div>'}
+  <div><button class="btn s" onclick="$('phF').click()">📷 증명사진 ${P.photo?'바꾸기':'올리기'}</button>${P.photo?` <button class="btn s d" onclick="pset('photo','');renderProfile()">삭제</button>`:''}<div class="sub" style="margin-top:4px">이력서에만 쓰여요. 작게 줄여서 저장해요.</div></div>
+  <input type="file" id="phF" accept="image/*" hidden onchange="setPhoto(this)"></div>
   <div class="sub" style="margin-top:10px;font-weight:700">자기소개 / 경력 요약 (이력서 상단 문구)</div><textarea rows="4" onchange="pset('summary',this.value)">${esc(P.summary)}</textarea></div>
  <div class="card"><h3>⏱️ 경력 기간 요약</h3>
-  ${cs.total?`<div class="big">${fmtM(cs.total)}</div><div class="sub">총 경력 (겹치는 기간은 한 번만 계산 · 재직 중이면 오늘까지)</div><div style="margin-top:8px">${Object.entries(cs.byType).map(([k,v])=>`<span class="tr" style="background:${TRC[k]||'#64748b'}22;color:${TRC[k]||'#64748b'}">${esc(k)} ${fmtM(v)}</span>`).join('')}</div>`:'<div class="sub">아래 "경력"에 입사·퇴사 월을 입력하면 자동으로 계산돼요.</div>'}
+  ${cs.total?`<div class="big">${fmtM(cs.total)}</div><div class="sub">총 경력 (겹치는 기간은 한 번만 계산 · 재직 중이면 이번 달까지)</div><div style="margin-top:8px">${Object.entries(cs.byType).map(([k,v])=>`<span class="tr" style="background:${TRC[k]||'#64748b'}22;color:${TRC[k]||'#64748b'}">${esc(k)} ${fmtM(v)}</span>`).join('')}</div>`:'<div class="sub">아래 "경력"에 입사·퇴사 월을 입력하면 자동으로 계산돼요.</div>'}
   ${cs.gaps.map(g=>`<div class="al warn" style="margin-top:8px">공백기 ${ym(g.from.slice(0,7))} ~ ${ym(g.to.slice(0,7))} (${fmtM(g.days)}) — 면접에서 사유를 물을 수 있어요. 한 줄 답변을 준비해 두세요.</div>`).join('')}
   <div class="sub" style="margin-top:10px">자격증 ${P.certs.length}개 · 업무 역량 전문 ${cc.전문} / 실무 ${cc.실무} / 기초 ${cc.기초}</div></div></div>
  <div class="card" style="margin-top:12px"><h3>💼 경력 <button class="btn s p" onclick="openCareer()">＋ 경력 추가</button></h3>
@@ -851,20 +886,45 @@ function openSkill(id){const k=id?D.profile.skills.find(x=>x.id===id):{id:uid(),
  <div style="display:flex;justify-content:space-between;margin-top:12px">${delBtn('skills',k.id,id)}<button class="btn p" onclick="saveSkill('${k.id}')">저장</button></div>`)}
 function saveSkill(id){if(!val('skN')){toast('이름을 입력해 주세요');return}upsert(D.profile.skills,{id,name:val('skN'),level:val('skL')});save();closeDlg();refresh()}
 const taskLines=t=>(t||'').split('\n').map(x=>x.trim().replace(/^[-•·]\s*/,'')).filter(Boolean);
-function resumeHTML(){const P=D.profile,cs=careerSummary();
+let rsPhoto=true,rsCover=true;
+function resumeHTML(){const P=D.profile,cs=careerSummary(),C=sortedCareer();
  const lv=l=>Object.entries(P.comp).filter(([,v])=>v===l).map(([k])=>k);
- return `<div class="resume"><h1>${esc(P.name||'이름')}</h1><div class="sub">${esc([P.phone,P.email,P.area].filter(Boolean).join(' · '))}</div>
- ${cs.total?`<h2>경력 요약</h2><div><b>총 경력 ${fmtM(cs.total)}</b> ${Object.entries(cs.byType).map(([k,v])=>`· ${esc(k)} ${fmtM(v)}`).join(' ')}</div>`:''}
- ${P.summary?`<div style="margin-top:6px;white-space:pre-wrap">${esc(P.summary)}</div>`:''}
- ${P.career.length?`<h2>경력사항</h2>${sortedCareer().map(c=>`<div style="margin-bottom:10px"><b>${esc(c.company)}</b>${c.type?` (${esc(c.type)})`:''} &nbsp;<span class="sub">${ym(c.start)} ~ ${c.current?'재직중':ym(c.end)} ${esc([c.dept,c.rank].filter(Boolean).join(' / '))}</span>${c.scale?`<div class="sub">${esc(c.scale)}</div>`:''}<ul>${taskLines(c.tasks).map(l=>`<li>${esc(l)}</li>`).join('')}</ul>${c.achv?`<div>▶ 성과: ${esc(c.achv).replace(/\n/g,'<br>')}</div>`:''}</div>`).join('')}`:''}
- ${P.edu.length?`<h2>학력</h2>${P.edu.map(e=>`<div>${ym(e.start)} ~ ${ym(e.end)} &nbsp;${esc(e.school)} ${esc(e.major)} ${esc(e.degree)} ${esc(e.status)}</div>`).join('')}`:''}
- ${P.certs.length?`<h2>자격증</h2>${P.certs.map(e=>`<div>${ym(e.date)} &nbsp;${esc(e.name)} ${esc(e.org)} ${esc(e.note)}</div>`).join('')}`:''}
- ${P.skills.length?`<h2>보유 프로그램</h2><div>${P.skills.map(k=>`${esc(k.name)}(${esc(k.level)})`).join(', ')}</div>`:''}
- ${lv('전문').length||lv('실무').length?`<h2>핵심 업무 역량</h2>${lv('전문').length?`<div><b>전문</b> ${lv('전문').map(esc).join(', ')}</div>`:''}${lv('실무').length?`<div><b>실무</b> ${lv('실무').map(esc).join(', ')}</div>`:''}`:''}
- ${coverText()?`<h2>자기소개서</h2>${COVER.filter(([k])=>(D.prep.cover[k]||'').trim()).map(([k,l])=>`<div style="margin-top:8px"><b>[${l}]</b><div style="white-space:pre-wrap">${esc(D.prep.cover[k].trim())}</div></div>`).join('')}`:''}</div>`}
-function openResume(){dlg('📄 이력서 미리보기',`<div class="noprint" style="text-align:right;margin-bottom:8px"><button class="btn p" onclick="printResume()">🖨 인쇄 · PDF 저장</button></div>${resumeHTML()}`)}
+ const dur=c=>{const r=careerRange(c);return r?fmtM(diff(r[1],r[0])+1):''};
+ const PRI=['세무사','공인회계사','재경관리사','전산세무 1급','전산세무 2급','TAT 1급','전산회계 1급','FAT 1급','컴퓨터활용능력 1급'];
+ const best=[...P.certs].sort((a,b)=>{const i=x=>{const k=PRI.findIndex(p=>x.name.includes(p));return k<0?99:k};return i(a)-i(b)})[0];
+ const lastEdu=[...P.edu].sort((a,b)=>(b.end||'').localeCompare(a.end||''))[0];
+ const td=new Date();
+ return `<div class="rs">
+ <div class="rs-head"><div style="flex:1;min-width:0">${P.title?`<div class="rs-title">${esc(P.title)}</div>`:''}<div class="rs-name">${esc(P.name||'이름')}</div>
+  <div class="rs-info">${P.birth?`<span>출생</span><b>${esc(P.birth)}년생</b>`:''}${P.phone?`<span>휴대폰</span><b>${esc(P.phone)}</b>`:''}${P.email?`<span>이메일</span><b>${esc(P.email)}</b>`:''}${P.area?`<span>주소</span><b>${esc(P.area)}</b>`:''}</div></div>
+  ${rsPhoto&&P.photo?`<img class="rs-photo" src="${P.photo}" alt="">`:''}</div>
+ <div class="rs-sum">
+  <div><span>총 경력</span><b>${cs.total?fmtM(cs.total):'-'}</b></div>
+  <div><span>최종 학력</span><b>${lastEdu?esc(lastEdu.school):'-'}</b>${lastEdu?`<i>${esc([lastEdu.major,lastEdu.degree].filter(Boolean).join(' · '))}</i>`:''}</div>
+  <div><span>대표 자격증</span><b>${best?esc(best.name):'-'}</b>${P.certs.length>1?`<i>외 ${P.certs.length-1}개</i>`:''}</div>
+  <div><span>주요 프로그램</span><b>${P.skills.slice(0,2).map(k=>esc(k.name)).join(', ')||'-'}</b>${P.skills.length>2?`<i>외 ${P.skills.length-2}개</i>`:''}</div></div>
+ ${P.summary?`<div class="rs-intro">${esc(P.summary)}</div>`:''}
+ ${lv('전문').length||lv('실무').length?`<h2>핵심 역량</h2><div class="rs-kw">${[...lv('전문'),...lv('실무')].map(k=>`<span>${esc(k)}</span>`).join('')}</div>`:''}
+ ${C.length?`<h2>경력 <small>총 ${fmtM(cs.total)}</small></h2>
+  <table class="rs-tb"><thead><tr><th>회사명</th><th>근무 기간</th><th>기간</th><th>부서 · 직급</th></tr></thead><tbody>${C.map(c=>`<tr><td><b>${esc(c.company)}</b></td><td>${ym(c.start)} ~ ${c.current?'재직중':ym(c.end)}</td><td>${dur(c)}</td><td>${esc([c.dept,c.rank].filter(Boolean).join(' · '))}</td></tr>`).join('')}</tbody></table>
+  <h2>경력 상세</h2>${C.map(c=>`<div class="rs-job"><div><div class="per">${ym(c.start)} ~ ${c.current?'재직중':ym(c.end)}</div><div class="dur">${dur(c)}</div></div>
+   <div><div class="co">${esc(c.company)} <span class="pos">${esc([c.dept,c.rank].filter(Boolean).join(' · '))}</span></div>${c.scale?`<div class="scale">${esc(c.scale)}</div>`:''}
+   <ul>${taskLines(c.tasks).map(l=>`<li>${esc(l)}</li>`).join('')}</ul>${c.achv?`<div class="achv">▶ ${esc(c.achv).replace(/\n/g,'<br>▶ ')}</div>`:''}</div></div>`).join('')}`:''}
+ ${P.edu.length?`<h2>학력</h2><table class="rs-tb"><thead><tr><th>기간</th><th>학교</th><th>전공</th><th>학위</th><th>구분</th></tr></thead><tbody>${[...P.edu].sort((a,b)=>(b.end||'').localeCompare(a.end||'')).map(e=>`<tr><td>${e.start||e.end?`${ym(e.start)} ~ ${ym(e.end)}`:''}</td><td><b>${esc(e.school)}</b></td><td>${esc(e.major)}</td><td>${esc(e.degree)}</td><td>${esc(e.status)}</td></tr>`).join('')}</tbody></table>`:''}
+ ${P.certs.length?`<h2>자격증</h2><table class="rs-tb"><thead><tr><th>취득일</th><th>자격증</th><th>발급 기관</th></tr></thead><tbody>${[...P.certs].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<tr><td>${ym(e.date)}</td><td><b>${esc(e.name)}</b>${e.note?` <span class="pos">${esc(e.note)}</span>`:''}</td><td>${esc(e.org)}</td></tr>`).join('')}</tbody></table>`:''}
+ ${P.skills.length?`<h2>보유 프로그램</h2><div class="rs-kw">${P.skills.map(k=>`<span>${esc(k.name)} <em>${esc(k.level)}</em></span>`).join('')}</div>`:''}
+ ${rsCover&&coverText()?`<div class="rs-cover"><h2 style="margin-top:0">자기소개서</h2>${COVER.filter(([k])=>(D.prep.cover[k]||'').trim()).map(([k,l])=>`<h3>${l}</h3><div class="ct">${esc(D.prep.cover[k].trim())}</div>`).join('')}</div>`:''}
+ <div class="rs-sign">위의 기재 사항은 사실과 다름없음을 확인합니다.<div>${td.getFullYear()}년 ${td.getMonth()+1}월 ${td.getDate()}일 &nbsp; 작성자 <b>${esc(P.name)}</b></div></div></div>`}
+function openResume(){dlg('📄 이력서 미리보기',`<div class="noprint" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:#fffaeb;border-radius:10px">
+ <label class="sub" style="display:flex;gap:4px;align-items:center"><input type="checkbox" ${rsPhoto?'checked':''} onchange="rsPhoto=this.checked;openResume()"> 사진</label>
+ <label class="sub" style="display:flex;gap:4px;align-items:center"><input type="checkbox" ${rsCover?'checked':''} onchange="rsCover=this.checked;openResume()"> 자기소개서</label>
+ <span class="sub" style="flex:1">인쇄 창에서 '대상: PDF로 저장'을 고르면 업체에 보낼 PDF가 돼요</span>
+ <button class="btn p" onclick="printResume()">🖨 인쇄 · PDF 저장</button></div>${resumeHTML()}`);$('dlg').querySelector('.mc').style.width='min(860px,100%)'}
 function printResume(){document.body.classList.add('pr');window.print();setTimeout(()=>document.body.classList.remove('pr'),800)}
-window.addEventListener('afterprint',()=>document.body.classList.remove('pr'));
+window.addEventListener('beforeprint',()=>{if(document.body.classList.contains('pr'))return;
+ document.querySelectorAll('.panel.on textarea,.panel.on input[type=text],.panel.on input:not([type])').forEach(el=>{const d=document.createElement('div');d.className='pv';d.textContent=el.value;el.after(d)});
+ document.querySelectorAll('.panel.on details').forEach(d=>{d.dataset.wo=d.open?'1':'0';d.open=true})});
+window.addEventListener('afterprint',()=>{document.body.classList.remove('pr');document.querySelectorAll('.pv').forEach(x=>x.remove());document.querySelectorAll('details[data-wo]').forEach(d=>{d.open=d.dataset.wo==='1';delete d.dataset.wo})});
 function careerText(){const P=D.profile,cs=careerSummary();let t=`[경력 요약] 총 ${fmtM(cs.total)} (${Object.entries(cs.byType).map(([k,v])=>k+' '+fmtM(v)).join(' / ')})\n`;
  sortedCareer().forEach(c=>{t+=`\n■ ${c.company}${c.type?' ('+c.type+')':''} | ${ym(c.start)} ~ ${c.current?'재직중':ym(c.end)}${[c.dept,c.rank].filter(Boolean).length?' | '+[c.dept,c.rank].filter(Boolean).join(' / '):''}\n`;if(c.scale)t+=`  - 규모: ${c.scale}\n`;taskLines(c.tasks).forEach(l=>t+=`  - ${l}\n`);if(c.achv)t+=`  ▶ 성과: ${c.achv.replace(/\n/g,' / ')}\n`});return t}
 function copyCareerText(){const t=careerText();if(!D.profile.career.length){toast('경력을 먼저 입력해 주세요');return}
@@ -902,11 +962,11 @@ function renderSet(){renderAuthBox();$('uiI').value=D.ui.icon;$('uiN').value=D.u
 function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 function exportJSON(){dl(`이직준비_백업_${today()}.json`,new Blob([JSON.stringify(D,null,1)],{type:'application/json'}))}
 function mergeProfile(o){const P=D.profile,F=o.profile||{},n={career:0,edu:0,certs:0,skills:0,comp:0,etc:0};
- ['name','phone','email','area','summary'].forEach(k=>{if(F[k]&&!String(P[k]||'').trim()){P[k]=F[k];n.etc++}});
+ ['name','title','birth','photo','phone','email','area','summary'].forEach(k=>{if(F[k]&&!String(P[k]||'').trim()){P[k]=F[k];n.etc++}});
  const add=(k,key)=>(F[k]||[]).forEach(x=>{if(!P[k].some(y=>key(y)===key(x))){P[k].push(Object.assign({},x,{id:uid()}));n[k]++}});
  add('career',x=>normCo(x.company)+'|'+x.start);add('edu',x=>normCo(x.school));add('certs',x=>normCo(x.name));add('skills',x=>normCo(x.name));
  Object.entries(F.comp||{}).forEach(([k,v])=>{if(!P.comp[k]){P.comp[k]=v;n.comp++}});
- const R=o.prep||{};D.prep.strong=D.prep.strong||[];(R.strong||[]).forEach(x=>{if(!D.prep.strong.some(y=>y.title===x.title)){D.prep.strong.push(Object.assign({},x,{id:uid()}));n.etc++}});(R.qa||[]).forEach(x=>{if(!D.prep.qa.some(y=>y.q===x.q)){D.prep.qa.push(Object.assign({a:'',ready:false,star:false},x,{id:uid()}));n.qa=(n.qa||0)+1}});['pitch1','pitch3','strengths'].forEach(k=>{if(R[k]&&!String(D.prep[k]||'').trim()){D.prep[k]=R[k];n.etc++}});
+ const R=o.prep||{};D.prep.strong=D.prep.strong||[];(R.strong||[]).forEach(x=>{const ex=D.prep.strong.find(y=>y.title===x.title);if(ex){if(x.say)ex.say=x.say;if(x.why)ex.why=x.why;return}if(!D.prep.strong.some(y=>y.title===x.title)){D.prep.strong.push(Object.assign({},x,{id:uid()}));n.etc++}});(R.qa||[]).forEach(x=>{const ex=D.prep.qa.find(y=>y.q===x.q);if(ex){if(x.a&&!String(ex.a||'').trim()){ex.a=x.a;n.qa=(n.qa||0)+1}if(x.tip&&x.tip!==ex.tip)ex.tip=x.tip;return}if(!D.prep.qa.some(y=>y.q===x.q)){D.prep.qa.push(Object.assign({a:'',ready:false,star:false},x,{id:uid()}));n.qa=(n.qa||0)+1}});['pitch1','pitch3','strengths'].forEach(k=>{if(R[k]&&!String(D.prep[k]||'').trim()){D.prep[k]=R[k];n.etc++}});
  Object.entries(R.cover||{}).forEach(([k,v])=>{if(v&&!String(D.prep.cover[k]||'').trim()){D.prep.cover[k]=v;n.etc++}});
  (R.achv||[]).forEach(a=>{if(!D.prep.achv.some(x=>x.title===a.title)){D.prep.achv.push(Object.assign({},a,{id:uid()}));n.etc++}});
  Object.entries(o.goal||{}).forEach(([k,v])=>{if(v&&!Array.isArray(v)&&!String(D.goal[k]||'').trim()){D.goal[k]=v;n.etc++}});
