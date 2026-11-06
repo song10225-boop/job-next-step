@@ -249,7 +249,8 @@ tr.clk{cursor:pointer}tr.clk:hover{background:var(--hover2)}
 .fin{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .fin th,.fin td{padding:6px 8px;border-bottom:1px solid var(--line3);text-align:right;white-space:nowrap}
 .fin th:first-child,.fin td:first-child{text-align:left}
-.fin input{width:100%;min-width:84px;text-align:right;padding:5px 7px}
+.fin input{width:100%;min-width:110px;text-align:right;padding:5px 7px;font-variant-numeric:tabular-nums}
+.fin .eok{font-size:.72rem;color:var(--sub);text-align:right;margin-top:2px;white-space:nowrap}
 .ratios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .ratio{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card);min-width:0}
 .ratio .n{font-size:.82rem;color:var(--sub)}.ratio .v{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.25}
@@ -1600,6 +1601,8 @@ const FIN_ROWS=[['sales','매출액'],['op','영업이익'],['net','당기순이
 const anaCo=a=>{const j=a.jobId&&D.jobs.find(x=>x.id===a.jobId);return j?j.company:(a.company||'회사')};
 const num=v=>{if(v===''||v==null)return null;const n=Number(String(v).replace(/[,\s]/g,''));return isFinite(n)?n:null};
 const pct=(a,b)=>a==null||b==null||b===0?null:a/b*100;
+const comma=v=>{const n=num(v);if(n==null)return v==null?'':String(v);const [i,d]=String(Math.abs(n)).split('.');return (n<0?'-':'')+Number(i).toLocaleString('ko-KR')+(d?'.'+d:'')};
+const uncomma=v=>String(v||'').replace(/[,\s원]/g,'').replace(/^\((.*)\)$/,'-$1').replace(/^[△▲]/,'-').trim();
 const eokTxt=(v,u)=>{if(v==null)return '—';const e=v*(UNITS[u]||0.01);return Math.abs(e)>=1?`약 ${(Math.round(e*10)/10).toLocaleString('ko-KR')}억 원`:`약 ${Math.round(e*10000).toLocaleString('ko-KR')}만 원`};
 const f1=v=>v==null?'—':(Math.round(v*10)/10).toLocaleString('ko-KR');
 const CTYPES=['중소기업','중견기업','대기업','공공·비영리','세무사사무실','회계법인·회계사무소'];
@@ -1675,12 +1678,12 @@ function renderAna(){const a=D.analyses.find(x=>x.id===anaOpen);if(a)return rend
   3. 비율·외감 여부·맞춤 역질문·답변 초안은 <b>자동</b>으로 만들어져요<br>
   <span class="sub">입력한 내용은 바로 내 계정에 저장되고, 아래 카드로 계속 남아요. 폰에서도 그대로 보여요.</span></div></div>
  ${D.analyses.length?`<input type="search" id="anaS" placeholder="🔎 회사명·사업·메모 검색" value="${esc(anaQ)}" style="width:100%;max-width:420px;margin-bottom:10px" oninput="anaQ=this.value;clearTimeout(window._at);window._at=setTimeout(()=>{renderAna();const e=$('anaS');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)"><br><div class="seg" style="margin-bottom:12px;flex-wrap:wrap">${F.map(t=>`<button class="${anaF===t?'on':''}" onclick="anaF='${t}';renderAna()">${t} ${t==='전체'?D.analyses.length:t==='✅ 외감'?D.analyses.filter(x=>auditState(x).s==='y').length:D.analyses.filter(x=>x.ctype===t).length}</button>`).join('')}</div>
- <div class="anagrid">${L.map(x=>{const R=anaRatios(x),fm=isFirm(x),f=x.firm||{};return `<button class="anac" onclick="anaOpen='${x.id}';renderAna()">
+ <div class="anagrid">${L.map(x=>{const R=anaRatios(x),fm=isFirm(x),f=x.firm||{};return `<div class="anac" role="button" tabindex="0" onclick="anaOpen='${x.id}';renderAna()" onkeydown="if(event.key==='Enter')this.click()">
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--acc-t)">No.${no.get(x.id)}</b><span class="chip">${esc(x.ctype)}</span>${auditBadge(x)}${x.confirmed?'<span class="res next">📁 확정</span>':''}</div>
   <div style="font-weight:800;font-size:1.08rem">${esc(anaCo(x))}</div><div class="sub" style="font-size:.85rem">${esc((fm?f.focus:x.info.biz)||'주요 업무 미입력')}</div>
   <div style="margin-top:6px;font-size:.88rem">${fm?[f.pros&&'세무사·회계사 '+f.pros,f.staff&&'직원 '+f.staff,f.clients&&'거래처 '+f.clients,f.program].filter(Boolean).map(esc).join(' · ')||'<span class="sub">사무소 정보 미입력</span>'
    :R?`${esc(R.y)}년 매출 ${eokTxt(R.c.sales,x.unit)}${R.opm!=null?` · 영업이익률 ${f1(R.opm)}%`:''}${R.debt!=null?` · 부채비율 ${f1(R.debt)}%`:''}`:'<span class="sub">재무 숫자 미입력</span>'}</div>
-  <div class="sub" style="font-size:.8rem;margin-top:6px">체크 ${Object.values(x.checks||{}).filter(Boolean).length}/${typeChk(x).length} · ${x.pitch?'답변 준비됨 ✔':'답변 아직'}${x.created?' · '+md(x.created):''}</div></button>`}).join('')||'<div class="sub">해당하는 카드가 없어요.</div>'}</div>`:'<div class="card sub">아직 분석한 회사가 없어요. 면접 잡힌 회사부터 하나 골라보세요.</div>'}
+  <div class="sub" style="font-size:.8rem;margin-top:6px">체크 ${Object.values(x.checks||{}).filter(Boolean).length}/${typeChk(x).length} · ${x.pitch?'답변 준비됨 ✔':'답변 아직'}${x.created?' · '+md(x.created):''}</div><div style="margin-top:10px;display:flex;gap:6px"><button class="btn s ${x.confirmed?'':'p'}" onclick="event.stopPropagation();anaQuick('${x.id}')">${x.confirmed?'📁 확정됨 · 해제':'✅ 분석 확정'}</button><button class="btn s" onclick="event.stopPropagation();anaOpen='${x.id}';renderAna()">열기 →</button></div></div>`}).join('')||'<div class="sub">해당하는 카드가 없어요.</div>'}</div>`:'<div class="card sub">아직 분석한 회사가 없어요. 면접 잡힌 회사부터 하나 골라보세요.</div>'}
  <div class="card" style="margin-top:14px"><h3>🎯 회계 직무는 "회사 소개"가 아니라 "회계 담당자 눈"으로 말하세요</h3>
   <div class="two"><div class="rvbox bad"><b>😵 기계 같다는 말을 듣는 답</b><br>"귀사는 2009년에 설립되어 IC칩, 블랙박스, 로봇청소기 사업을 하고 있으며 대표님 인사말처럼 고객 중심…" → 홈페이지를 외운 느낌</div>
   <div class="rvbox good"><b>🌼 회계 담당자다운 답</b><br>"매출은 3년째 늘었는데 영업이익률은 줄고 있는 걸 봤습니다. 해외 매출이 커지면서 환율과 원가 관리가 중요해 보였고, 저는 결산과 원가 쪽에서 바로 도움을 드릴 수 있다고 생각했습니다."</div></div>
@@ -1698,7 +1701,7 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
  const finTable=`<div class="card" style="margin-bottom:14px"><h3>💰 재무 숫자 (최근 3년) ${fm?'<span class="sub" style="font-weight:400;font-size:.85rem">사무소는 보통 공개 안 돼요 · 있으면만</span>':''}<span style="margin-left:auto;display:flex;gap:6px"><button class="btn s p" onclick="anaPaste()">📋 붙여넣어 자동 채우기</button><select onchange="anaSet('unit',this.value);renderAna()" style="font-weight:400" aria-label="단위">${Object.keys(UNITS).map(u=>`<option ${a.unit===u?'selected':''}>${u}</option>`).join('')}</select></span></h3>
   <div class="sub" style="margin-bottom:8px">다트·기업정보의 재무 표를 복사해서 붙여넣으면 자동으로 채워져요. 작은 중소기업은 매출액·영업이익만 있어도 괜찮아요.</div>
   <div class="tw"><table class="fin"><thead><tr><th>항목</th>${a.fin.map((r,i)=>`<th><input value="${esc(r.y)}" style="text-align:center;font-weight:700;min-width:70px" onchange="anaSet('fin.${i}.y',this.value.trim());renderAna()" aria-label="연도"></th>`).join('')}</tr></thead>
-  <tbody>${FIN_ROWS.map(([k,l])=>`<tr><td>${l}</td>${a.fin.map((r,i)=>`<td><input inputmode="decimal" value="${esc(r[k]??'')}" onchange="anaSet('fin.${i}.${k}',this.value.trim());renderAna()" aria-label="${r.y} ${l}"></td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
+  <tbody>${FIN_ROWS.map(([k,l])=>`<tr><td>${l}</td>${a.fin.map((r,i)=>`<td><input inputmode="decimal" value="${esc(comma(r[k]))}" onfocus="this.select()" onchange="anaSet('fin.${i}.${k}',uncomma(this.value));renderAna()" aria-label="${r.y} ${l}">${num(r[k])!=null?`<div class="eok">${eokTxt(num(r[k]),a.unit)}</div>`:''}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
  <div class="card" style="margin-bottom:14px"><h3>📊 숫자 읽기 ${R?`<span class="sub" style="font-weight:400;font-size:.85rem">${esc(R.y)}년 기준</span>`:''}</h3>${ratioCards(R)}${auditCheck(a)}</div>`;
  $('p-ana').innerHTML=`<div class="h"><h2>🔍 ${esc(anaCo(a))}</h2>${auditBadge(a)}${a.confirmed?`<button class="btn" onclick="anaConfirm(false)">📁 확정됨 · 해제</button>`:`<button class="btn p" onclick="anaConfirm(true)">✅ 분석 확정 → 면접 기록 폴더로</button>`}<button class="btn" onclick="anaOpen='';renderAna()">← 카드 목록</button><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
  <div class="card" style="margin-bottom:14px"><div class="form">
@@ -1727,9 +1730,12 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
   <textarea rows="5" style="width:100%" onchange="anaSet('pitch',this.value)" placeholder="✨ 초안 만들기를 누르면 위 내용으로 답변을 만들어 드려요">${esc(a.pitch)}</textarea>
   <div class="sub" style="font-size:.85rem;margin-top:6px">사업 하나 + 숫자 하나 + 내 업무와 연결 하나. 30초 안쪽이면 충분해요. 📌 면접 직전 한 장에도 나와요.</div></div>
  <div class="card"><h3>📎 메모 (리뷰, 들은 이야기, 출퇴근 등)</h3><textarea rows="4" style="width:100%" onchange="anaSet('memo',this.value)">${esc(a.memo)}</textarea>
-  <div style="text-align:right;margin-top:10px"><button class="btn s d" onclick="if(confirm('이 회사 분석 카드를 삭제할까요?')){D.analyses=D.analyses.filter(x=>x.id!=='${a.id}');anaOpen='';save();renderAna()}">카드 삭제</button></div></div>`}
+  <div style="text-align:right;margin-top:10px"><button class="btn s d" onclick="if(confirm('이 회사 분석 카드를 삭제할까요?')){D.analyses=D.analyses.filter(x=>x.id!=='${a.id}');anaOpen='';save();renderAna()}">카드 삭제</button></div></div>
+ <div class="card" style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;${a.confirmed?'':'background:var(--yel2)'}"><div style="flex:1;min-width:200px"><b>${a.confirmed?'📁 확정된 분석이에요':'다 정리했나요?'}</b><div class="sub">${a.confirmed?'📝 면접 기록 → 📁 회사분석 확정 탭에서 볼 수 있어요.':'확정하면 📝 면접 기록 → 📁 회사분석 확정 탭에 모여요. 확정 후에도 계속 고칠 수 있어요.'}</div></div>
+  ${a.confirmed?`<button class="btn" onclick="anaConfirm(false)">확정 해제</button><button class="btn p" onclick="rvView='ana';show('rev')">📁 폴더 보러 가기</button>`:`<button class="btn p" style="font-size:1.05rem;padding:10px 18px" onclick="anaConfirm(true)">✅ 분석 확정 → 면접 기록 폴더로</button>`}</div>`}
 function anaAcct(k,v){const a=D.analyses.find(x=>x.id===anaOpen);a.acct=(a.acct||[]).filter(x=>x!==k);if(v)a.acct.push(k);save();renderAna()}
 function anaAcctAuto(){const a=D.analyses.find(x=>x.id===anaOpen),S=acctSuggest(a);if(!S.length){toast('숫자나 사업 내용을 더 넣으면 추천해 드려요');return}a.acct=[...new Set([...(a.acct||[]),...S])];save();renderAna();toast(`${S.length}개를 추천했어요. 아니면 체크를 풀어주세요`)}
+function anaQuick(id){const a=D.analyses.find(x=>x.id===id);if(!a)return;a.confirmed=!a.confirmed;a.confirmedAt=a.confirmed?today():'';save();renderAna();toast(a.confirmed?'📁 면접 기록 → 회사분석 확정 폴더에 넣었어요':'확정을 해제했어요')}
 function anaConfirm(v){const a=D.analyses.find(x=>x.id===anaOpen);a.confirmed=v;a.confirmedAt=v?today():'';save();renderAna();toast(v?'📁 면접 기록 → 회사분석 확정 폴더에 넣었어요':'확정을 해제했어요')}
 function a_chk(i,v){const a=D.analyses.find(x=>x.id===anaOpen);a.checks[i]=v;save()}
 /* 붙여넣기 자동 채우기 */
