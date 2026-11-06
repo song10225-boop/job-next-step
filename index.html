@@ -659,9 +659,9 @@ function defaultQA(){const Q=[
 ['트랙별','회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?','계획이 없다면 실무 보조로서의 강점과 배우고 싶은 분야로']];
 return Q.map(([group,track,cat,q,tip])=>({id:uid(),group,track,cat,q,tip,a:'',ready:false,star:false}))}
 const qaGroup=q=>q.group||((q.track||'공통')!=='공통'?'트랙별':'공통');
-function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),reviews:[],analyses:[],indNotes:{},briefs:[],myq:defaultMyQ(),myQuotes:[],updatedAt:''}}
+function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},myqVer:2,me:blankMe(),reviews:[],analyses:[],indNotes:{},briefs:[],myq:defaultMyQ(),myQuotes:[],updatedAt:''}}
 function blankMe(){return {name:'',oneLine:'',typing:['오늘도 한 걸음씩, 꽃피는 중이에요 🌱'],mbti:'',mbtiName:'',mbtiDesc:'',work:[],hobbies:[],now:[],notes:[],diary:{}}}
-function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];if(!Array.isArray(o.analyses))o.analyses=[];if(!o.indNotes||typeof o.indNotes!=='object')o.indNotes={};if(!Array.isArray(o.briefs))o.briefs=[];if(!Array.isArray(o.myq)||!o.myq.length)o.myq=defaultMyQ();o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];if(!Array.isArray(o.analyses))o.analyses=[];if(!o.indNotes||typeof o.indNotes!=='object')o.indNotes={};if(!Array.isArray(o.briefs))o.briefs=[];if(!Array.isArray(o.myq)||!o.myq.length)o.myq=defaultMyQ();if(!(r&&r.myqVer>=2)){const have=new Set(o.myq.map(x=>x.q));defaultMyQ().filter(x=>/처우|인수인계/.test(x.cat)&&!have.has(x.q)).forEach(x=>o.myq.push(x));o.myqVer=2}o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  if(!(r&&r.v>=3)){const def=defaultQA(),by=new Map(def.map(q=>[q.q,q]));o.prep.qa.forEach(q=>{const d=by.get(q.q);if(d){q.tip=q.tip||d.tip;q.group=q.group||d.group;q.cat=d.cat}});const have=new Set(o.prep.qa.map(q=>q.q));def.filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=3}
  if(!Array.isArray(o.prep.strong))o.prep.strong=[];['kw','cheat'].forEach(k=>{if(!Array.isArray(o.prep[k]))o.prep[k]=[]});if(!o.prep.kwLog)o.prep.kwLog={n:0,last:''};
@@ -1595,13 +1595,29 @@ function defaultMyQ(){const Q=[
 ['🧾 세무사무실','work','신고 시즌(1·5·7월 등)에는 업무 분담을 어떻게 하시나요?','시즌 업무를 아는 사람'],
 ['🧾 세무사무실','work','기장 프로그램은 세무사랑과 더존 중 어떤 것을 쓰시나요?','둘 다 쓸 수 있다는 걸 이어서 어필'],
 ['🧮 회계사무소','work','감사 업무와 세무 업무 비중은 어느 정도인가요?','업무 구조를 이해하려는 질문'],
-['🧮 회계사무소','work','감사 시즌에는 일정이 보통 어떻게 운영되나요?','시즌 강도를 부드럽게 확인']];
+['🧮 회계사무소','work','감사 시즌에는 일정이 보통 어떻게 운영되나요?','시즌 강도를 부드럽게 확인'],
+['💬 처우·근무 (부드럽게)','pay','처우는 회사 기준에 맞추려고 하는데, 연봉은 보통 어떤 기준으로 정해지는지 여쭤봐도 될까요?','"맞추겠다"를 먼저 말해서 돈만 보는 사람처럼 보이지 않아요'],
+['💬 처우·근무 (부드럽게)','pay','연봉이나 처우 이야기는 보통 어느 단계에서 나누시는지 궁금합니다.','1차에서도 쓸 수 있는 가장 안전한 연봉 질문 — 시기만 확인'],
+['💬 처우·근무 (부드럽게)','pay','연차는 보통 어떻게 쓰시나요? 결산이나 신고 시즌을 피해서 쓰는 분위기인지 궁금합니다.','"시즌을 피해서"를 붙이면 일을 아는 사람의 질문이 돼요'],
+['💬 처우·근무 (부드럽게)','pay','월말 결산이나 신고 시즌처럼 바쁜 시기에는 보통 어느 정도까지 일하게 되나요?','"야근 많아요?" 대신 — 바쁜 시기를 인정하면서 묻기'],
+['💬 처우·근무 (부드럽게)','pay','평소에는 보통 몇 시쯤 업무를 마무리하시는지 여쭤봐도 될까요?','퇴근 시간을 부드럽게 확인'],
+['💬 처우·근무 (부드럽게)','pay','바쁜 시기에는 팀에서 업무를 어떻게 나눠서 하시는지 궁금합니다.','야근을 직접 묻지 않고 업무 강도를 파악'],
+['💬 처우·근무 (부드럽게)','pay','수습 기간이 있다면 기간과 조건이 어떻게 되는지 여쭤봐도 될까요?','최종 면접·합격 후 꼭 확인할 것'],
+['💬 처우·근무 (부드럽게)','pay','직원분들이 가장 좋아하시는 회사 제도가 있다면 어떤 건가요?','"복지가 뭐예요?" 대신 — 분위기까지 알 수 있어요'],
+['💬 처우·근무 (부드럽게)','pay','솔직히 근무 조건도 궁금했는데 먼저 물어봐 주셔서 감사합니다. 연차나 바쁜 시기 근무는 보통 어떻게 운영되나요?','대표님이 "그런 건 안 궁금해요?" 하고 먼저 물을 때 쓰는 답'],
+['🔁 인수인계·충원','work','이 자리는 새로 생긴 자리인가요, 아니면 기존 담당자분 업무를 이어받는 자리인가요?','충원인지부터 확인 — 다음 질문으로 자연스럽게 이어져요'],
+['🔁 인수인계·충원','work','전임자분과 인수인계 기간을 가질 수 있을까요? 있다면 보통 어느 정도인지 궁금합니다.','인수인계 가능 여부·기간 확인'],
+['🔁 인수인계·충원','work','인수인계 자료나 업무 매뉴얼이 정리되어 있는지 여쭤봐도 될까요?','혼자 파악해야 하는지 미리 알 수 있어요'],
+['🔁 인수인계·충원','work','실례가 안 된다면, 전임자분은 어떤 계기로 다른 길을 가시게 되었는지 여쭤봐도 될까요? 제가 그 업무를 오래 잘 이어가고 싶어서요.','퇴사 이유는 "오래 이어가고 싶어서"를 붙이면 부드러워요'],
+['🔁 인수인계·충원','work','이 자리에서 오래 일하신 분들은 보통 어떤 점이 잘 맞으셨다고 하시나요?','퇴사 이유를 직접 묻기 어려울 때 돌려서 묻기'],
+['🔁 인수인계·충원','work','인수인계 없이 바로 시작하게 되면, 업무 파악은 어떤 자료로 하면 좋을까요?','전임자가 이미 나갔을 때 — 준비된 사람으로 보여요'],
+['🔁 인수인계·충원','work','결산이나 신고 일정 중간에 입사하게 되면, 가장 먼저 챙겨야 할 일정이 있을까요?','입사 시점 일정까지 생각하는 사람']];
 return Q.map(([cat,who,q,why])=>({id:uid(),cat,who,q,why,pick:false,mine:false}))}
-const WHO={work:['실무진·팀장','work'],boss:['대표·임원','boss'],all:['누구에게나',''],end:['마지막에','end']};
+const WHO={work:['실무진·팀장','work'],boss:['대표·임원','boss'],all:['누구에게나',''],end:['마지막에','end'],pay:['물어봐도 될 때만','boss']};
 let mqWho='전체',mqCo='';
 function anaFor(jobId,company){return D.analyses.find(a=>(jobId&&a.jobId===jobId)||(company&&coMatch(anaCo(a),company)===2))}
 function renderMyQ(){const M=D.myq,P=M.filter(x=>x.pick),cats=[...new Set(M.map(x=>x.cat))];
- const L=M.filter(x=>mqWho==='전체'||x.who===mqWho||(mqWho!=='end'&&x.who==='all'));
+ const L=M.filter(x=>mqWho==='전체'||x.who===mqWho||(mqWho!=='end'&&mqWho!=='pay'&&x.who==='all'));
  const act=D.jobs.filter(j=>j.stage!=='종료'),j=D.jobs.find(x=>x.id===mqCo),a=j&&anaFor(j.id,j.company),cq=a?anaQuestions(a):[];
  const row=x=>`<div class="mq ${x.pick?'picked':''}"><input type="checkbox" ${x.pick?'checked':''} onchange="mqPick('${x.id}',this.checked)" aria-label="내가 쓸 질문" style="width:18px;height:18px;margin-top:3px">
   <div style="min-width:0"><div><span class="who ${WHO[x.who]?.[1]||''}">${WHO[x.who]?.[0]||''}</span>${x.mine?'<span class="who">✏️ 내가 추가</span>':''}</div><div class="q">${esc(x.q)}</div>${x.why?`<div class="why">💡 ${esc(x.why)}</div>`:''}</div>
@@ -1614,10 +1630,15 @@ function renderMyQ(){const M=D.myq,P=M.filter(x=>x.pick),cats=[...new Set(M.map(
   ${P.length?P.map(x=>`<div style="padding:5px 0;border-bottom:1px dashed var(--line)"><span class="who ${WHO[x.who]?.[1]||''}">${WHO[x.who]?.[0]||''}</span> ${esc(x.q)}</div>`).join(''):'<div class="sub">아래 목록에서 체크하면 여기에 모여요. 📌 면접 직전 한 장에도 같이 나와요.</div>'}</div>
  <div class="card" style="margin-bottom:14px"><h3>🏢 회사 맞춤 질문 <select onchange="mqCo=this.value;renderMyQ()" style="margin-left:auto;font-weight:400"><option value="">회사 고르기</option>${act.map(x=>`<option value="${x.id}" ${x.id===mqCo?'selected':''}>${esc(x.company)}</option>`).join('')}</select></h3>
   ${!j?'<div class="sub">면접 볼 회사를 고르면, 회사 분석 내용으로 그 회사만을 위한 질문을 만들어 드려요.</div>':!a?`<div class="sub">${esc(j.company)}의 회사 분석이 아직 없어요. <button class="btn s p" onclick="openAnaFor('${j.id}')">🔍 회사 분석 하러 가기</button></div>`:cq.length?cq.map(q=>`<div class="mq" style="grid-template-columns:minmax(0,1fr) auto"><div><div class="q">${esc(q.q)}</div><div class="why">💡 ${esc(q.why)}</div></div><button class="btn s" onclick="mqAddCustom(${JSON.stringify(q.q).replace(/"/g,'&quot;')},${JSON.stringify(q.why).replace(/"/g,'&quot;')})">⭐ 담기</button></div>`).join(''):'<div class="sub">회사 분석에 사업 내용이나 재무 숫자를 넣으면 질문이 만들어져요.</div>'}</div>
- <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><b>질문 목록</b><span class="seg">${[['전체','전체'],['work','실무진·팀장'],['boss','대표·임원'],['end','마지막에']].map(([k,l])=>`<button class="${mqWho===k?'on':''}" onclick="mqWho='${k}';renderMyQ()">${l}</button>`).join('')}</span></div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><b>질문 목록</b><span class="seg">${[['전체','전체'],['work','실무진·팀장'],['boss','대표·임원'],['pay','💬 처우'],['end','마지막에']].map(([k,l])=>`<button class="${mqWho===k?'on':''}" onclick="mqWho='${k}';renderMyQ()">${l}</button>`).join('')}</span></div>
  ${cats.filter(c=>L.some(x=>x.cat===c)).map(c=>`<h4 style="margin:14px 0 8px">${esc(c)}</h4>${L.filter(x=>x.cat===c).map(row).join('')}`).join('')}
  <div class="card warnq" style="margin-top:16px"><h3 style="margin-bottom:6px">⚠️ 피하면 좋은 질문</h3>
-  <div>• 홈페이지만 봐도 아는 것 ("무슨 일 하는 회사예요?")<br>• 1차부터 연봉·휴가·야근만 묻기 → 처우는 <b>최종 면접이나 합격 후</b>에, "회사 기준이 궁금합니다"처럼 부드럽게<br>• "저 붙을 것 같나요?" 같은 결과 질문<br>• "야근 많죠?"처럼 부정적인 전제가 깔린 질문 → "바쁜 시기는 언제인가요?"로 바꾸기</div></div>
+  <div>• 홈페이지만 봐도 아는 것 ("무슨 일 하는 회사예요?")<br>• 질문을 <b>처우만</b> 하기 → 업무 질문 1개 + 처우 질문 1개로 섞기<br>• "저 붙을 것 같나요?" 같은 결과 질문<br>• "야근 많죠?"처럼 부정적인 전제가 깔린 질문 → "바쁜 시기는 언제인가요?"로 바꾸기</div></div>
+ <div class="card" style="margin-top:14px"><h3>💬 연봉·연차·야근, 언제 물어봐도 될까?</h3>
+  <div class="two"><div class="sit a"><h4>✅ 지금 물어봐도 돼요</h4>• <b>대표·사장님이 먼저</b> "연봉이나 그런 건 안 궁금해요?" 하실 때 → 작은 회사일수록 대표님이 결정하시니 오히려 직접 확인하는 게 좋아요<br>• <b>최종 면접</b>, <b>합격 연락 후</b> 처우 협의 때 → 연봉·입사일·수습은 꼭 확인<br>• 면접관이 "편하게 물어보세요"라고 할 때</div>
+  <div class="sit b"><h4>🌿 1차 실무진 면접이라면 이렇게 바꿔서</h4>• 야근 → "<b>바쁜 시기</b>에는 어느 정도까지…"<br>• 연차 → "<b>시즌을 피해서</b> 쓰는 분위기인지…"<br>• 연봉 → "<b>보통 어느 단계에서</b> 이야기 나누시는지…" (금액 말고 시기만)<br>• 복지 → "직원분들이 <b>좋아하시는 제도</b>가…"</div></div>
+  <div style="margin-top:10px"><b>부드러워지는 말머리</b> <span class="sub">— 앞에 하나만 붙여도 인상이 달라져요</span><div class="tagl" style="margin-top:6px"><span>실례가 안 된다면</span><span>회사 기준에 맞추려고 하는데</span><span>오래 다니고 싶어서 여쭤보는데</span><span>먼저 물어봐 주셔서 감사합니다</span><span>제가 미리 준비하고 싶어서요</span></div></div>
+  <div class="sub" style="margin-top:8px">위 목록의 <b>💬 처우·근무</b>, <b>🔁 인수인계·충원</b>에 바로 쓸 문장이 있어요. ⭐ 체크해 두면 면접 직전 한 장에도 나와요.</div></div>
  <div class="card" style="margin-top:14px"><h3>🌷 정말 궁금한 게 없을 때 (그래도 "없습니다"로 끝내지 않기)</h3>
   <div class="rvbox" style="margin-bottom:8px">"설명을 충분히 해주셔서 궁금했던 부분이 다 해소됐습니다. 대신 마지막으로 한 말씀만 드려도 될까요? 저는 [키워드]와 [키워드] 경험이 있어서, 입사하면 바로 [업무]부터 맡을 수 있습니다. 오래 함께 일하고 싶습니다."</div>
   <div class="sub">질문 대신 30초 마무리 어필로 바꾸는 방법이에요. [키워드]는 🔑 키워드 연습의 내 키워드를 넣으세요.</div></div>`}
