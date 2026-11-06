@@ -1443,9 +1443,9 @@ function renderRev(){const A=[...D.reviews].sort((a,b)=>(b.date||'').localeCompa
  $('p-rev').innerHTML=`<div class="h"><h2>📝 면접 기록</h2><span class="sub">면접 ${A.length}번 · 받은 질문 ${nQ}개</span><button class="btn" onclick="window.print()">🖨 인쇄</button><button class="btn p" onclick="openRev()">＋ 오늘 면접 기록하기</button></div>
  <div class="rvbar"><input type="search" id="rvS" placeholder="🔎 회사·질문·답변·아쉬운 점 검색" value="${esc(rvQ)}" oninput="rvQ=this.value;clearTimeout(window._rvt);window._rvt=setTimeout(()=>{renderRev();const e=$('rvS');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)">
   <select onchange="rvRes=this.value;renderRev()" aria-label="결과">${[['전체','결과 전체'],...RV_RES].map(([k,l])=>`<option value="${k}" ${rvRes===k?'selected':''}>${l}</option>`).join('')}</select>
-  <span class="seg"><button class="${rvView==='card'?'on':''}" onclick="rvView='card';renderRev()">🗂️ 카드</button><button class="${rvView==='q'?'on':''}" onclick="rvView='q';renderRev()">📚 질문 모아보기</button></span>
+  <span class="seg"><button class="${rvView==='card'?'on':''}" onclick="rvView='card';renderRev()">🗂️ 카드</button><button class="${rvView==='q'?'on':''}" onclick="rvView='q';renderRev()">📚 질문 모아보기</button><button class="${rvView==='ana'?'on':''}" onclick="rvView='ana';renderRev()">📁 회사분석 확정 ${D.analyses.filter(x=>x.confirmed).length}</button></span>
   ${rvView==='q'?`<label class="sub" style="display:flex;gap:4px;align-items:center"><input type="checkbox" ${rvBadOnly?'checked':''} onchange="rvBadOnly=this.checked;renderRev()"> 😓 아쉬웠던 답만</label>`:''}</div>
- ${!A.length?`<div class="card" style="text-align:center;padding:34px 20px"><div style="font-size:2.4rem">🌱</div><div style="font-weight:700;font-size:1.1rem;margin:6px 0">면접 보고 온 날, 기억이 생생할 때 적어두세요</div><div class="sub">받은 질문, 내 답변, 아쉬웠던 점을 남기면 다음 면접에서 훨씬 잘할 수 있어요.<br>질문을 한 줄씩 붙여넣기만 해도 돼요.</div><button class="btn p" style="margin-top:14px" onclick="openRev()">＋ 첫 면접 기록하기</button></div>`
+ ${rvView==='ana'?rvAnaHTML(q):!A.length?`<div class="card" style="text-align:center;padding:34px 20px"><div style="font-size:2.4rem">🌱</div><div style="font-weight:700;font-size:1.1rem;margin:6px 0">면접 보고 온 날, 기억이 생생할 때 적어두세요</div><div class="sub">받은 질문, 내 답변, 아쉬웠던 점을 남기면 다음 면접에서 훨씬 잘할 수 있어요.<br>질문을 한 줄씩 붙여넣기만 해도 돼요.</div><button class="btn p" style="margin-top:14px" onclick="openRev()">＋ 첫 면접 기록하기</button></div>`
  :rvView==='card'?(L.length?`<div class="rvgrid">${L.map(r=>{const pos=(r.signals||[]).filter(x=>RV_POS.includes(x)).length,rs=RV_RES.find(x=>x[0]===r.result);
   return `<button class="rv" onclick="viewRev('${r.id}')">${dayBox(r.date)}<div style="min-width:0">${r.mood!=null&&RV_MOOD[r.mood]?`<span class="mood" title="${RV_MOOD[r.mood][1]}">${RV_MOOD[r.mood][0]}</span>`:''}
    <div class="co">${esc(rvCo(r))}</div><div class="sub" style="font-size:.85rem">${esc([rvRole(r),r.round].filter(Boolean).join(' · '))}${r.time?' · '+esc(r.time):''}</div>
@@ -1455,6 +1455,18 @@ function renderRev(){const A=[...D.reviews].sort((a,b)=>(b.date||'').localeCompa
  :(allQ.length?allQ.map(x=>{const inBank=D.prep.qa.some(y=>y.q===x.q);return `<div class="rvq" style="background:var(--card)"><div style="display:flex;gap:8px;align-items:flex-start"><div class="q" style="flex:1">${esc(x.q)}</div>${x.self?`<span class="chip">${RV_SELF.find(s=>s[0]===x.self)?.[1]||''}</span>`:''}</div>
   <div class="sub" style="font-size:.8rem">${esc(rvCo(x.r))} · ${fullDate(x.r.date)}</div>${x.a?`<div class="a"><span class="sub">내 답변</span><br>${esc(x.a)}</div>`:''}${x.fix?`<div class="fx">✨ 다음엔 이렇게<br>${esc(x.fix)}</div>`:''}
   <div style="text-align:right;margin-top:6px">${inBank?'<span class="sub" style="font-size:.8rem">✔ 질문 은행에 있음</span>':`<button class="btn s" onclick="rvToBank('${x.r.id}','${x.id}')">❓ 면접 질문 은행에 담기</button>`}</div></div>`}).join(''):'<div class="card sub">조건에 맞는 질문이 없어요.</div>')}`}
+function rvAnaHTML(q){const all=[...D.analyses].sort((a,b)=>(a.created||'').localeCompare(b.created||'')),no=new Map(all.map((x,i)=>[x.id,i+1]));
+ const C=all.filter(x=>x.confirmed&&(!q||[anaCo(x),x.ctype,x.info.biz,x.pitch,x.memo,(x.firm||{}).focus].join(' ').toLowerCase().includes(q))).sort((a,b)=>(b.confirmedAt||'').localeCompare(a.confirmedAt||''));
+ if(!D.analyses.some(x=>x.confirmed))return `<div class="card" style="text-align:center;padding:30px"><div style="font-size:2rem">📁</div><div style="font-weight:700;margin:6px 0">아직 확정한 회사 분석이 없어요</div><div class="sub">🔍 회사 분석에서 다 정리한 카드의 <b>✅ 분석 확정</b>을 누르면 여기로 모여요.</div><button class="btn p" style="margin-top:12px" onclick="show('ana')">🔍 회사 분석으로</button></div>`;
+ return C.length?`<div style="display:flex;flex-direction:column;gap:12px">${C.map(x=>{const R=anaRatios(x),fm=isFirm(x),F=x.firm||{},ac=(x.acct||[]).map(k=>ACCT.find(y=>y[0]===k)).filter(Boolean),rv=D.reviews.filter(r=>coMatch(rvCo(r),anaCo(x))===2);
+  return `<div class="card"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b style="color:var(--acc-t)">No.${no.get(x.id)}</b><span style="font-weight:800;font-size:1.15rem">${esc(anaCo(x))}</span><span class="chip">${esc(x.ctype)}</span>${auditBadge(x)}${rv.length?`<span class="chip">📝 면접 ${rv.length}번</span>`:''}
+   <span style="margin-left:auto;display:flex;gap:6px"><button class="btn s" onclick="anaOpen='${x.id}';show('ana')">✏️ 수정</button><button class="btn s" onclick="rvAnaUn('${x.id}')">확정 해제</button><button class="btn s d" onclick="rvAnaDel('${x.id}')">삭제</button></span></div>
+   <div class="sub" style="margin-top:4px">${esc((fm?F.focus:x.info.biz)||'')}${x.confirmedAt?' · 확정 '+md(x.confirmedAt):''}</div>
+   ${fm?`<div style="margin-top:6px">${[F.pros,F.staff&&'직원 '+F.staff,F.clients&&'거래처 '+F.clients,F.program].filter(Boolean).map(esc).join(' · ')}</div>`:R?`<div class="nums" style="margin-top:10px"><div><b>${eokTxt(R.c.sales,x.unit)}</b><span>${esc(R.y)}년 매출</span></div><div><b>${R.growth==null?'—':f1(R.growth)+'%'}</b><span>매출 증가율</span></div><div><b>${R.opm==null?'—':f1(R.opm)+'%'}</b><span>영업이익률</span></div><div><b>${R.debt==null?'—':f1(R.debt)+'%'}</b><span>부채비율</span></div></div>`:''}
+   ${ac.length?`<div style="margin-top:10px">${ac.map(y=>`<div style="padding:2px 0">🎯 <b>${y[1]}</b> — <span class="sub">${y[2]}</span></div>`).join('')}</div>`:''}
+   ${x.pitch?`<div class="rvbox" style="margin-top:10px">🗣️ ${esc(x.pitch)}</div>`:''}</div>`}).join('')}</div>`:'<div class="card sub">검색 결과가 없어요.</div>'}
+function rvAnaUn(id){const a=D.analyses.find(x=>x.id===id);if(!a)return;a.confirmed=false;save();renderRev();toast('확정을 해제했어요 (회사 분석에는 그대로 있어요)')}
+function rvAnaDel(id){if(!confirm('이 회사 분석 카드를 완전히 삭제할까요? (회사 분석 메뉴에서도 사라져요)'))return;D.analyses=D.analyses.filter(x=>x.id!==id);save();renderRev()}
 function viewRev(id){const r=D.reviews.find(x=>x.id===id);if(!r)return;const rs=RV_RES.find(x=>x[0]===r.result),sg=r.signals||[];
  dlg(`📝 ${esc(rvCo(r))} 면접`,`<div class="rvd"><div style="display:flex;gap:14px;align-items:flex-start">${dayBox(r.date)}<div style="flex:1;min-width:0">
   <div style="font-weight:800;font-size:1.2rem">${esc(rvCo(r))} <span class="sub" style="font-size:.95rem;font-weight:400">${esc(rvRole(r))}</span></div>
@@ -1630,26 +1642,49 @@ const TYPE_CHK={
  tax:['거래처 수와 주요 업종 (법인·개인 비율)','세무사·직원 수 → 1인당 담당 거래처','사용 프로그램 (세무사랑·더존)','주력 분야 (기장, 양도·상속, 법인 컨설팅 등)','홈페이지·블로그에서 강조하는 서비스','신고 시즌 근무 방식','리뷰 (근속, 분위기)'],
  cpa:['감사와 세무 업무 비중','주요 클라이언트 규모·업종','감사 시즌 일정과 출장 여부','구성원 수와 회계사 비율','홈페이지의 서비스 분야','리뷰 (시즌 강도, 교육)']};
 const typeChk=a=>/세무사/.test(a.ctype)?TYPE_CHK.tax:/회계법인|회계사무/.test(a.ctype)?TYPE_CHK.cpa:TYPE_CHK.corp;
-let anaOpen='',anaF='전체';
+let anaOpen='',anaF='전체',anaQ='';
+const ACCT=[
+ ['group','연결결산 · 계열사 거래','자회사나 계열사가 있어서, 연결결산과 계열사 간 거래(내부거래) 정리가 중요한 회사로 보였습니다.'],
+ ['listed','상장사 · 분기 공시','상장사라 분기마다 결산 일정이 빠르고 공시 기준이 엄격할 거라고 생각했습니다.'],
+ ['fx','해외 매출·수입 · 외화','해외 매출이나 수입 비중이 있어서, 외화 채권·채무와 환율 변동 처리가 중요해 보였습니다.'],
+ ['mfg','제조·재고 · 원가','제품을 만들고 재고를 가진 회사라, 재고 실사와 원가 계산을 정확히 하는 게 중요해 보였습니다.'],
+ ['grow','성장 중 · 업무량 증가','매출이 늘고 있어서 결산·세무 업무량도 함께 늘고 있을 거라고 생각했습니다.'],
+ ['margin','이익률 하락·적자 · 비용 관리','매출은 늘었지만 이익률이 줄고 있어서, 비용과 원가를 숫자로 꼼꼼히 관리하는 역할이 중요해 보였습니다.'],
+ ['debt','차입금 많음 · 자금 관리','부채 비중이 있는 편이라 자금 일정과 차입금 관리가 중요한 회사로 보였습니다.'],
+ ['ar','외상 매출 많음 · 채권 관리','매출채권 비중이 커서 미수금 관리가 중요한 업무일 것 같았습니다.'],
+ ['rnd','정부과제·R&D · 보조금 정산','연구개발과 정부과제가 있으면 보조금 회계처리와 연구비 정산이 꼼꼼해야 한다고 알고 있습니다.'],
+ ['project','프로젝트·수주형 매출 · 매출 인식','수주·프로젝트 단위 매출이라 매출을 언제 인식하는지가 중요한 회사로 보였습니다.'],
+ ['audit','외부감사 대상 · 감사 대응','외부감사 대상이라 감사 일정에 맞춰 자료를 준비하는 게 중요한 회사로 보였습니다.']];
+function acctSuggest(a){const R=anaRatios(a),S=new Set(),L=a.info.listed||'';
+ if(/코스피|코스닥|코넥스|상장/.test(L)&&!/비상장/.test(L))S.add('listed');if(auditState(a).s==='y')S.add('audit');
+ if(R){if(R.growth!=null&&R.growth>=10)S.add('grow');if(R.debt!=null&&R.debt>150)S.add('debt');if(R.ard!=null&&R.ard>75)S.add('ar');
+  const F=R.F.filter(r=>r.op!=null&&r.sales);if(F.length>=2&&F[F.length-1].op/F[F.length-1].sales<F[0].op/F[0].sales-0.01)S.add('margin');if(R.opm!=null&&R.opm<0)S.add('margin')}
+ if(/제조|생산|공장|부품|칩|카드|가전/.test(a.info.biz||''))S.add('mfg');if(/자회사|계열|그룹|연결/.test((a.info.biz||'')+(a.info.news||'')+(a.memo||'')))S.add('group');
+ if(/해외|수출|글로벌|BMW|환율/.test((a.info.biz||'')+(a.info.news||'')))S.add('fx');return [...S]}
 function openAnaFor(jobId){let a=D.analyses.find(x=>x.jobId===jobId);if(!a){a=blankAna(jobId);D.analyses.push(a);save()}anaOpen=a.id;show('ana')}
 function renderAna(){const a=D.analyses.find(x=>x.id===anaOpen);if(a)return renderAnaOne(a);
  D.analyses.forEach(x=>{x.ctype=x.ctype||'중소기업';x.audit=x.audit||'auto';x.firm=x.firm||{}});
  const act=D.jobs.filter(j=>j.stage!=='종료'&&!D.analyses.some(x=>x.jobId===j.id));
  const F=['전체',...CTYPES.filter(t=>D.analyses.some(x=>x.ctype===t)),'✅ 외감'];
- const L=[...D.analyses].filter(x=>anaF==='전체'||(anaF==='✅ 외감'?auditState(x).s==='y':x.ctype===anaF)).sort((a,b)=>(b.created||'').localeCompare(a.created||''));
+ const q=anaQ.toLowerCase().trim(),all=[...D.analyses].sort((a,b)=>(a.created||'').localeCompare(b.created||'')),no=new Map(all.map((x,i)=>[x.id,i+1]));
+ const L=all.filter(x=>(anaF==='전체'||(anaF==='✅ 외감'?auditState(x).s==='y':x.ctype===anaF))&&(!q||[anaCo(x),x.ctype,x.info.biz,x.info.news,x.memo,x.pitch,(x.firm||{}).focus].join(' ').toLowerCase().includes(q))).reverse();
  $('p-ana').innerHTML=`<div class="h"><h2>🔍 회사 분석</h2><select id="anaNew" style="font-weight:400"><option value="">지원현황에서 회사 고르기</option>${act.map(j=>`<option value="${j.id}">${esc(j.company)}</option>`).join('')}<option value="__">✏️ 직접 입력</option></select><button class="btn p" onclick="const v=$('anaNew').value;if(!v){toast('회사를 골라주세요');return}if(v==='__'){const a=blankAna();D.analyses.push(a);save();anaOpen=a.id;renderAna()}else openAnaFor(v)">＋ 분석 카드 만들기</button><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
  <div class="card" style="margin-bottom:14px"><h3>💡 이렇게 쓰면 빨라요</h3><div style="line-height:1.85">
   1. <b>＋ 분석 카드 만들기</b> → 회사 유형만 고르기<br>
   2. 다트·기업정보 화면의 재무 표를 <b>통째로 복사 → 📋 붙여넣어 자동 채우기</b> (매출·이익·자산·부채가 알아서 들어가요)<br>
   3. 비율·외감 여부·맞춤 역질문·답변 초안은 <b>자동</b>으로 만들어져요<br>
   <span class="sub">입력한 내용은 바로 내 계정에 저장되고, 아래 카드로 계속 남아요. 폰에서도 그대로 보여요.</span></div></div>
- ${D.analyses.length?`<div class="seg" style="margin-bottom:12px;flex-wrap:wrap">${F.map(t=>`<button class="${anaF===t?'on':''}" onclick="anaF='${t}';renderAna()">${t} ${t==='전체'?D.analyses.length:t==='✅ 외감'?D.analyses.filter(x=>auditState(x).s==='y').length:D.analyses.filter(x=>x.ctype===t).length}</button>`).join('')}</div>
+ ${D.analyses.length?`<input type="search" id="anaS" placeholder="🔎 회사명·사업·메모 검색" value="${esc(anaQ)}" style="width:100%;max-width:420px;margin-bottom:10px" oninput="anaQ=this.value;clearTimeout(window._at);window._at=setTimeout(()=>{renderAna();const e=$('anaS');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)"><br><div class="seg" style="margin-bottom:12px;flex-wrap:wrap">${F.map(t=>`<button class="${anaF===t?'on':''}" onclick="anaF='${t}';renderAna()">${t} ${t==='전체'?D.analyses.length:t==='✅ 외감'?D.analyses.filter(x=>auditState(x).s==='y').length:D.analyses.filter(x=>x.ctype===t).length}</button>`).join('')}</div>
  <div class="anagrid">${L.map(x=>{const R=anaRatios(x),fm=isFirm(x),f=x.firm||{};return `<button class="anac" onclick="anaOpen='${x.id}';renderAna()">
-  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><span class="chip">${esc(x.ctype)}</span>${auditBadge(x)}</div>
+  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--acc-t)">No.${no.get(x.id)}</b><span class="chip">${esc(x.ctype)}</span>${auditBadge(x)}${x.confirmed?'<span class="res next">📁 확정</span>':''}</div>
   <div style="font-weight:800;font-size:1.08rem">${esc(anaCo(x))}</div><div class="sub" style="font-size:.85rem">${esc((fm?f.focus:x.info.biz)||'주요 업무 미입력')}</div>
   <div style="margin-top:6px;font-size:.88rem">${fm?[f.pros&&'세무사·회계사 '+f.pros,f.staff&&'직원 '+f.staff,f.clients&&'거래처 '+f.clients,f.program].filter(Boolean).map(esc).join(' · ')||'<span class="sub">사무소 정보 미입력</span>'
    :R?`${esc(R.y)}년 매출 ${eokTxt(R.c.sales,x.unit)}${R.opm!=null?` · 영업이익률 ${f1(R.opm)}%`:''}${R.debt!=null?` · 부채비율 ${f1(R.debt)}%`:''}`:'<span class="sub">재무 숫자 미입력</span>'}</div>
   <div class="sub" style="font-size:.8rem;margin-top:6px">체크 ${Object.values(x.checks||{}).filter(Boolean).length}/${typeChk(x).length} · ${x.pitch?'답변 준비됨 ✔':'답변 아직'}${x.created?' · '+md(x.created):''}</div></button>`}).join('')||'<div class="sub">해당하는 카드가 없어요.</div>'}</div>`:'<div class="card sub">아직 분석한 회사가 없어요. 면접 잡힌 회사부터 하나 골라보세요.</div>'}
+ <div class="card" style="margin-top:14px"><h3>🎯 회계 직무는 "회사 소개"가 아니라 "회계 담당자 눈"으로 말하세요</h3>
+  <div class="two"><div class="rvbox bad"><b>😵 기계 같다는 말을 듣는 답</b><br>"귀사는 2009년에 설립되어 IC칩, 블랙박스, 로봇청소기 사업을 하고 있으며 대표님 인사말처럼 고객 중심…" → 홈페이지를 외운 느낌</div>
+  <div class="rvbox good"><b>🌼 회계 담당자다운 답</b><br>"매출은 3년째 늘었는데 영업이익률은 줄고 있는 걸 봤습니다. 해외 매출이 커지면서 환율과 원가 관리가 중요해 보였고, 저는 결산과 원가 쪽에서 바로 도움을 드릴 수 있다고 생각했습니다."</div></div>
+  <div style="margin-top:10px;line-height:1.8">공식: <b>사실 1개</b> (숫자나 소식) → <b>그래서 회계팀에 무슨 일이 생기는지</b> (아래 '회계 포인트') → <b>내 경험 1개</b><br><span class="sub">제품 이름·연혁·비전 문구는 외울 필요 없어요. 면접관도 회계 지원자에게 그걸 기대하지 않아요. 숫자를 "읽을 줄 안다"는 게 가장 큰 차별점이에요.</span></div></div>
  <div class="card src" style="margin-top:14px"><h3>🔎 어디서 찾나요? (회사 규모별)</h3><div style="line-height:1.9">
   • <b>외감·상장·중견기업</b> → <b>DART 전자공시</b> (<a href="https://dart.fss.or.kr" target="_blank" rel="noopener">dart.fss.or.kr</a>) 회사명 검색 → 감사보고서 → 재무상태표·손익계산서. 표를 복사해서 붙여넣으면 돼요.<br>
   • <b>다트에 없는 작은 중소기업</b> → 사람인·잡코리아 <b>기업정보</b>(매출액·사원수·설립일), 크레딧잡(직원 수·입퇴사), 잡플래닛(리뷰). 보통 매출액·영업이익 정도만 나와요. <b>있는 숫자만 넣어도 같은 틀로 돼요</b> (빈칸은 계산에서 빠져요).<br>
@@ -1665,7 +1700,7 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
   <div class="tw"><table class="fin"><thead><tr><th>항목</th>${a.fin.map((r,i)=>`<th><input value="${esc(r.y)}" style="text-align:center;font-weight:700;min-width:70px" onchange="anaSet('fin.${i}.y',this.value.trim());renderAna()" aria-label="연도"></th>`).join('')}</tr></thead>
   <tbody>${FIN_ROWS.map(([k,l])=>`<tr><td>${l}</td>${a.fin.map((r,i)=>`<td><input inputmode="decimal" value="${esc(r[k]??'')}" onchange="anaSet('fin.${i}.${k}',this.value.trim());renderAna()" aria-label="${r.y} ${l}"></td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
  <div class="card" style="margin-bottom:14px"><h3>📊 숫자 읽기 ${R?`<span class="sub" style="font-weight:400;font-size:.85rem">${esc(R.y)}년 기준</span>`:''}</h3>${ratioCards(R)}${auditCheck(a)}</div>`;
- $('p-ana').innerHTML=`<div class="h"><h2>🔍 ${esc(anaCo(a))}</h2>${auditBadge(a)}<button class="btn" onclick="anaOpen='';renderAna()">← 카드 목록</button><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
+ $('p-ana').innerHTML=`<div class="h"><h2>🔍 ${esc(anaCo(a))}</h2>${auditBadge(a)}${a.confirmed?`<button class="btn" onclick="anaConfirm(false)">📁 확정됨 · 해제</button>`:`<button class="btn p" onclick="anaConfirm(true)">✅ 분석 확정 → 면접 기록 폴더로</button>`}<button class="btn" onclick="anaOpen='';renderAna()">← 카드 목록</button><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
  <div class="card" style="margin-bottom:14px"><div class="form">
   ${!a.jobId?`<label>회사명<input value="${esc(a.company)}" onchange="anaSet('company',this.value.trim())"></label>`:`<label>회사명 (지원현황 공고)<input value="${esc(anaCo(a))}" disabled></label>`}
   <label>회사 유형<select onchange="anaSet('ctype',this.value);renderAna()">${CTYPES.map(t=>`<option ${a.ctype===t?'selected':''}>${t}</option>`).join('')}</select></label>
@@ -1682,6 +1717,9 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
   ${inp('taxAgent','세무 신고','예: 세무사무실 위탁 / 자체')}${inp('ceo','대표','')}
   <label class="w">최근 소식 · 홈페이지에서 본 것<textarea rows="2" onchange="anaSet('info.news',this.value.trim())">${esc(I.news)}</textarea></label></div></div>`}
  ${finTable}
+ ${fm?'':`<div class="card chk" style="margin-bottom:14px"><h3>🎯 이 회사의 회계 포인트 (면접에서 말할 거리) <button class="btn s" onclick="anaAcctAuto()">✨ 숫자로 자동 추천</button></h3>
+  <div class="sub" style="margin-bottom:6px">회사 정보를 "그래서 회계팀에 무슨 일이 있을까?"로 바꾼 거예요. 1~2개만 골라 답변에 쓰세요.</div>
+  ${ACCT.map(([k,t,say])=>`<label><input type="checkbox" ${(a.acct||[]).includes(k)?'checked':''} onchange="anaAcct('${k}',this.checked)"> <span><b>${t}</b>${(a.acct||[]).includes(k)?`<br><span class="sub" style="font-size:.86rem">🗣️ ${say}</span>`:''}</span></label>`).join('')}</div>`}
  <div class="two" style="margin-bottom:14px"><div class="card chk"><h3>✅ ${esc(a.ctype)} 지원자라면 이걸 보세요</h3>
   ${chk.map((c,i)=>`<label><input type="checkbox" ${a.checks[i]?'checked':''} onchange="a_chk(${i},this.checked)"> ${esc(c)}</label>`).join('')}</div>
   <div class="card"><h3>🙋 이 회사 맞춤 역질문</h3>${anaQuestions(a).map(q=>`<div class="mq" style="grid-template-columns:minmax(0,1fr) auto"><div><div class="q">${esc(q.q)}</div><div class="why">💡 ${esc(q.why)}</div></div><button class="btn s" onclick="mqAddCustom(${JSON.stringify(q.q).replace(/"/g,'&quot;')},${JSON.stringify(q.why).replace(/"/g,'&quot;')})">⭐ 담기</button></div>`).join('')||'<div class="sub">사업 내용이나 숫자를 넣으면 만들어져요.</div>'}</div></div>
@@ -1690,6 +1728,9 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
   <div class="sub" style="font-size:.85rem;margin-top:6px">사업 하나 + 숫자 하나 + 내 업무와 연결 하나. 30초 안쪽이면 충분해요. 📌 면접 직전 한 장에도 나와요.</div></div>
  <div class="card"><h3>📎 메모 (리뷰, 들은 이야기, 출퇴근 등)</h3><textarea rows="4" style="width:100%" onchange="anaSet('memo',this.value)">${esc(a.memo)}</textarea>
   <div style="text-align:right;margin-top:10px"><button class="btn s d" onclick="if(confirm('이 회사 분석 카드를 삭제할까요?')){D.analyses=D.analyses.filter(x=>x.id!=='${a.id}');anaOpen='';save();renderAna()}">카드 삭제</button></div></div>`}
+function anaAcct(k,v){const a=D.analyses.find(x=>x.id===anaOpen);a.acct=(a.acct||[]).filter(x=>x!==k);if(v)a.acct.push(k);save();renderAna()}
+function anaAcctAuto(){const a=D.analyses.find(x=>x.id===anaOpen),S=acctSuggest(a);if(!S.length){toast('숫자나 사업 내용을 더 넣으면 추천해 드려요');return}a.acct=[...new Set([...(a.acct||[]),...S])];save();renderAna();toast(`${S.length}개를 추천했어요. 아니면 체크를 풀어주세요`)}
+function anaConfirm(v){const a=D.analyses.find(x=>x.id===anaOpen);a.confirmed=v;a.confirmedAt=v?today():'';save();renderAna();toast(v?'📁 면접 기록 → 회사분석 확정 폴더에 넣었어요':'확정을 해제했어요')}
 function a_chk(i,v){const a=D.analyses.find(x=>x.id===anaOpen);a.checks[i]=v;save()}
 /* 붙여넣기 자동 채우기 */
 const PASTE_LBL={sales:/^(매출액|수익\s*\(매출액\)|영업수익|매출)(?![가-힣])/,op:/^영업이익|^영업손익|^영업\(손실\)이익/,net:/^당기순이익|^당기순손익|^당기순\(손실\)이익/,asset:/^자산\s*총계/,debt:/^부채\s*총계/,equity:/^자본\s*총계/,curA:/^유동자산/,curL:/^유동부채/,ar:/^매출채권/};
@@ -1741,7 +1782,8 @@ function anaDraft(){const a=D.analyses.find(x=>x.id===anaOpen),R=anaRatios(a),I=
   else s2=o?`${R.y}년 매출이 ${sv} 정도이고, ${o}`:`${R.y}년 매출이 ${sv} 정도인 것을 확인했습니다.`}
  if(I.news)s2+=` 최근 ${I.news.split(/\n/)[0].replace(/[.。]$/,'')} 소식도 봤습니다.`;
  const need=R&&R.growth!=null&&R.growth>=10?'회사가 커지는 만큼 결산과 세무 신고를 정확하게 챙기는 일':R&&R.debt!=null&&R.debt>150?'자금 일정과 차입금 관리':R&&R.ard!=null&&R.ard>75?'매출채권과 미수금 관리':/위탁|세무사/.test(I.taxAgent||'')?'세무사무실에 넘길 자료를 정확하게 준비하는 일':'정확한 결산과 증빙 관리';
- const kw=U[0]?U[0].word:'회계 실무';
+ const kw=U[0]?U[0].word:'회계 실무',ap=(a.acct||[]).map(k=>ACCT.find(x=>x[0]===k)).filter(Boolean)[0];
+ if(ap){a.pitch=[s1,s2].filter(Boolean).join(' ')+`\n${ap[2]} 저는 '${kw}' 경험이 있어서 이 부분에서 바로 도움을 드릴 수 있다고 생각해 지원하게 되었습니다.`;save();renderAna();toast('초안을 만들었어요. 내 말투로 다듬어 주세요');return}
  a.pitch=[s1,s2].filter(Boolean).join(' ')+`\n그래서 이 회사에서는 ${need}이 중요하다고 생각했고, 제가 가진 '${kw}' 경험으로 바로 도움을 드릴 수 있겠다고 생각해 지원하게 되었습니다.`;
  save();renderAna();toast('초안을 만들었어요. 내 말투로 다듬어 주세요')}
 
