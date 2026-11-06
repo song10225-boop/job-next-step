@@ -300,6 +300,15 @@ tr.clk{cursor:pointer}tr.clk:hover{background:var(--hover2)}
 .indpick button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px 12px;cursor:pointer;font:inherit;color:var(--ink)}
 .indpick button.on{background:var(--yel);border-color:transparent;color:var(--on-acc);font-weight:700}
 @media print{.hide .bq .a,.hide .bsec .ans{filter:none!important}}
+
+/* ---- 한 번에 올리기 ---- */
+.bk-tabs{display:flex;gap:6px;margin-bottom:12px}
+.bk-prev{max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.bk-prev table{font-size:.85rem}.bk-prev td,.bk-prev th{padding:5px 8px;white-space:nowrap}
+.bk-prev tr.dup{background:color-mix(in oklab,#f08c00 10%,var(--card))}.bk-prev tr.off{opacity:.45}
+.bk-sum{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;cursor:pointer;background:var(--yel3)}
+.drop.over{border-color:var(--yel);background:var(--yel2)}
 /* ---- 로그인 잠금 화면 ---- */
 body.locked .top,body.locked main{display:none!important}
 #gate{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 15%,#fff3bf 0,#fffdf5 45%),#fffdf5}
@@ -482,6 +491,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
   <select id="bt" onchange="renderBoard()"><option value="">트랙 전체</option><option>중소기업·경영지원</option><option>세무사사무실</option><option>회계사사무실</option><option>기타</option></select>
   <span class="seg" id="bv"></span>
   <button class="btn" onclick="window.print()">🖨 인쇄</button>
+  <button class="btn" onclick="bulkOpen()">📥 한 번에 올리기</button>
   <button class="btn p" onclick="openJob()">＋ 공고 추가</button></div>
  <details class="card" style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:800">🔎 공고 찾기 바로가기 (트랙별 검색 키워드)</summary><div id="finder"></div></details>
  <div id="boardBody"></div>
@@ -2005,6 +2015,65 @@ function renderBriefOne(b){const U=D.prep.kw,kws=(b.kw||[]).map(id=>U.find(k=>k.
   <textarea rows="2" style="width:100%;margin-top:10px" placeholder="이 회사에 대한 내 메모 (면접 장소, 준비물, 들은 이야기)" onchange="D.briefs.find(x=>x.id==='${b.id}').memo=this.value;save()">${esc(b.memo||'')}</textarea>
   <div style="text-align:right;margin-top:8px"><button class="btn s d" onclick="if(confirm('이 맞춤 카드를 삭제할까요?')){D.briefs=D.briefs.filter(x=>x.id!=='${b.id}');brOpen='';save();renderBrief()}">카드 삭제</button></div></div>
  </div>`}
+
+
+/* ============ 📥 지원 공고 한 번에 올리기 ============ */
+const BK_COLS={company:/^(회사|회사명|기업|기업명|업체|업체명|company)$/i,role:/^(직무|포지션|공고|공고명|공고제목|채용제목|제목|모집분야|role|position|title)$/i,
+ appliedDate:/^(지원일|지원일자|지원날짜|지원 일자|날짜|일자|applied)$/i,deadline:/^(마감|마감일|서류마감|마감일자|접수마감|deadline)$/i,stage:/^(상태|단계|진행|진행상태|진행상황|결과|status)$/i,
+ source:/^(경로|지원경로|채널|사이트|플랫폼|출처|source)$/i,url:/^(링크|주소|url|공고링크|공고url)$/i,salary:/^(연봉|급여|희망연봉|salary)$/i,location:/^(근무지|지역|위치|근무지역|location)$/i,notes:/^(메모|비고|노트|memo|note)$/i,track:/^(트랙|구분|분류)$/i};
+let BK={rows:[],mode:'file'};
+function bkDate(v){if(v==null||v==='')return '';if(typeof v==='number'&&v>20000&&v<80000){const d=new Date(Math.round((v-25569)*864e5));return d.toISOString().slice(0,10)}
+ let t=String(v).trim();let m=t.match(/(20\d{2})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+ m=t.match(/^(\d{2})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);if(m)return `20${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+ m=t.match(/^(\d{1,2})[.\-\/월]\s*(\d{1,2})/);if(m){const y=new Date().getFullYear();return `${y}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`}return ''}
+function bkStage(t,applied){t=String(t||'');if(/불합|탈락|미선정|거절|종료|마감됨|취소/.test(t))return ['종료',/서류/.test(t)?'불합격(서류)':/면접/.test(t)?'불합격(면접)':/취소/.test(t)?'지원 취소':'불합격'];
+ if(/최종\s*합격|오퍼|입사/.test(t))return ['오퍼',''];if(/최종/.test(t))return ['최종',''];if(/면접/.test(t))return ['면접',''];if(/서류\s*합격|서류\s*통과/.test(t))return ['서류합격',''];
+ if(/지원\s*예정|관심|스크랩/.test(t))return [t.includes('예정')?'지원예정':'관심',''];if(/지원|제출|접수|열람|미열람|검토/.test(t)||applied)return ['서류제출',''];return ['관심','']}
+function bkSource(t){t=String(t||'');const tt=t.replace(/\s/g,''),f=SOURCES.find(x=>tt.includes(x.replace(/\s/g,'')));if(f)return f;if(/saramin/i.test(t))return '사람인';if(/jobkorea/i.test(t))return '잡코리아';if(/wanted/i.test(t))return '원티드';if(/추천|지인/.test(t))return '지인추천';if(/헤드/.test(t))return '헤드헌터';return t?'기타':''}
+function bkTrack(co,role,t){const x=(co||'')+' '+(role||'')+' '+(t||'');if(/세무사|세무회계|세무법인|택스|tax/i.test(x))return '세무사사무실';if(/회계법인|회계사무|공인회계/.test(x))return '회계사사무실';return D.goal.tracks.length===1?D.goal.tracks[0]:'중소기업·경영지원'}
+function bkFromTable(rows){rows=rows.filter(r=>r&&r.some(c=>String(c??'').trim()));if(!rows.length)return [];
+ const head=rows[0].map(c=>String(c??'').replace(/\s/g,'').trim()),map={};head.forEach((h,i)=>{for(const [k,re] of Object.entries(BK_COLS))if(map[k]==null&&re.test(h))map[k]=i});
+ let body=rows.slice(1);if(map.company==null){map.company=0;if(rows[0].length>1)map.role=map.role??1;if(rows[0].length>2)map.appliedDate=map.appliedDate??2;body=rows}
+ return body.map(r=>{const g=k=>map[k]!=null?r[map[k]]:'';const co=String(g('company')??'').trim();if(!co)return null;const ad=bkDate(g('appliedDate')),[st,oc]=bkStage(g('stage'),ad);
+  return {company:co,role:String(g('role')??'').trim(),appliedDate:ad,deadline:bkDate(g('deadline')),stage:st,outcome:oc,source:bkSource(g('source')),url:String(g('url')??'').trim(),salary:String(g('salary')??'').trim(),location:String(g('location')??'').trim(),notes:String(g('notes')??'').trim(),track:bkTrack(co,g('role'),g('track'))}}).filter(Boolean)}
+function bkParseText(t){const lines=t.split(/\r?\n/).filter(l=>l.trim());if(!lines.length)return [];
+ const sep=lines.some(l=>l.includes('\t'))?'\t':lines.filter(l=>l.includes(',')).length>lines.length/2?',':lines.some(l=>/\s[\/|]\s/.test(l))?/\s*[\/|]\s*/:null;
+ const rows=lines.map(l=>sep?l.split(sep).map(x=>x.trim()):[l.trim()]);return bkFromTable(rows)}
+function bkMark(){const seen=new Set();BK.rows.forEach(r=>{const key=normCo(r.company)+'|'+(r.role||'').replace(/\s/g,'')+'|'+(r.appliedDate||'');
+  const ex=D.jobs.find(j=>coMatch(j.company,r.company)===2&&((r.role&&j.role&&j.role.replace(/\s/g,'')===r.role.replace(/\s/g,''))||(r.appliedDate&&j.appliedDate===r.appliedDate)));
+  r.dup=ex?'이미 있음':seen.has(key)?'파일 안 중복':'';r.exId=ex?ex.id:'';r.act=r.act||'skip';r.prev=!r.dup?D.jobs.filter(j=>coMatch(j.company,r.company)===2).length:0;r.on=r.on??!r.dup;seen.add(key)})}
+function bkOpen(){bulkOpen()}
+function bulkOpen(){BK={rows:[],mode:BK.mode||'file'};bkDraw()}
+function bkDraw(){const R=BK.rows,on=R.filter(r=>r.on).length,dup=R.filter(r=>r.dup).length,re=R.filter(r=>r.prev).length;
+ dlg('📥 지원한 공고 한 번에 올리기',`<div class="bk-tabs seg"><button class="${BK.mode==='file'?'on':''}" onclick="BK.mode='file';BK.rows=[];bkDraw()">📄 엑셀·CSV 파일</button><button class="${BK.mode==='paste'?'on':''}" onclick="BK.mode='paste';BK.rows=[];bkDraw()">📋 복사해서 붙여넣기</button></div>
+ ${!R.length?(BK.mode==='file'?`<div class="drop" id="bkDrop" onclick="$('bkF').click()">📄 엑셀(.xlsx)이나 CSV 파일을 여기로 끌어오거나 눌러서 고르세요<div class="sub" style="margin-top:6px">첫 줄에 <b>회사명 · 직무 · 지원일 · 상태 · 경로</b> 같은 제목이 있으면 알아서 맞춰요</div></div><input type="file" id="bkF" accept=".xlsx,.xls,.csv" hidden onchange="bkFile(this.files[0])">
+  <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn s" onclick="bkTemplate()">⬇️ 빈 양식 받기</button><span class="sub" style="font-size:.85rem">양식에 채워서 올리면 가장 정확해요. 사람인·잡코리아에서 받은 엑셀도 그대로 올려보세요.</span></div>`
+ :`<div class="sub" style="margin-bottom:8px;line-height:1.7">엑셀 표를 드래그해서 복사하거나, 메모장에 <b>한 줄에 한 회사</b>씩 적어서 붙여넣으세요.<br>예) <code>그린테크 / 회계 담당 / 2026.11.03</code> 또는 회사명만 한 줄씩</div>
+  <textarea id="bkT" rows="10" style="width:100%" placeholder="회사명	직무	지원일	상태&#10;그린테크	회계 담당	2026.11.03	서류제출&#10;한빛세무회계	기장	11/05	면접&#10;또는&#10;그린테크 / 회계 담당 / 2026.11.03"></textarea>
+  <div style="text-align:right;margin-top:10px"><button class="btn p" onclick="BK.rows=bkParseText($('bkT').value);if(!BK.rows.length){toast('회사명을 못 찾았어요');return}bkMark();bkDraw()">미리보기 →</button></div>`)
+ :`<div class="bk-sum"><span class="chip">전체 ${R.length}건</span><span class="res pass">새로 추가 ${on}건</span>${R.filter(r=>r.act==='update').length?`<span class="res next">🔄 상태 업데이트 ${R.filter(r=>r.act==='update').length}건</span>`:''}${dup?`<span class="res wait">⚠️ 중복 의심 ${dup}건 (기본으로 빼둠)</span>`:''}${re?`<span class="res next">🔁 같은 회사 재지원 ${re}건</span>`:''}</div>
+  <div class="bk-prev"><table><thead><tr><th><input type="checkbox" ${on===R.length?'checked':''} onchange="BK.rows.forEach(r=>r.on=this.checked);bkDraw()" aria-label="전체 선택"></th><th>회사</th><th>직무</th><th>지원일</th><th>단계</th><th>경로</th><th>트랙</th><th></th></tr></thead>
+  <tbody>${R.map((r,i)=>`<tr class="${r.dup?'dup':''} ${r.on?'':'off'}"><td><input type="checkbox" ${r.on?'checked':''} onchange="BK.rows[${i}].on=this.checked;bkDraw()" aria-label="추가"></td><td><b>${esc(r.company)}</b></td><td>${esc(r.role)}</td><td>${esc(r.appliedDate)}</td>
+   <td><select onchange="BK.rows[${i}].stage=this.value" style="padding:2px 4px">${STAGES.map(x=>`<option ${x===r.stage?'selected':''}>${x}</option>`).join('')}</select>${r.outcome?` <span class="sub">${esc(r.outcome)}</span>`:''}</td><td>${esc(r.source)}</td><td>${esc(r.track)}</td>
+   <td>${r.exId?`<select onchange="BK.rows[${i}].act=this.value;bkDraw()" style="padding:2px 4px"><option value="skip" ${r.act==='skip'?'selected':''}>⚠️ 이미 있음 · 건너뛰기</option><option value="update" ${r.act==='update'?'selected':''}>🔄 기존 공고 상태 업데이트</option></select>`:r.dup?`<span class="res wait">${r.dup}</span>`:r.prev?`<span class="res next">🔁 ${r.prev+1}회차</span>`:''}</td></tr>`).join('')}</tbody></table></div>
+  <div class="sub" style="font-size:.82rem;margin-top:8px">지원일이 있으면 '서류제출', 상태에 '불합격'이 있으면 '종료'로 넣어요. 단계는 표에서 바로 바꿀 수 있어요. 재직 중·전 직장 회사는 올린 뒤 배지로 표시돼요.</div>
+  <div style="display:flex;justify-content:space-between;margin-top:12px"><button class="btn" onclick="BK.rows=[];bkDraw()">← 다시 고르기</button><button class="btn p" onclick="bkSave()">✅ ${on}건 올리기${R.filter(r=>r.act==='update').length?` + ${R.filter(r=>r.act==='update').length}건 업데이트`:''}</button></div>`}`);
+ $('dlg').querySelector('.mc').style.width='min(900px,100%)';
+ const d=$('bkDrop');if(d){d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');d.ondrop=e=>{e.preventDefault();d.classList.remove('over');bkFile(e.dataTransfer.files[0])}}}
+function bkFile(f){if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{let rows;if(/\.csv$/i.test(f.name)){let t=r.result;if(typeof t!=='string')t=new TextDecoder('utf-8').decode(t);if(t.includes(' '))t=new TextDecoder('euc-kr').decode(r.result instanceof ArrayBuffer?r.result:new TextEncoder().encode(t));rows=t.split(/\r?\n/).map(l=>bkCsvLine(l))}
+   else{if(typeof XLSX==='undefined'){toast('엑셀 읽기 도구를 불러오지 못했어요. CSV로 저장해서 올려주세요');return}const wb=XLSX.read(new Uint8Array(r.result),{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''})}
+   BK.rows=bkFromTable(rows);if(!BK.rows.length){toast('회사명을 못 찾았어요. 첫 줄 제목을 확인해 주세요');return}bkMark();bkDraw()}catch(e){toast('파일을 읽지 못했어요: '+(e.message||e))}};
+ r.readAsArrayBuffer(f)}
+function bkCsvLine(l){const out=[];let cur='',q=false;for(let i=0;i<l.length;i++){const c=l[i];if(q){if(c==='"'&&l[i+1]==='"'){cur+='"';i++}else if(c==='"')q=false;else cur+=c}else if(c==='"')q=true;else if(c===','){out.push(cur);cur=''}else cur+=c}out.push(cur);return out}
+function bkTemplate(){const rows=[['회사명','직무','지원일','상태','지원경로','서류마감','연봉','근무지','링크','메모'],['그린테크(예시)','회계 담당','2026-11-03','서류제출','사람인','2026-11-10','3,800','고양시','https://','예시 줄은 지우고 쓰세요']];
+ if(typeof XLSX!=='undefined'){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[18,16,12,10,10,12,8,10,24,24].map(w=>({wch:w}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'지원목록');XLSX.writeFile(wb,'지원목록_양식.xlsx')}
+ else dl('지원목록_양식.csv',new Blob(['﻿'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'}))}
+function bkSave(){const L=BK.rows.filter(r=>r.on),U=BK.rows.filter(r=>r.exId&&r.act==='update');if(!L.length&&!U.length){toast('올릴 줄을 골라주세요');return}
+ U.forEach(r=>{const j=D.jobs.find(x=>x.id===r.exId);if(!j)return;if(STAGES.indexOf(r.stage)!==STAGES.indexOf(j.stage))setStage(j,r.stage);if(r.outcome)j.outcome=r.outcome;['deadline','source','url','salary','location'].forEach(k=>{if(r[k]&&!j[k])j[k]=r[k]});if(r.appliedDate&&!j.appliedDate)j.appliedDate=r.appliedDate;if(r.notes)j.notes=(j.notes?j.notes+'\n':'')+r.notes});
+ L.forEach(r=>{const j={id:uid(),company:r.company,role:r.role,stage:'관심',priority:2,track:r.track,jtype:'',scope:'',deadline:r.deadline,source:r.source,url:r.url,salary:r.salary,location:r.location,contact:'',resume:'',appliedDate:r.appliedDate,outcome:r.outcome,notes:r.notes,events:[],created:today()};
+  setStage(j,r.stage);if(r.stage==='종료'&&!j.outcome)j.outcome='불합격';if(!r.appliedDate&&STAGES.indexOf(r.stage)>=2&&r.stage!=='종료')j.appliedDate='';D.jobs.push(j)});
+ save();closeDlg();boardView='co';refresh();toast(`${L.length}건 올리기${U.length?` · ${U.length}건 상태 업데이트`:''} 완료 🌼 회사별 이력으로 보여드릴게요`)}
 
 /* ============ 로그인 · 클라우드 저장 ============ */
 const firebaseConfig={apiKey:"AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",authDomain:"taxdiary-calendar.firebaseapp.com",projectId:"taxdiary-calendar",storageBucket:"taxdiary-calendar.firebasestorage.app",messagingSenderId:"4033600838",appId:"1:4033600838:web:6d41b6767d129ad0845947"};
