@@ -281,6 +281,25 @@ tr.clk{cursor:pointer}tr.clk:hover{background:var(--hover2)}
 .mine{background:var(--okbg);border-radius:12px;padding:12px 14px}
 .say{background:var(--tipbg);border-radius:12px;padding:12px 14px;white-space:pre-wrap;line-height:1.7}
 .indmini{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;background:var(--yel3)}
+
+/* ---- 맞춤 면접 카드 ---- */
+.bhero{border-radius:18px;padding:20px 22px;background:linear-gradient(130deg,color-mix(in oklab,var(--yel) 75%,#fff),var(--yel));color:var(--on-acc);margin-bottom:14px}
+.bhero .co{font-size:1.5rem;font-weight:800}
+.bhero .kw3{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px}
+.bhero .kw3 span{background:color-mix(in oklab,#fff 78%,transparent);border-radius:12px;padding:7px 14px;font-weight:800;font-size:1.1rem}
+.bhero .kw3 i{font-style:normal;opacity:.6;font-weight:700;margin-right:4px}
+.bsec{margin-bottom:14px}
+.bsec h3 .n{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--yel);color:var(--on-acc);align-items:center;justify-content:center;font-size:.85rem;margin-right:2px}
+.cl{border-left:3px solid var(--yel);padding:4px 0 4px 12px;margin-bottom:10px}
+.cl .hl{background:color-mix(in oklab,var(--yel) 35%,transparent);border-radius:4px;padding:0 3px}
+.bq{border-bottom:1px dashed var(--line);padding:8px 0}.bq:last-child{border-bottom:0}
+.bq .q{font-weight:700}.bq .a{white-space:pre-wrap;margin-top:3px;color:var(--ink2)}
+.hide .bq .a,.hide .bsec .ans{filter:blur(6px);cursor:pointer;user-select:none}
+.hide .bq .a.show,.hide .bsec .ans.show{filter:none}
+.indpick{display:flex;flex-wrap:wrap;gap:6px}
+.indpick button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px 12px;cursor:pointer;font:inherit;color:var(--ink)}
+.indpick button.on{background:var(--yel);border-color:transparent;color:var(--on-acc);font-weight:700}
+@media print{.hide .bq .a,.hide .bsec .ans{filter:none!important}}
 /* ---- 로그인 잠금 화면 ---- */
 body.locked .top,body.locked main{display:none!important}
 #gate{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 15%,#fff3bf 0,#fffdf5 45%),#fffdf5}
@@ -502,6 +521,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 <section class="panel" id="p-rev"></section>
 <section class="panel" id="p-myq"></section>
 <section class="panel" id="p-ind"></section>
+<section class="panel" id="p-brief"></section>
 <section class="panel" id="p-ana"></section>
 <section class="panel" id="p-me"></section>
 <section class="panel" id="p-deco"></section>
@@ -639,9 +659,9 @@ function defaultQA(){const Q=[
 ['트랙별','회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?','계획이 없다면 실무 보조로서의 강점과 배우고 싶은 분야로']];
 return Q.map(([group,track,cat,q,tip])=>({id:uid(),group,track,cat,q,tip,a:'',ready:false,star:false}))}
 const qaGroup=q=>q.group||((q.track||'공통')!=='공통'?'트랙별':'공통');
-function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),reviews:[],analyses:[],indNotes:{},myq:defaultMyQ(),myQuotes:[],updatedAt:''}}
+function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),reviews:[],analyses:[],indNotes:{},briefs:[],myq:defaultMyQ(),myQuotes:[],updatedAt:''}}
 function blankMe(){return {name:'',oneLine:'',typing:['오늘도 한 걸음씩, 꽃피는 중이에요 🌱'],mbti:'',mbtiName:'',mbtiDesc:'',work:[],hobbies:[],now:[],notes:[],diary:{}}}
-function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];if(!Array.isArray(o.analyses))o.analyses=[];if(!o.indNotes||typeof o.indNotes!=='object')o.indNotes={};if(!Array.isArray(o.myq)||!o.myq.length)o.myq=defaultMyQ();o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];if(!Array.isArray(o.analyses))o.analyses=[];if(!o.indNotes||typeof o.indNotes!=='object')o.indNotes={};if(!Array.isArray(o.briefs))o.briefs=[];if(!Array.isArray(o.myq)||!o.myq.length)o.myq=defaultMyQ();o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  if(!(r&&r.v>=3)){const def=defaultQA(),by=new Map(def.map(q=>[q.q,q]));o.prep.qa.forEach(q=>{const d=by.get(q.q);if(d){q.tip=q.tip||d.tip;q.group=q.group||d.group;q.cat=d.cat}});const have=new Set(o.prep.qa.map(q=>q.q));def.filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=3}
  if(!Array.isArray(o.prep.strong))o.prep.strong=[];['kw','cheat'].forEach(k=>{if(!Array.isArray(o.prep[k]))o.prep[k]=[]});if(!o.prep.kwLog)o.prep.kwLog={n:0,last:''};
@@ -658,7 +678,7 @@ function setStage(j,s){j.stage=s;const i=STAGES.indexOf(s);if(s!=='종료')j.max
 
 /* ============ 탭 ============ */
 const TABS=[['dash','🌼 대시보드',()=>renderDash(),'이직 준비'],['profile','👤 내 프로필',()=>renderProfile()],['board','📋 지원현황',()=>renderBoard()],['ana','🔍 회사 분석',()=>renderAna()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],
- ['prep','🎤 이력서·자소서',()=>renderPrep(),'면접'],['qa','❓ 면접 질문',()=>renderQA()],['myq','🙋 나의 질문',()=>renderMyQ()],['ind','📚 업종별 회계',()=>renderInd()],['kw','🔑 키워드 연습',()=>renderKW()],['cheat','📌 면접 직전 한 장',()=>renderCheat()],['rev','📝 면접 기록',()=>renderRev()],
+ ['brief','🎯 맞춤 면접 카드',()=>renderBrief(),'면접'],['prep','🎤 이력서·자소서',()=>renderPrep()],['qa','❓ 면접 질문',()=>renderQA()],['myq','🙋 나의 질문',()=>renderMyQ()],['ind','📚 업종별 회계',()=>renderInd()],['kw','🔑 키워드 연습',()=>renderKW()],['cheat','📌 면접 직전 한 장',()=>renderCheat()],['rev','📝 면접 기록',()=>renderRev()],
  ['people','🤝 인맥·헤드헌터',()=>renderPeople(),'기록'],['stats','📊 통계',()=>renderStats()],
  ['me','🌷 나의 공간',()=>renderMe(),'나'],['deco','🎨 꾸미기',()=>renderDeco()],['set','⚙️ 설정',()=>renderSet()]];
 let cur='dash';
@@ -1414,7 +1434,7 @@ function renderCheat(){const P=D.profile,cs=careerSummary(),C=D.prep.cheat,U=kwU
     ${j.notes?`<div style="margin-top:8px;white-space:pre-wrap">${esc(j.notes)}</div>`:''}${(j.events||[]).filter(e=>e.note).map(e=>`<div class="sub" style="margin-top:4px">📝 ${esc(e.type)}: ${esc(e.note)}</div>`).join('')}
     ${revForJob(j.id,j.company).slice(0,2).map(r=>`<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><b>📝 지난 면접 ${fullDate(r.date)} ${esc(r.round||'')}</b> ${r.mood!=null&&RV_MOOD[r.mood]?RV_MOOD[r.mood][0]:''}${r.improve?`<div style="white-space:pre-wrap">🛠️ ${esc(r.improve)}</div>`:''}${(r.qas||[]).length?`<div class="sub" style="font-size:.88rem">받은 질문: ${r.qas.map(x=>esc(x.q)).join(' / ')}</div>`:''} <button class="btn s" onclick="viewRev('${r.id}')">자세히</button></div>`).join('')}
     ${(()=>{const a=anaFor(j.id,j.company);if(!a)return `<div style="margin-top:8px" class="sub">🔍 회사 분석이 아직 없어요.</div>`;const R=anaRatios(a);const ix=IND.find(i=>i.k===a.ind);return `${ix?`<div style="margin-top:10px"><b>${ix.e} ${ix.n}</b> — ${ix.one}<div class="sub" style="font-size:.88rem">💪 ${ix.mine.replace(/<[^>]+>/g,'')}</div></div>`:''}<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><b>🔍 회사 분석</b> ${esc(a.info.biz||'')}${R?` · ${R.y}년 영업이익률 ${f1(R.opm)}% · 부채비율 ${f1(R.debt)}%`:''}${a.pitch?`<div style="white-space:pre-wrap;margin-top:4px">🗣️ ${esc(a.pitch)}</div>`:''}</div>`})()}
-    <div style="margin-top:8px"><button class="btn s" onclick="openAnaFor('${j.id}')">🔍 회사 분석</button> <button class="btn s" onclick="openJob('${j.id}')">공고 열어서 메모하기</button>${j.url?` <a class="btn s" href="${esc(j.url)}" target="_blank" rel="noopener">공고 보기 ↗</a>`:''}</div></div>`:'<div class="sub">면접 볼 회사를 고르면 일정·연봉·메모가 여기 모여요.</div>'}</div>
+    <div style="margin-top:8px"><button class="btn s p" onclick="brForJob('${j.id}')">🎯 맞춤 카드</button> <button class="btn s" onclick="openAnaFor('${j.id}')">🔍 회사 분석</button> <button class="btn s" onclick="openJob('${j.id}')">공고 열어서 메모하기</button>${j.url?` <a class="btn s" href="${esc(j.url)}" target="_blank" rel="noopener">공고 보기 ↗</a>`:''}</div></div>`:'<div class="sub">면접 볼 회사를 고르면 일정·연봉·메모가 여기 모여요.</div>'}</div>
   <div class="card wide"><div class="cs-h">🔢 숫자로 말하기</div><div class="nums">
    <div><b>${cs.total?fmtM(cs.total):'-'}</b><span>총 회계 경력</span></div><div><b>${tax?fmtM(tax):'-'}</b><span>세무사무실</span></div>
    <div><b>${P.career.length}곳</b><span>경험한 회사</span></div><div><b>${best?esc(best.name):'-'}</b><span>대표 자격증</span></div></div>
@@ -1458,7 +1478,7 @@ function renderRev(){const A=[...D.reviews].sort((a,b)=>(b.date||'').localeCompa
  $('p-rev').innerHTML=`<div class="h"><h2>📝 면접 기록</h2><span class="sub">면접 ${A.length}번 · 받은 질문 ${nQ}개</span><button class="btn" onclick="window.print()">🖨 인쇄</button><button class="btn p" onclick="openRev()">＋ 오늘 면접 기록하기</button></div>
  <div class="rvbar"><input type="search" id="rvS" placeholder="🔎 회사·질문·답변·아쉬운 점 검색" value="${esc(rvQ)}" oninput="rvQ=this.value;clearTimeout(window._rvt);window._rvt=setTimeout(()=>{renderRev();const e=$('rvS');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)">
   <select onchange="rvRes=this.value;renderRev()" aria-label="결과">${[['전체','결과 전체'],...RV_RES].map(([k,l])=>`<option value="${k}" ${rvRes===k?'selected':''}>${l}</option>`).join('')}</select>
-  <span class="seg"><button class="${rvView==='card'?'on':''}" onclick="rvView='card';renderRev()">🗂️ 카드</button><button class="${rvView==='q'?'on':''}" onclick="rvView='q';renderRev()">📚 질문 모아보기</button><button class="${rvView==='ana'?'on':''}" onclick="rvView='ana';renderRev()">📁 회사분석 확정 ${D.analyses.filter(x=>x.confirmed).length}</button></span>
+  <span class="seg"><button class="${rvView==='card'?'on':''}" onclick="rvView='card';renderRev()">🗂️ 카드</button><button class="${rvView==='q'?'on':''}" onclick="rvView='q';renderRev()">📚 질문 모아보기</button><button class="${rvView==='ana'?'on':''}" onclick="rvView='ana';renderRev()">📁 확정 폴더 ${D.analyses.filter(x=>x.confirmed).length+D.briefs.filter(x=>x.confirmed).length}</button></span>
   ${rvView==='q'?`<label class="sub" style="display:flex;gap:4px;align-items:center"><input type="checkbox" ${rvBadOnly?'checked':''} onchange="rvBadOnly=this.checked;renderRev()"> 😓 아쉬웠던 답만</label>`:''}</div>
  ${rvView==='ana'?rvAnaHTML(q):!A.length?`<div class="card" style="text-align:center;padding:34px 20px"><div style="font-size:2.4rem">🌱</div><div style="font-weight:700;font-size:1.1rem;margin:6px 0">면접 보고 온 날, 기억이 생생할 때 적어두세요</div><div class="sub">받은 질문, 내 답변, 아쉬웠던 점을 남기면 다음 면접에서 훨씬 잘할 수 있어요.<br>질문을 한 줄씩 붙여넣기만 해도 돼요.</div><button class="btn p" style="margin-top:14px" onclick="openRev()">＋ 첫 면접 기록하기</button></div>`
  :rvView==='card'?(L.length?`<div class="rvgrid">${L.map(r=>{const pos=(r.signals||[]).filter(x=>RV_POS.includes(x)).length,rs=RV_RES.find(x=>x[0]===r.result);
@@ -1470,18 +1490,19 @@ function renderRev(){const A=[...D.reviews].sort((a,b)=>(b.date||'').localeCompa
  :(allQ.length?allQ.map(x=>{const inBank=D.prep.qa.some(y=>y.q===x.q);return `<div class="rvq" style="background:var(--card)"><div style="display:flex;gap:8px;align-items:flex-start"><div class="q" style="flex:1">${esc(x.q)}</div>${x.self?`<span class="chip">${RV_SELF.find(s=>s[0]===x.self)?.[1]||''}</span>`:''}</div>
   <div class="sub" style="font-size:.8rem">${esc(rvCo(x.r))} · ${fullDate(x.r.date)}</div>${x.a?`<div class="a"><span class="sub">내 답변</span><br>${esc(x.a)}</div>`:''}${x.fix?`<div class="fx">✨ 다음엔 이렇게<br>${esc(x.fix)}</div>`:''}
   <div style="text-align:right;margin-top:6px">${inBank?'<span class="sub" style="font-size:.8rem">✔ 질문 은행에 있음</span>':`<button class="btn s" onclick="rvToBank('${x.r.id}','${x.id}')">❓ 면접 질문 은행에 담기</button>`}</div></div>`}).join(''):'<div class="card sub">조건에 맞는 질문이 없어요.</div>')}`}
-function rvAnaHTML(q){const all=[...D.analyses].sort((a,b)=>(a.created||'').localeCompare(b.created||'')),no=new Map(all.map((x,i)=>[x.id,i+1]));
+function rvAnaHTML(q){const BR=D.briefs.filter(b=>b.confirmed&&(!q||[brCo(b),b.pitch,b.memo].join(' ').toLowerCase().includes(q)));
+ const brHTML=BR.length?`<h3 style="margin:0 0 10px">🎯 확정된 맞춤 카드 (${BR.length})</h3><div class="anagrid" style="margin-bottom:18px">${BR.map(b=>{const kws=(b.kw||[]).map(id=>D.prep.kw.find(k=>k.id===id)).filter(Boolean),a=brAna(b);return `<div class="card"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${(b.inds||[]).map(k=>{const i=IND.find(x=>x.k===k);return i?`<span class="chip">${i.e} ${i.n}</span>`:''}).join('')}</div><div style="font-weight:800;font-size:1.1rem">${esc(brCo(b))}</div><div class="sub" style="font-size:.85rem">🔑 ${kws.map(k=>esc(k.word)).join(' → ')}</div><div class="sub" style="font-size:.8rem">${a?'🔍 '+esc(anaCo(a))+' 분석 연결 · ':''}확정 ${md(b.confirmedAt)}</div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn s p" onclick="brOpen='${b.id}';show('brief')">열기</button><button class="btn s" onclick="brConfirm('${b.id}',false);show('rev')">확정 해제</button></div></div>`}).join('')}</div><h3 style="margin:0 0 10px">🔍 확정된 회사 분석</h3>`:'';const all=[...D.analyses].sort((a,b)=>(a.created||'').localeCompare(b.created||'')),no=new Map(all.map((x,i)=>[x.id,i+1]));
  const C=all.filter(x=>x.confirmed&&(!q||[anaCo(x),x.ctype,x.info.biz,x.pitch,x.memo,(x.firm||{}).focus].join(' ').toLowerCase().includes(q))).sort((a,b)=>(b.confirmedAt||'').localeCompare(a.confirmedAt||''));
- if(!D.analyses.some(x=>x.confirmed))return `<div class="card" style="text-align:center;padding:30px"><div style="font-size:2rem">📁</div><div style="font-weight:700;margin:6px 0">아직 확정한 회사 분석이 없어요</div><div class="sub">🔍 회사 분석에서 다 정리한 카드의 <b>✅ 분석 확정</b>을 누르면 여기로 모여요.</div><button class="btn p" style="margin-top:12px" onclick="show('ana')">🔍 회사 분석으로</button></div>`;
- return C.length?`<div style="display:flex;flex-direction:column;gap:12px">${C.map(x=>{const R=anaRatios(x),fm=isFirm(x),F=x.firm||{},ac=(x.acct||[]).map(k=>ACCT.find(y=>y[0]===k)).filter(Boolean),rv=D.reviews.filter(r=>coMatch(rvCo(r),anaCo(x))===2);
+ if(!D.analyses.some(x=>x.confirmed)&&!D.briefs.some(x=>x.confirmed))return `<div class="card" style="text-align:center;padding:30px"><div style="font-size:2rem">📁</div><div style="font-weight:700;margin:6px 0">아직 확정한 카드가 없어요</div><div class="sub">🔍 회사 분석에서 다 정리한 카드의 <b>✅ 분석 확정</b>을 누르면 여기로 모여요.</div><button class="btn p" style="margin-top:12px" onclick="show('ana')">🔍 회사 분석으로</button></div>`;
+ return brHTML+(C.length?`<div style="display:flex;flex-direction:column;gap:12px">${C.map(x=>{const R=anaRatios(x),fm=isFirm(x),F=x.firm||{},ac=(x.acct||[]).map(k=>ACCT.find(y=>y[0]===k)).filter(Boolean),rv=D.reviews.filter(r=>coMatch(rvCo(r),anaCo(x))===2);
   return `<div class="card"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b style="color:var(--acc-t)">No.${no.get(x.id)}</b><span style="font-weight:800;font-size:1.15rem">${esc(anaCo(x))}</span><span class="chip">${esc(x.ctype)}</span>${auditBadge(x)}${rv.length?`<span class="chip">📝 면접 ${rv.length}번</span>`:''}
    <span style="margin-left:auto;display:flex;gap:6px"><button class="btn s" onclick="anaOpen='${x.id}';show('ana')">✏️ 수정</button><button class="btn s" onclick="rvAnaUn('${x.id}')">확정 해제</button><button class="btn s d" onclick="rvAnaDel('${x.id}')">삭제</button></span></div>
    <div class="sub" style="margin-top:4px">${esc((fm?F.focus:x.info.biz)||'')}${x.confirmedAt?' · 확정 '+md(x.confirmedAt):''}</div>
    ${fm?`<div style="margin-top:6px">${[F.pros,F.staff&&'직원 '+F.staff,F.clients&&'거래처 '+F.clients,F.program].filter(Boolean).map(esc).join(' · ')}</div>`:R?`<div class="nums" style="margin-top:10px"><div><b>${eokTxt(R.c.sales,x.unit)}</b><span>${esc(R.y)}년 매출</span></div><div><b>${R.growth==null?'—':f1(R.growth)+'%'}</b><span>매출 증가율</span></div><div><b>${R.opm==null?'—':f1(R.opm)+'%'}</b><span>영업이익률</span></div><div><b>${R.debt==null?'—':f1(R.debt)+'%'}</b><span>부채비율</span></div></div>`:''}
    ${ac.length?`<div style="margin-top:10px">${ac.map(y=>`<div style="padding:2px 0">🎯 <b>${y[1]}</b> — <span class="sub">${y[2]}</span></div>`).join('')}</div>`:''}
-   ${x.pitch?`<div class="rvbox" style="margin-top:10px">🗣️ ${esc(x.pitch)}</div>`:''}</div>`}).join('')}</div>`:'<div class="card sub">검색 결과가 없어요.</div>'}
+   ${x.pitch?`<div class="rvbox" style="margin-top:10px">🗣️ ${esc(x.pitch)}</div>`:''}</div>`}).join('')}</div>`:(D.analyses.some(x=>x.confirmed)?'<div class="card sub">검색 결과가 없어요.</div>':'<div class="card sub">확정된 회사 분석은 아직 없어요.</div>'))}
 function rvAnaUn(id){const a=D.analyses.find(x=>x.id===id);if(!a)return;a.confirmed=false;save();renderRev();toast('확정을 해제했어요 (회사 분석에는 그대로 있어요)')}
-function rvAnaDel(id){if(!confirm('이 회사 분석 카드를 완전히 삭제할까요? (회사 분석 메뉴에서도 사라져요)'))return;D.analyses=D.analyses.filter(x=>x.id!==id);save();renderRev()}
+function rvAnaDel(id){if(!confirm('이 회사 분석 카드를 완전히 삭제할까요? (회사 분석 메뉴에서도 사라져요)'+anaLinkedMsg(id)))return;D.analyses=D.analyses.filter(x=>x.id!==id);save();renderRev()}
 function viewRev(id){const r=D.reviews.find(x=>x.id===id);if(!r)return;const rs=RV_RES.find(x=>x[0]===r.result),sg=r.signals||[];
  dlg(`📝 ${esc(rvCo(r))} 면접`,`<div class="rvd"><div style="display:flex;gap:14px;align-items:flex-start">${dayBox(r.date)}<div style="flex:1;min-width:0">
   <div style="font-weight:800;font-size:1.2rem">${esc(rvCo(r))} <span class="sub" style="font-size:.95rem;font-weight:400">${esc(rvRole(r))}</span></div>
@@ -1748,7 +1769,7 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
   <textarea rows="5" style="width:100%" onchange="anaSet('pitch',this.value)" placeholder="✨ 초안 만들기를 누르면 위 내용으로 답변을 만들어 드려요">${esc(a.pitch)}</textarea>
   <div class="sub" style="font-size:.85rem;margin-top:6px">사업 하나 + 숫자 하나 + 내 업무와 연결 하나. 30초 안쪽이면 충분해요. 📌 면접 직전 한 장에도 나와요.</div></div>
  <div class="card"><h3>📎 메모 (리뷰, 들은 이야기, 출퇴근 등)</h3><textarea rows="4" style="width:100%" onchange="anaSet('memo',this.value)">${esc(a.memo)}</textarea>
-  <div style="text-align:right;margin-top:10px"><button class="btn s d" onclick="if(confirm('이 회사 분석 카드를 삭제할까요?')){D.analyses=D.analyses.filter(x=>x.id!=='${a.id}');anaOpen='';save();renderAna()}">카드 삭제</button></div></div>
+  <div style="text-align:right;margin-top:10px"><button class="btn s d" onclick="if(confirm('이 회사 분석 카드를 삭제할까요?'+anaLinkedMsg('${a.id}'))){D.analyses=D.analyses.filter(x=>x.id!=='${a.id}');anaOpen='';save();renderAna()}">카드 삭제</button></div></div>
  <div class="card" style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;${a.confirmed?'':'background:var(--yel2)'}"><div style="flex:1;min-width:200px"><b>${a.confirmed?'📁 확정된 분석이에요':'다 정리했나요?'}</b><div class="sub">${a.confirmed?'📝 면접 기록 → 📁 회사분석 확정 탭에서 볼 수 있어요.':'확정하면 📝 면접 기록 → 📁 회사분석 확정 탭에 모여요. 확정 후에도 계속 고칠 수 있어요.'}</div></div>
   ${a.confirmed?`<button class="btn" onclick="anaConfirm(false)">확정 해제</button><button class="btn p" onclick="rvView='ana';show('rev')">📁 폴더 보러 가기</button>`:`<button class="btn p" style="font-size:1.05rem;padding:10px 18px" onclick="anaConfirm(true)">✅ 분석 확정 → 면접 기록 폴더로</button>`}</div>`}
 function anaAcct(k,v){const a=D.analyses.find(x=>x.id===anaOpen);a.acct=(a.acct||[]).filter(x=>x!==k);if(v)a.acct.push(k);save();renderAna()}
@@ -1868,6 +1889,101 @@ function renderInd(){const x=IND.find(i=>i.k===indK)||IND[0],note=D.indNotes[x.k
  <div class="sub" style="font-size:.8rem;margin-top:10px">※ 회계기준·세법·연구비 규정은 바뀔 수 있고 회사·과제마다 기준이 달라요. 면접 전 지원 회사 상황에 맞춰 한 번 더 확인하세요.</div>`}
 function indToQA(k){const x=IND.find(i=>i.k===k);let n=0;x.qs.forEach(q=>{if(!D.prep.qa.some(y=>y.q===q)){D.prep.qa.push({id:uid(),group:'트랙별',track:'공통',cat:x.n,q,tip:x.key.slice(0,2).map(t=>t.replace(/<[^>]+>/g,'')).join(' / '),a:'',ready:false,star:false});n++}});save();toast(n?`${n}개를 질문 은행에 담았어요`:'이미 담겨 있어요')}
 function indMini(a){const x=IND.find(i=>i.k===a.ind);if(!x)return '';return `<div class="indmini"><b>${x.e} ${x.n} 회계 포인트</b> — ${x.one}<ul class="ul" style="margin-top:4px">${x.key.slice(0,3).map(t=>`<li>${t}</li>`).join('')}</ul><div style="margin-top:6px">💪 ${x.mine}</div><button class="btn s" style="margin-top:8px" onclick="indK='${x.k}';show('ind')">📚 업종별 회계 자세히</button></div>`}
+
+
+/* ============ 🎯 맞춤 면접 카드 ============ */
+const IND_RE={retail:/외상|매입|매출|재고|부가|세금계산서|거래처|원장/,mfg:/수출|수입|영세|감가|원가|재고|부가|제조|설비/,svc:/급여|4대|원천|일용|연말|퇴직|인사|근태|채용/,
+ ecom:/매출|카드|부가|정산|대사|세금계산서|증빙|도구/,it:/증빙|법인카드|세금계산서|결산|자금|급여|원천|도구|웹|IT|ERP|더존|아마란스|프로그램|불편/,rnd:/급여|4대|인건비|증빙|법인카드|결산|원천|연말|원칙/};
+let brOpen='',brHide=false;
+const IND_SHORT={retail:['도소매','매입·재고와 외상 관리'],mfg:['제조','원가와 재고 관리'],svc:['서비스','인건비와 원천세 처리'],ecom:['쇼핑몰','판매 채널별 정산 대사'],it:['IT','매출 인식과 정부지원금 정산'],rnd:['연구개발','연구비 비목별 집행과 정산']};
+const brCo=b=>{const j=b.jobId&&D.jobs.find(x=>x.id===b.jobId);return j?j.company:(b.company||'회사')};
+const brAna=b=>(b.anaId&&D.analyses.find(x=>x.id===b.anaId))||(b.noAuto?null:anaFor(b.jobId,brCo(b)));
+const brRe=b=>{const L=(b.inds||[]).map(k=>IND_RE[k]).filter(Boolean);return L.length?new RegExp(L.map(r=>r.source).join('|')+'|결산'):/결산|증빙|급여/};
+function brBuild(b){const re=brRe(b),U=kwUse(),cs=careerSummary(),P=D.profile,I=(b.inds||[]).map(k=>IND.find(i=>i.k===k)).filter(Boolean),a=brAna(b),co=brCo(b);
+ // 1) 키워드 순서: 업종 관련 높은 순, "오래" 류는 맨 뒤
+ const sc=k=>{const t=k.word+' '+(k.proof||'')+' '+(k.so||'');return (t.match(new RegExp(re.source,'g'))||[]).length};
+ const last=U.filter(k=>/오래|깊게/.test(k.word)),rest=U.filter(k=>!last.includes(k)).map((k,i)=>({k,s:sc(k),i})).sort((x,y)=>y.s-x.s||x.i-y.i).map(x=>x.k);
+ b.kw=[...rest.slice(0,3),...last.slice(0,1)].map(k=>k.id);
+ // 2) 강점 3개
+ b.strong=D.prep.strong.filter(x=>x.kind==='s').map((x,i)=>({x,s:((x.title+' '+x.why).match(new RegExp(re.source,'g'))||[]).length,i})).sort((p,q)=>q.s-p.s||q.i-p.i).slice(0,3).map(o=>o.x.id);
+ // 3) 맞춤 1분 자기소개 초안
+ const kws=b.kw.map(id=>U.find(k=>k.id===id)).filter(Boolean),need=I.map(i=>IND_SHORT[i.k][1]).join(', ');
+ b.pitch=`안녕하세요, 회계 경력 ${cs.total?fmtM(cs.total):''}의 ${P.name||D.me.name||''}입니다.\n`+
+  (need?`${josa(co,'은','는')} ${I.map(i=>IND_SHORT[i.k][0]).join('·')} 분야라 ${need}${/[가-힣]$/.test(need)&&(need.slice(-1).charCodeAt(0)-0xAC00)%28?'이':'가'} 특히 중요한 회사라고 알고 있습니다.\n`:'')+
+  kws.filter(k=>!/오래|깊게/.test(k.word)).map(k=>k.line||`${k.word} — ${k.proof}`).join('\n')+
+  `\n${(kws.find(k=>/오래|깊게/.test(k.word))||{}).line||'입사하면 바로 실무에 보탬이 되는 담당자가 되겠습니다.'}`;
+ b.built=today();return b}
+function brForJob(jobId){const b=D.briefs.find(x=>x.jobId===jobId);if(b){brOpen=b.id;show('brief');return}show('brief');newBrief();setTimeout(()=>{$('brJ').value='j:'+jobId;$('brJ').onchange()},30)}
+function brLink(id,v){const b=D.briefs.find(x=>x.id===id);if(!b||!v)return;
+ if(v==='__none'){b.anaId='';b.noAuto=true}else if(v==='__new'){const a=blankAna(b.jobId);if(!b.jobId)a.company=brCo(b);a.ind=(b.inds||[])[0]||'';D.analyses.push(a);b.anaId=a.id;save();anaOpen=a.id;show('ana');toast('새 회사 분석을 만들고 이 카드에 연결했어요');return}
+ else{b.anaId=v;b.noAuto=false;const a=D.analyses.find(x=>x.id===v);if(a&&a.ind&&!(b.inds||[]).includes(a.ind)){b.inds=[...(b.inds||[]),a.ind];toast('분석의 업종도 카드에 추가했어요')}}
+ save();renderBrief()}
+function brConfirm(id,v){const b=D.briefs.find(x=>x.id===id);if(!b)return;b.confirmed=v;b.confirmedAt=v?today():'';
+ const a=brAna(b);let extra='';if(v&&a&&!a.confirmed){a.confirmed=true;a.confirmedAt=today();extra=' · 회사 분석도 함께 확정'}
+ save();renderBrief();toast(v?`📌 카드를 확정했어요${extra} — 📝 면접 기록 → 📁 확정 폴더에 모여요`:'확정을 해제했어요. 다시 만들기를 쓸 수 있어요')}
+function anaLinkedMsg(id){const n=D.briefs.filter(b=>b.anaId===id).length;return n?`\n이 분석은 맞춤 카드 ${n}개와 연결돼 있어요. 카드는 그대로 남고 연결만 끊겨요.`:''}
+function newBrief(){const act=D.jobs.filter(j=>j.stage!=='종료'),an=D.analyses;
+ dlg('🎯 맞춤 면접 카드 만들기',`<div class="form"><label class="w">어느 회사?<select id="brJ"><option value="">고르기</option>${act.map(j=>`<option value="j:${j.id}">${esc(j.company)}${j.role?' · '+esc(j.role):''}</option>`).join('')}${an.map(a=>`<option value="a:${a.id}">${esc(anaCo(a))} (회사 분석)</option>`).join('')}<option value="new">✏️ 직접 입력</option></select></label>
+ <label class="w">직접 입력할 때 회사명<input id="brC" placeholder="예: 구름"></label></div>
+ <div style="margin:12px 0 6px;font-weight:700">이 회사 업종 (여러 개 고르기)</div><div class="indpick" id="brI">${IND.map(i=>`<button type="button" data-k="${i.k}" onclick="this.classList.toggle('on')">${i.e} ${i.n}</button>`).join('')}</div>
+ <div class="sub" style="margin-top:8px;font-size:.85rem">회사 분석에서 업종을 골라뒀다면 자동으로 켜져요.</div>
+ <div style="text-align:right;margin-top:14px"><button class="btn p" onclick="saveNewBrief()">✨ 맞춤 카드 만들기</button></div>`);
+ $('brJ').onchange=()=>{const v=$('brJ').value;let a=null;if(v.startsWith('j:')){const j=D.jobs.find(x=>x.id===v.slice(2));a=anaFor(j.id,j.company)}else if(v.startsWith('a:'))a=D.analyses.find(x=>x.id===v.slice(2));
+  document.querySelectorAll('#brI button').forEach(x=>x.classList.toggle('on',!!a&&a.ind===x.dataset.k))}}
+function saveNewBrief(){const v=val('brJ'),inds=[...document.querySelectorAll('#brI button.on')].map(x=>x.dataset.k);let jobId='',company='';
+ let anaId='';if(v.startsWith('j:')){jobId=v.slice(2);const j=D.jobs.find(x=>x.id===jobId),a=anaFor(jobId,j.company);if(a)anaId=a.id}else if(v.startsWith('a:')){const a=D.analyses.find(x=>x.id===v.slice(2));anaId=a.id;jobId=a.jobId||'';company=anaCo(a)}else{company=val('brC');if(!company){toast('회사를 고르거나 적어주세요');return}}
+ if(!inds.length){toast('업종을 하나 이상 골라주세요');return}
+ const b=brBuild({id:uid(),jobId,company,anaId,inds,qsDone:{},memo:'',created:today(),confirmed:false});D.briefs.push(b);save();brOpen=b.id;closeDlg();renderBrief();toast('맞춤 카드를 만들었어요 🌼')}
+function renderBrief(){const b=D.briefs.find(x=>x.id===brOpen);if(b)return renderBriefOne(b);
+ $('p-brief').innerHTML=`<div class="h"><h2>🎯 맞춤 면접 카드</h2><button class="btn p" onclick="newBrief()">＋ 회사별 맞춤 카드 만들기</button></div>
+ <div class="card" style="margin-bottom:14px"><h3>💡 면접 가기 전 마지막으로 이것만</h3><div style="line-height:1.8">회사와 업종만 고르면, 지금까지 정리한 <b>키워드·이력서·강점·질문·회사 분석</b>을 그 회사에 맞게 골라서 한 장으로 만들어요.<br>
+  <span class="sub">예) 구름 — 💻 IT + 🔬 연구비 → "증빙 원칙주의 · 급여(인건비) · 직접 만든 도구"가 앞으로, 이력서에서는 급여·4대보험·법인카드 줄이 강조돼요.</span></div></div>
+ ${D.briefs.length?`<div class="anagrid">${[...D.briefs].reverse().sort((x,y)=>(y.confirmed?1:0)-(x.confirmed?1:0)).map(b=>{const kws=(b.kw||[]).map(id=>D.prep.kw.find(k=>k.id===id)).filter(Boolean),j=b.jobId&&D.jobs.find(x=>x.id===b.jobId),ne=j&&nextEv(j);
+  return `<div class="anac" role="button" tabindex="0" onclick="brOpen='${b.id}';renderBrief()" onkeydown="if(event.key==='Enter')this.click()" style="${b.confirmed?'border-color:var(--green)':''}"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${b.confirmed?'<span class="res pass">📌 확정</span>':''}${brAna(b)?'<span class="res next">🔍 분석 연결</span>':''}${(b.inds||[]).map(k=>{const i=IND.find(x=>x.k===k);return i?`<span class="chip">${i.e} ${i.n}</span>`:''}).join('')}</div>
+  <div style="font-weight:800;font-size:1.1rem">${esc(brCo(b))}</div>${ne?`<div style="margin-top:2px">📅 <b>${esc(ne.type)} ${md(ne.date)}</b> · ${dLabel(ne.date)}</div>`:''}
+  <div class="sub" style="font-size:.85rem;margin-top:6px">🔑 ${kws.map(k=>esc(k.word)).join(' → ')||'키워드 없음'}</div><div class="sub" style="font-size:.78rem;margin-top:4px">만든 날 ${md(b.created)}${b.built&&b.built!==b.created?' · 다시 만듦 '+md(b.built):''}</div></div>`}).join('')}</div>`:'<div class="card sub">아직 맞춤 카드가 없어요. 면접 잡힌 회사로 하나 만들어 보세요.</div>'}`}
+function renderBriefOne(b){const U=D.prep.kw,kws=(b.kw||[]).map(id=>U.find(k=>k.id===id)).filter(Boolean),re=brRe(b),I=(b.inds||[]).map(k=>IND.find(i=>i.k===k)).filter(Boolean),a=brAna(b),R=a&&anaRatios(a),j=b.jobId&&D.jobs.find(x=>x.id===b.jobId),ne=j&&nextEv(j),co=brCo(b);
+ const st=(b.strong||[]).map(id=>D.prep.strong.find(x=>x.id===id)).filter(Boolean);
+ const C=sortedCareer().map(c=>{const L=taskLines(c.tasks),m=L.filter(t=>re.test(t));return {c,L:(m.length?m:L).slice(0,3),hit:m.length}}).filter(x=>x.L.length);
+ const qaA=q=>{const x=D.prep.qa.find(y=>y.q===q);return x&&x.a?x.a:''};
+ const Q=[...I.flatMap(i=>i.qs.map(q=>({q,src:i.e+' '+i.n.replace(/ \(.*\)/,''),tip:''}))),
+  ...D.prep.qa.filter(x=>x.group==='기출'&&coMatch(x.cat||'',co)===2).map(x=>({q:x.q,src:'🎯 이 회사에서 받은 질문',a:x.a})),
+  ...D.prep.qa.filter(x=>x.group==='내 경력'&&/공백|이직|근속|육아휴직/.test(x.cat+x.q)).slice(0,4).map(x=>({q:x.q,src:'👤 내 경력',a:x.a}))];
+ const yourQ=[...(a?anaQuestions(a).slice(0,2):[]),...D.myq.filter(x=>x.pick).slice(0,2).map(x=>({q:x.q}))];
+ const best=R&&R.c.sales!=null?`${R.y}년 매출 ${eokTxt(R.c.sales,a.unit)}${R.growth!=null?` (전년 대비 ${R.growth>=0?'+':''}${f1(R.growth)}%)`:''}`:'';
+ $('p-brief').innerHTML=`<div class="h"><h2>🎯 ${esc(co)} 맞춤 카드</h2><button class="btn ${brHide?'p':''}" onclick="brHide=!brHide;renderBrief()">🙈 ${brHide?'가리기 켜짐':'답 가리기'}</button>${b.confirmed?`<button class="btn" onclick="brConfirm('${b.id}',false)">📌 확정됨 · 해제</button>`:`<button class="btn" onclick="if(confirm('키워드 순서·강점·1분 소개를 지금 데이터로 다시 만들까요? (1분 소개를 고쳤다면 덮어써져요)')){brBuild(D.briefs.find(x=>x.id==='${b.id}'));save();renderBrief()}">🔄 다시 만들기</button><button class="btn p" onclick="brConfirm('${b.id}',true)">✅ 카드 확정</button>`}<button class="btn" onclick="brOpen='';renderBrief()">← 목록</button><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
+ <div class="card" style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;${b.confirmed?'background:var(--okbg)':''}">
+  <b>🔍 회사 분석</b>${a?`<span>${esc(anaCo(a))}</span><span class="chip">${esc(a.ctype||'')}</span>${auditBadge(a)}${a.confirmed?'<span class="res next">📁 확정</span>':''}`:'<span class="sub">연결된 분석이 없어요</span>'}
+  <select style="margin-left:auto" aria-label="회사 분석 연결" onchange="brLink('${b.id}',this.value)"><option value="">${a?'다른 분석으로 바꾸기':'분석 불러오기'}</option>${D.analyses.map(x=>`<option value="${x.id}">${esc(anaCo(x))}${x.id===(a&&a.id)?' (연결됨)':''}</option>`).join('')}<option value="__new">＋ 새로 분석하기</option>${a?'<option value="__none">연결 끊기</option>':''}</select>
+  ${a?`<button class="btn s" onclick="anaOpen='${a.id}';show('ana')">열기 →</button>`:''}
+  ${b.confirmed?`<span class="res pass" style="width:100%">📌 확정된 카드 — ${md(b.confirmedAt)} 확정 · 다시 만들기가 잠겨 있어서 내용이 덮어써지지 않아요 (회사 분석 숫자는 계속 최신으로 보여요)</span>`:''}</div>
+ <div class="${brHide?'hide':''}">
+ <div class="bhero"><div style="display:flex;gap:6px;flex-wrap:wrap">${I.map(i=>`<span style="background:color-mix(in oklab,#fff 70%,transparent);border-radius:999px;padding:2px 10px;font-size:.85rem;font-weight:700">${i.e} ${i.n}</span>`).join('')}</div>
+  <div class="co" style="margin-top:6px">${esc(co)}${j&&j.role?` <span style="font-size:1rem;font-weight:600">· ${esc(j.role)}</span>`:''}</div>
+  ${ne?`<div>📅 ${esc(ne.type)} ${md(ne.date)} ${esc(ne.time||'')} · <b>${dLabel(ne.date)}</b>${j.location?' · 📍 '+esc(j.location):''}</div>`:''}
+  <div style="margin-top:10px;font-weight:700">오늘 외울 건 이것뿐 👇</div>
+  <div class="kw3">${kws.map((k,i)=>`<span><i>${i+1}</i>${esc(k.word)}</span>`).join('')}</div>
+  ${best?`<div>🔢 꼭 말할 숫자: <b>${best}</b>${R.opm!=null?` · 영업이익률 ${f1(R.opm)}%`:''}</div>`:''}
+  ${I.length?`<div style="margin-top:4px">🎯 이 회사가 중요하게 볼 것: <b>${I.map(i=>IND_SHORT[i.k][1]).join(' / ')}</b></div>`:''}</div>
+ <div class="card bsec"><h3><span class="n">1</span> 맞춤 1분 자기소개 <span class="sub" style="font-weight:400;font-size:.85rem">고쳐 쓰면 저장돼요 · 문장은 외우지 말고 흐름만</span></h3>
+  <textarea class="ans" rows="7" style="width:100%;line-height:1.7" onclick="this.classList.add('show')" onchange="D.briefs.find(x=>x.id==='${b.id}').pitch=this.value;save()">${esc(b.pitch)}</textarea>
+  <div style="margin-top:6px"><button class="btn s" onclick="show('kw')">🔑 키워드 연습에서 소리 내 연습하기</button></div></div>
+ <div class="card bsec"><h3><span class="n">2</span> 이력서에서 먼저 꺼낼 경험 <span class="sub" style="font-weight:400;font-size:.85rem">이 업종과 관련된 줄을 골랐어요</span></h3>
+  ${C.map(x=>`<div class="cl"><div><b>${esc(x.c.company)}</b> <span class="sub">${ym(x.c.start)} ~ ${x.c.current?'재직중':ym(x.c.end)}</span></div>${x.L.map(t=>`<div>${x.hit?'<span class="hl">':''}• ${esc(t)}${x.hit?'</span>':''}</div>`).join('')}</div>`).join('')||'<div class="sub">내 프로필에 경력을 넣으면 나와요.</div>'}
+  ${I.map(i=>`<div class="mine" style="margin-top:8px">${i.e} <b>${i.n}</b> — ${i.mine}</div>`).join('')}
+  ${I.map(i=>D.indNotes[i.k]?`<div class="rvbox" style="margin-top:8px">✏️ 내 메모 (${i.n}): ${esc(D.indNotes[i.k])}</div>`:'').join('')}</div>
+ <div class="card bsec"><h3><span class="n">3</span> 이 회사에 맞는 내 강점</h3>${st.map(x=>`<div class="bq"><div class="q">💪 ${esc(x.title)}</div>${x.say?`<div class="a">${esc(x.say.split('\n')[0])}</div>`:''}</div>`).join('')||'<div class="sub">이력서·자소서 메뉴에 강점을 넣으면 나와요.</div>'}</div>
+ <div class="card bsec"><h3><span class="n">4</span> "우리 회사 얼마나 알고 왔어요?"</h3>
+  ${a&&!isFirm(a)&&R?`<div class="nums" style="margin-bottom:10px"><div><b>${eokTxt(R.c.sales,a.unit)}</b><span>${esc(R.y)}년 매출</span></div><div><b>${R.growth==null?'—':f1(R.growth)+'%'}</b><span>매출 증가율</span></div><div><b>${R.opm==null?'—':f1(R.opm)+'%'}</b><span>영업이익률</span></div><div><b>${R.debt==null?'—':f1(R.debt)+'%'}</b><span>부채비율</span></div></div>`:''}
+  ${a&&a.info&&a.info.biz?`<div class="sub" style="margin-bottom:6px">🏢 ${esc(a.info.biz)}</div>`:''}${a&&a.pitch?`<div class="say ans" onclick="this.classList.toggle('show')">${esc(a.pitch)}</div>`:`<div class="sub">회사 분석에서 답변 초안을 만들면 여기에 나와요. ${j?`<button class="btn s p" onclick="openAnaFor('${j.id}')">🔍 회사 분석</button>`:''}</div>`}
+  ${a&&(a.acct||[]).length?`<div style="margin-top:8px">${(a.acct||[]).slice(0,3).map(k=>{const y=ACCT.find(z=>z[0]===k);return y?`<div class="sub">🎯 ${y[1]}</div>`:''}).join('')}</div>`:''}</div>
+ <div class="card bsec"><h3><span class="n">5</span> 나올 수 있는 질문 <span class="sub" style="font-weight:400;font-size:.85rem">답을 가리고 떠올려 보세요</span></h3>
+  ${Q.map(x=>{const ans=x.a||qaA(x.q);return `<div class="bq"><div class="sub" style="font-size:.78rem">${esc(x.src)}</div><div class="q">${esc(x.q)}</div><div class="a" onclick="this.classList.toggle('show')">${ans?esc(ans):'<span class="sub">아직 답이 없어요 — ❓ 면접 질문에서 적어두세요</span>'}</div></div>`}).join('')}</div>
+ <div class="card bsec"><h3><span class="n">6</span> 마지막에 할 역질문 (1~2개)</h3>${yourQ.map(x=>`<div style="padding:4px 0">🙋 ${esc(x.q)}</div>`).join('')||'<div class="sub">🙋 나의 질문에서 ⭐ 고르세요.</div>'}</div>
+ <div class="card bsec" style="background:linear-gradient(135deg,var(--yel2),var(--card))"><h3><span class="n">7</span> 마무리 한마디</h3><div class="mind">${esc((kws.find(k=>/오래|깊게/.test(k.word))||{}).line||'오래, 깊게 일할 회계 담당자가 되겠습니다. 오늘 시간 내주셔서 감사합니다.')}</div>
+  <textarea rows="2" style="width:100%;margin-top:10px" placeholder="이 회사에 대한 내 메모 (면접 장소, 준비물, 들은 이야기)" onchange="D.briefs.find(x=>x.id==='${b.id}').memo=this.value;save()">${esc(b.memo||'')}</textarea>
+  <div style="text-align:right;margin-top:8px"><button class="btn s d" onclick="if(confirm('이 맞춤 카드를 삭제할까요?')){D.briefs=D.briefs.filter(x=>x.id!=='${b.id}');brOpen='';save();renderBrief()}">카드 삭제</button></div></div>
+ </div>`}
 
 /* ============ 로그인 · 클라우드 저장 ============ */
 const firebaseConfig={apiKey:"AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",authDomain:"taxdiary-calendar.firebaseapp.com",projectId:"taxdiary-calendar",storageBucket:"taxdiary-calendar.firebasestorage.app",messagingSenderId:"4033600838",appId:"1:4033600838:web:6d41b6767d129ad0845947"};
