@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>업무 노트</title>
 <link rel="icon" id="fav" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E📒%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -21,7 +21,7 @@
  --ink:#37352f;--ink2:#5c5545;--sub:#8a8170;--sub2:#55606e;--navy:#3d3420;--blue:color-mix(in oklab,var(--yel) 72%,#000);
  --okbg:#f0fdf4;--tipbg:color-mix(in oklab,var(--yel) 18%,#fff);--chipbg:#eef0f3;
  --green:#5c940d;--red:#dc2626;--amber:#d97706;--violet:#7c3aed;
- --round:"Jua","Gowun Dodum",-apple-system,"Malgun Gothic",sans-serif;--soft:"Gowun Dodum",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+ --round:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif;--soft:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif}
 :root[data-palette="pink"]{--yel:#ffa6c1;--on-acc:#5c1430;--pop:#ffc93c;--leaf:#79c2a0}
 :root[data-palette="pastel"]{--yel:#afc8ff;--on-acc:#1e2f5c;--pop:#cdb8ff;--leaf:#8fd6b4}
 :root[data-palette="retro"]{--yel:#f2913d;--on-acc:#2b1700;--pop:#2a9d8f;--leaf:#e9c46a}
@@ -31,7 +31,7 @@
  --acc-t:color-mix(in oklab,var(--yel) 80%,#fff);--ink:#f2ede0;--ink2:#ddd5c3;--sub:#b3a993;--sub2:#c3bdae;--navy:#fff3cf;--blue:var(--yel);
  --okbg:#1d3022;--tipbg:color-mix(in oklab,var(--yel) 13%,#272520);--chipbg:#3a3830;--green:#94d82d}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 var(--soft)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 var(--soft);-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit}
 body{display:flex;min-height:100vh}
 .top{position:sticky;top:0;height:100vh;width:228px;flex:none;background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 12px 14px;z-index:20}
@@ -215,7 +215,7 @@ body.locked #gate{display:flex}
 /* ---- 오늘의 문장 배너 ---- */
 .hero{position:relative;overflow:hidden;border-radius:18px;padding:26px 30px 22px;margin-bottom:18px;background:linear-gradient(120deg,#ffe066 0%,var(--yel) 45%,var(--acc-h) 100%);color:var(--on-acc);box-shadow:0 6px 20px #e0a80030}
 .hero .hi{font-size:.95rem;font-weight:800;opacity:.85}
-.hero .q{font-family:"Gowun Dodum",inherit;font-size:1.55rem;line-height:1.5;margin:10px 0 6px;max-width:calc(100% - 70px);word-break:keep-all}
+.hero .q{font-family:inherit;font-size:1.55rem;line-height:1.5;margin:10px 0 6px;max-width:calc(100% - 70px);word-break:keep-all}
 .hero .spell{display:inline-block;background:#fffdf5d9;border-radius:999px;padding:7px 16px;margin-top:10px;font-weight:700;font-size:.95rem;word-break:keep-all}
 .hero .ctl{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
 .hero .ctl button{border:0;background:#fffdf5b3;border-radius:999px;padding:5px 12px;cursor:pointer;font-weight:700;color:#5c4b00;font-size:.8rem}
@@ -234,7 +234,7 @@ body.locked #gate{display:flex}
 @media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.panel.on textarea,.panel.on input[type=text],.panel.on input:not([type]),.panel.on input[type=search],.qtabs,.starbtn{display:none!important}.pv{white-space:pre-wrap;border:1px solid #e5e5e5;border-radius:6px;padding:6px 9px;min-height:2.2em;font-size:.92em;line-height:1.6}.qcard,.qa,.cr{break-inside:avoid}main{padding:0!important;max-width:none}.hero,.top,.h .btn,.btn,#dlg,#toast,.noprint{display:none!important}body{background:var(--card)}.panel{display:none!important}.panel.on{display:block!important}.card,.tw{break-inside:avoid}.kan{grid-auto-flow:row;grid-template-columns:repeat(4,1fr)}body.pr main{display:none!important}body.pr #dlg{display:block!important;position:static;background:var(--card);padding:0}body.pr .mc{max-height:none;overflow:visible;width:100%;padding:0}body.pr .mh{display:none}}
 
 /* ---- 동글동글 글씨 ---- */
-h1,h2,h3,h4,h5,.brand,#tabs button,.btn,.kpi .k-v,.kpi .k-l,.card h3,.hero .hi,.qtabs button,.seg button,.lockbtn,.chipx,.step .t,.pipe b,.qcard .qq,.mbti,.big-kw,.cs-h,.kw-word,.mclock,.mtemp{font-family:var(--round);font-weight:400!important;letter-spacing:.005em}
+h1,h2,h3,h4,h5,.brand,#tabs button,.btn,.kpi .k-v,.kpi .k-l,.card h3,.hero .hi,.qtabs button,.seg button,.lockbtn,.chipx,.step .t,.pipe b,.qcard .qq,.mbti,.big-kw,.cs-h,.kw-word,.mclock,.mtemp{font-family:var(--round);font-weight:700!important;letter-spacing:-.01em}
 h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 .chip{background:var(--chipbg);color:var(--sub2)}
 .al{cursor:pointer}
@@ -288,7 +288,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 .sw{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:10px 12px;cursor:pointer;text-align:left;color:var(--ink)}
 .sw.on{outline:3px solid var(--yel);outline-offset:1px}
 .sw .dots{display:flex}.sw .dots i{width:18px;height:18px;border-radius:50%;border:2px solid var(--card);margin-left:-5px}.sw .dots i:first-child{margin-left:0}
-.sw b{font-family:var(--round);font-weight:400;display:block}
+.sw b{font-family:var(--round);font-weight:700;display:block}
 .critters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
 .critter{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:8px 4px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;color:var(--sub);font-size:.8rem}
 .critter.on{background:var(--yel3);border-color:var(--yel)}
@@ -339,7 +339,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 .cs-h{font-size:1.1rem;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .nums div{background:var(--yel3);border-radius:12px;padding:10px 12px;min-width:0}
-.nums b{display:block;font-family:var(--round);font-weight:400;font-size:1.35rem;line-height:1.2;overflow-wrap:anywhere}.nums span{font-size:.8rem;color:var(--sub)}
+.nums b{display:block;font-family:var(--round);font-weight:700;font-size:1.35rem;line-height:1.2;overflow-wrap:anywhere}.nums span{font-size:.8rem;color:var(--sub)}
 .one{display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);align-items:start}
 .one:last-child{border-bottom:0}
 .one .q{font-family:var(--round);color:var(--acc-t)}
@@ -348,7 +348,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 .hide .one .a.show,.hide .kwmini .ev2.show{filter:none}
 .kwmini{display:flex;flex-direction:column;gap:6px}
 .kwmini div{display:flex;gap:10px;align-items:baseline}
-.kwmini b{font-family:var(--round);font-weight:400;font-size:1.1rem;white-space:nowrap}
+.kwmini b{font-family:var(--round);font-weight:700;font-size:1.1rem;white-space:nowrap}
 .kwmini .ev2{color:var(--ink2);font-size:.92rem}
 .co-card{background:linear-gradient(135deg,var(--yel2),var(--card));border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .mind{font-family:var(--round);font-size:1.15rem;line-height:1.7}
@@ -602,7 +602,15 @@ function alerts(){const t=today(),L=[];
   if(j.stage==='서류제출'&&j.appliedDate&&diff(t,j.appliedDate)>=10)L.push({lv:'info',txt:`${j.company} 지원 후 ${diff(t,j.appliedDate)}일째 무소식 — 팔로업 또는 다음 공고`,fn:`openJob('${j.id}')`});
   (j.events||[]).forEach(e=>{if(e.date&&(e.date===t||e.date===addDays(t,1)))L.push({lv:'warn',txt:`${j.company} ${e.type} ${e.date===t?'오늘':'내일'} ${e.time||''}`,fn:`openJob('${j.id}')`})})});
  D.contacts.forEach(c=>{if(c.nextDate&&c.nextDate<=t)L.push({lv:'warn',txt:`${c.name} 연락할 차례 (${dLabel(c.nextDate)})`,fn:`openContact('${c.id}')`})});
+ D.events.forEach(e=>{if(!e.done&&e.date&&(e.date===t||e.date===addDays(t,1)))L.push({lv:'warn',txt:`📅 ${e.title} ${e.date===t?'오늘':'내일'} ${e.time||''}`,fn:`openEv('${e.id}')`})});
+ D.todos.forEach(x=>{if(!x.done&&x.due&&x.due<=t)L.push({lv:x.due<t?'bad':'warn',txt:`✅ ${x.title} — ${x.due<t?'마감 지남':'오늘까지'}`,fn:`show('dash')`})});
  return L}
+const FOCUS_HELP=`<div style="line-height:1.8"><b>🔔 지금 챙길 것</b> (급한 것만 자동으로)
+<ul style="margin:4px 0 12px;padding-left:18px"><li><b>📋 지원현황 공고</b>: 서류 마감 3일 이내·지난 공고, 서류 제출 후 10일째 소식 없는 공고</li>
+<li><b>📋 공고 상세 안의 면접 일정</b>: 오늘·내일 면접</li><li><b>🗓️ 달력에 직접 등록한 일정</b>: 오늘·내일</li>
+<li><b>✅ 대시보드 할 일</b>: 마감일이 오늘이거나 지난 것</li><li><b>🤝 인맥·헤드헌터</b>: '다음 연락일'이 된 사람</li></ul>
+<b>📅 다가오는 일정 (2주)</b><ul style="margin:4px 0 0;padding-left:18px"><li>공고의 서류 마감일 · 공고 안 면접 일정</li><li>달력에 등록한 일정</li><li>할 일의 마감일</li><li>인맥의 다음 연락일</li></ul>
+<div class="sub" style="margin-top:10px">즉, 따로 등록할 필요 없이 공고·달력·할 일·인맥에 날짜만 넣어두면 자동으로 모여요.</div></div>`;
 function prog(label,v,goal){const p=goal?Math.min(100,Math.round(v/goal*100)):0;return `<div style="margin:8px 0"><div style="display:flex;justify-content:space-between"><span>${label}</span><b>${v} / ${goal}</b></div><div class="bar"><i style="width:${p}%"></i></div></div>`}
 /* ============ 오늘의 문장 · 주문 ============ */
 const QUOTES=[
@@ -709,7 +717,7 @@ function renderDash(){
  <div class="dgrid">
   <div class="dcol">
    ${showStart?`<div class="card"><h3>🌱 이렇게 시작해 보세요</h3><div class="start">${steps.map((x,i)=>`<div class="step ${x[0]?'ok':''}" onclick="${x[3]}"><div class="n">${x[0]?'✓':i+1}</div><div><div class="t">${x[1]}</div><div class="d">${x[2]}</div></div></div>`).join('')}</div></div>`:''}
-   <div class="card" id="focusCard"><h3>🔔 지금 챙길 것 · 다가오는 일정</h3>${focus}</div>
+   <div class="card" id="focusCard"><h3>🔔 지금 챙길 것 · 다가오는 일정 <button class="btn s" onclick="dlg('🔔 여기에 나오는 것',FOCUS_HELP)">어디서 오나요?</button></h3>${focus}</div>
    <div class="card"><h3>📋 지원 현황 <button class="btn s" onclick="show('board')">전체 보기</button></h3>
     <div class="pipe">${STAGES.map(s=>`<div style="--pc:${STC[s]};background:${STC[s]}14" onclick="show('board')"><b>${D.jobs.filter(j=>j.stage===s).length}</b><span>${s}</span></div>`).join('')}</div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.9rem">${TRACKS.slice(0,3).map(tr=>`<span>${trChip(tr)} <b>${act.filter(j=>j.track===tr).length}</b>건</span>`).join('')}</div>
@@ -861,13 +869,20 @@ function renderRoad(){$('rTips').innerHTML=tipsHTML();$('rStart').value=D.roadma
  const weeks=[...new Set(R.map(x=>x.week))].sort((a,b)=>a-b);
  $('rBody').innerHTML=weeks.map(w=>{const items=R.filter(x=>x.week===w),s=D.roadmap.start,range=s?` <span class="sub">${md(addDays(s,(w-1)*7))} ~ ${md(addDays(s,w*7-1))}</span>`:'';
   return `<div class="card" style="margin-bottom:8px"><div class="wkh ${cw===w?'cur':''}" style="margin-top:0">${w}주차${cw===w?' 👈 이번 주':''}${range} <span class="sub">${items.filter(x=>x.done).length}/${items.length}</span></div>
-  ${items.map(x=>`<div class="row"><input type="checkbox" ${x.done?'checked':''} onchange="roadDone('${x.id}',this.checked)"><input class="grow" style="border-color:transparent;${x.done?'text-decoration:line-through;color:#94a3b8':''}" value="${esc(x.title)}" onchange="roadTitle('${x.id}',this.value)"><select onchange="roadWeek('${x.id}',this.value)">${Array.from({length:12},(_,i)=>`<option value="${i+1}" ${x.week===i+1?'selected':''}>${i+1}주</option>`).join('')}</select><button class="btn s d" onclick="roadDel('${x.id}')">삭제</button></div>`).join('')}</div>`}).join('')}
+  ${items.map(x=>`<div class="row"><input type="checkbox" ${x.done?'checked':''} onchange="roadDone('${x.id}',this.checked)"><div class="grow" style="min-width:0;cursor:pointer" onclick="editRoad('${x.id}')"><div style="${x.done?'text-decoration:line-through;color:var(--sub)':''}">${esc(x.title)}</div>${x.memo?`<div class="sub" style="font-size:.84rem;white-space:pre-wrap">${esc(x.memo)}</div>`:''}</div><button class="btn s" onclick="editRoad('${x.id}')">✏️ 수정</button><select onchange="roadWeek('${x.id}',this.value)">${Array.from({length:12},(_,i)=>`<option value="${i+1}" ${x.week===i+1?'selected':''}>${i+1}주</option>`).join('')}</select><button class="btn s d" onclick="roadDel('${x.id}')">삭제</button></div>`).join('')}</div>`}).join('')}
 const rItem=id=>D.roadmap.items.find(x=>x.id===id);
 function roadDone(id,v){rItem(id).done=v;save();renderRoad()}
 function roadTitle(id,v){rItem(id).title=v;save()}
 function roadWeek(id,v){rItem(id).week=+v;save();renderRoad()}
-function roadDel(id){D.roadmap.items=D.roadmap.items.filter(x=>x.id!==id);save();renderRoad()}
-function addRoadItem(){const w=Math.min(12,Math.max(1,curWeek()||1));D.roadmap.items.push({id:uid(),week:w,title:'새 항목',done:false});save();renderRoad()}
+function roadDel(id){if(!confirm('이 항목을 삭제할까요?'))return;D.roadmap.items=D.roadmap.items.filter(x=>x.id!==id);save();closeDlg();renderRoad()}
+function editRoad(id,isNew){const x=rItem(id);if(!x)return;
+ dlg(isNew?'로드맵 항목 추가':'로드맵 항목 수정',`<div class="form"><label class="w">할 일<input id="rdT" value="${esc(x.title)}"></label>
+ <label>주차<select id="rdW">${Array.from({length:12},(_,i)=>`<option value="${i+1}" ${x.week===i+1?'selected':''}>${i+1}주차</option>`).join('')}</select></label>
+ <label style="flex-direction:row;align-items:center;gap:6px;margin-top:18px"><input type="checkbox" id="rdD" ${x.done?'checked':''}> 완료</label>
+ <label class="w">메모 (어떻게 할지, 참고 링크 등)<textarea id="rdM" rows="4">${esc(x.memo||'')}</textarea></label></div>
+ <div style="display:flex;justify-content:space-between;margin-top:12px"><button class="btn d" onclick="roadDel('${x.id}')">삭제</button><button class="btn p" onclick="saveRoad('${x.id}')">저장</button></div>`);setTimeout(()=>$('rdT')?.select(),50)}
+function saveRoad(id){const x=rItem(id),t=val('rdT');if(!t){toast('할 일을 적어주세요');return}Object.assign(x,{title:t,week:+val('rdW'),done:$('rdD').checked,memo:$('rdM').value.trim()});save();closeDlg();renderRoad();toast('저장했어요')}
+function addRoadItem(){const w=Math.min(12,Math.max(1,curWeek()||1));const it={id:uid(),week:w,title:'',done:false,memo:''};D.roadmap.items.push(it);save();renderRoad();editRoad(it.id,true)}
 function resetRoad(){if(!confirm('로드맵을 기본 항목으로 되돌릴까요? (체크 상태·수정 내용이 사라져요)'))return;D.roadmap.items=defaultRoadmap();save();renderRoad()}
 
 /* ============ 이력서·면접 ============ */
@@ -1165,11 +1180,12 @@ function wxInner(){const nm=CITIES[wx.city<0?0:wx.city][0];if(wx.err)return `<di
  if(!wx.data)return `<div class="wico">⛅</div><div class="sub">${nm} 날씨 불러오는 중…</div>`;
  const c=wx.data.current,d=wx.data.daily,w=WCODE[c.weather_code]||['🌈',''],rain=d.precipitation_probability_max?.[0];
  return `<div class="wico">${w[0]}</div><div style="min-width:0;flex:1"><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="mtemp">${Math.round(c.temperature_2m)}°</span><span>${nm} · ${w[1]}</span></div><div class="sub" style="font-size:.85rem">최고 ${Math.round(d.temperature_2m_max[0])}° · 최저 ${Math.round(d.temperature_2m_min[0])}° · 체감 ${Math.round(c.apparent_temperature)}°${rain!=null?` · 비 ${rain}%`:''}${rain>=50?' ☂️ 우산 챙겨요':''}</div></div>`}
-function miniHTML(){setTimeout(()=>loadWx(),0);
+function miniHTML(){setTimeout(()=>{loadWx();clockTick()},0);
  return `<div class="mini"><div class="card"><div style="flex:1"><div class="sub" style="font-size:.8rem" id="mAmpm"></div><div class="mclock" id="mClock">--:--</div></div><div class="sub" style="text-align:right;font-size:.85rem" id="mDay"></div></div>
  <div class="card"><div id="wxBox" style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">${wxInner()}</div><select class="wsel" aria-label="지역" onchange="D.ui.city=+this.value;save();loadWx(true)">${CITIES.map((c,i)=>`<option value="${i}" ${i===(+D.ui.city||0)?'selected':''}>${c[0]}</option>`).join('')}</select></div></div>`}
-setInterval(()=>{const el=$('mClock');if(!el)return;const d=new Date(),h=d.getHours(),p2=n=>String(n).padStart(2,'0');el.textContent=`${p2(h%12||12)}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
- $('mAmpm').textContent=h<12?'오전':'오후';const p=Math.round((h*3600+d.getMinutes()*60)/864);$('mDay').innerHTML=`오늘 하루<br><b>${p}%</b> 지났어요`},1000);
+function clockTick(){const el=$('mClock');if(!el)return;const d=new Date(),h=d.getHours(),p2=n=>String(n).padStart(2,'0');el.textContent=`${p2(h%12||12)}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
+ $('mAmpm').textContent=h<12?'오전':'오후';const p=Math.round((h*3600+d.getMinutes()*60)/864);$('mDay').innerHTML=`오늘 하루<br><b>${p}%</b> 지났어요`}
+setInterval(clockTick,1000);
 
 /* ============ 캐릭터 그림 ============ */
 const FACE=(y=0,m=true)=>`<circle cx="-8" cy="${y}" r="3" fill="#3B3324"/><circle cx="8" cy="${y}" r="3" fill="#3B3324"/><ellipse cx="-14" cy="${y+8}" rx="4.5" ry="2.8" fill="#FFB3C1"/><ellipse cx="14" cy="${y+8}" rx="4.5" ry="2.8" fill="#FFB3C1"/>${m?`<path d="M-4 ${y+7} Q0 ${y+11} 4 ${y+7}" stroke="#3B3324" stroke-width="2" fill="none" stroke-linecap="round"/>`:''}`;
@@ -1206,7 +1222,7 @@ function renderMe(){const M=D.me,tg=a=>(a||[]).length?`<div class="tagl">${a.map
    <div class="moods">${MOODS.map((m,i)=>`<button class="${meMood===i?'on':''}" title="${m[1]}" aria-label="${m[1]}" onclick="meMood=${i};renderMe()">${m[0]}</button>`).join('')}</div>
    <textarea id="dyT" rows="5" style="width:100%" placeholder="오늘 있었던 일, 고마웠던 일 한 가지">${esc(M.diary[meDay]?.t||'')}</textarea>
    <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><button class="btn p" onclick="saveDiary()">저장</button>${meDay!==today()?`<button class="btn" onclick="meDay=today();meMood=null;renderMe()">오늘로</button>`:''}${M.diary[meDay]?`<button class="btn s d" onclick="delDiary()">삭제</button>`:''}</div>
-   <ul class="dl2">${dk.map(k=>{const e=M.diary[k],d=new Date(k+'T00:00');return `<li><button onclick="meDay='${k}';meMood=null;renderMe()"><b style="font-family:var(--round);font-weight:400">${d.getMonth()+1}/${d.getDate()}</b><span>${MOODS[e.m]?.[0]||'📝'}</span><span>${esc(e.t)}</span></button></li>`}).join('')}</ul></div>
+   <ul class="dl2">${dk.map(k=>{const e=M.diary[k],d=new Date(k+'T00:00');return `<li><button onclick="meDay='${k}';meMood=null;renderMe()"><b style="font-family:var(--round);font-weight:700">${d.getMonth()+1}/${d.getDate()}</b><span>${MOODS[e.m]?.[0]||'📝'}</span><span>${esc(e.t)}</span></button></li>`}).join('')}</ul></div>
  </div>`}
 function addNote(){D.me.notes.unshift({id:uid(),c:(D.me.notes[0]?D.me.notes[0].c+1:0)%4,t:''});save();renderMe();document.querySelector('#p-me .note textarea')?.focus()}
 let noteT;function noteSet(id,v){const n=D.me.notes.find(x=>x.id===id);if(!n)return;n.t=v;clearTimeout(noteT);noteT=setTimeout(save,500)}
