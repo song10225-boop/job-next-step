@@ -268,6 +268,19 @@ tr.clk{cursor:pointer}tr.clk:hover{background:var(--hover2)}
 .chk label{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:.92rem}
 .src a{color:var(--acc-t)}
 @media(max-width:820px){.two,.ratios{grid-template-columns:1fr}.mq{grid-template-columns:auto minmax(0,1fr)}.mq .ctr{grid-column:1/-1;justify-self:end}}
+
+/* ---- 업종별 회계 ---- */
+.indtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.indtabs button{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:8px 14px;cursor:pointer;font:inherit;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px}
+.indtabs button.on{background:var(--yel);border-color:transparent;color:var(--on-acc)}
+.indtabs .e{font-size:1.2rem}
+.indsum{width:100%;border-collapse:collapse}.indsum th,.indsum td{padding:8px 10px;border-bottom:1px solid var(--line3);text-align:left;vertical-align:top}
+.indsum tr.clk:hover{background:var(--hover2);cursor:pointer}
+.ul{margin:0;padding-left:18px;line-height:1.75}.ul li{margin:2px 0}
+.ul b{color:var(--navy)}
+.mine{background:var(--okbg);border-radius:12px;padding:12px 14px}
+.say{background:var(--tipbg);border-radius:12px;padding:12px 14px;white-space:pre-wrap;line-height:1.7}
+.indmini{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;background:var(--yel3)}
 /* ---- 로그인 잠금 화면 ---- */
 body.locked .top,body.locked main{display:none!important}
 #gate{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 15%,#fff3bf 0,#fffdf5 45%),#fffdf5}
@@ -488,6 +501,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 <section class="panel" id="p-cheat"></section>
 <section class="panel" id="p-rev"></section>
 <section class="panel" id="p-myq"></section>
+<section class="panel" id="p-ind"></section>
 <section class="panel" id="p-ana"></section>
 <section class="panel" id="p-me"></section>
 <section class="panel" id="p-deco"></section>
@@ -625,9 +639,9 @@ function defaultQA(){const Q=[
 ['트랙별','회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?','계획이 없다면 실무 보조로서의 강점과 배우고 싶은 분야로']];
 return Q.map(([group,track,cat,q,tip])=>({id:uid(),group,track,cat,q,tip,a:'',ready:false,star:false}))}
 const qaGroup=q=>q.group||((q.track||'공통')!=='공통'?'트랙별':'공통');
-function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),reviews:[],analyses:[],myq:defaultMyQ(),myQuotes:[],updatedAt:''}}
+function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),reviews:[],analyses:[],indNotes:{},myq:defaultMyQ(),myQuotes:[],updatedAt:''}}
 function blankMe(){return {name:'',oneLine:'',typing:['오늘도 한 걸음씩, 꽃피는 중이에요 🌱'],mbti:'',mbtiName:'',mbtiDesc:'',work:[],hobbies:[],now:[],notes:[],diary:{}}}
-function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];if(!Array.isArray(o.analyses))o.analyses=[];if(!Array.isArray(o.myq)||!o.myq.length)o.myq=defaultMyQ();o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];if(!Array.isArray(o.analyses))o.analyses=[];if(!o.indNotes||typeof o.indNotes!=='object')o.indNotes={};if(!Array.isArray(o.myq)||!o.myq.length)o.myq=defaultMyQ();o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  if(!(r&&r.v>=3)){const def=defaultQA(),by=new Map(def.map(q=>[q.q,q]));o.prep.qa.forEach(q=>{const d=by.get(q.q);if(d){q.tip=q.tip||d.tip;q.group=q.group||d.group;q.cat=d.cat}});const have=new Set(o.prep.qa.map(q=>q.q));def.filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=3}
  if(!Array.isArray(o.prep.strong))o.prep.strong=[];['kw','cheat'].forEach(k=>{if(!Array.isArray(o.prep[k]))o.prep[k]=[]});if(!o.prep.kwLog)o.prep.kwLog={n:0,last:''};
@@ -644,7 +658,7 @@ function setStage(j,s){j.stage=s;const i=STAGES.indexOf(s);if(s!=='종료')j.max
 
 /* ============ 탭 ============ */
 const TABS=[['dash','🌼 대시보드',()=>renderDash(),'이직 준비'],['profile','👤 내 프로필',()=>renderProfile()],['board','📋 지원현황',()=>renderBoard()],['ana','🔍 회사 분석',()=>renderAna()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],
- ['prep','🎤 이력서·자소서',()=>renderPrep(),'면접'],['qa','❓ 면접 질문',()=>renderQA()],['myq','🙋 나의 질문',()=>renderMyQ()],['kw','🔑 키워드 연습',()=>renderKW()],['cheat','📌 면접 직전 한 장',()=>renderCheat()],['rev','📝 면접 기록',()=>renderRev()],
+ ['prep','🎤 이력서·자소서',()=>renderPrep(),'면접'],['qa','❓ 면접 질문',()=>renderQA()],['myq','🙋 나의 질문',()=>renderMyQ()],['ind','📚 업종별 회계',()=>renderInd()],['kw','🔑 키워드 연습',()=>renderKW()],['cheat','📌 면접 직전 한 장',()=>renderCheat()],['rev','📝 면접 기록',()=>renderRev()],
  ['people','🤝 인맥·헤드헌터',()=>renderPeople(),'기록'],['stats','📊 통계',()=>renderStats()],
  ['me','🌷 나의 공간',()=>renderMe(),'나'],['deco','🎨 꾸미기',()=>renderDeco()],['set','⚙️ 설정',()=>renderSet()]];
 let cur='dash';
@@ -1399,7 +1413,7 @@ function renderCheat(){const P=D.profile,cs=careerSummary(),C=D.prep.cheat,U=kwU
     <div class="sub" style="margin-top:4px">${[j.salary&&'연봉 '+j.salary,j.jtype,j.scope,j.contact&&'담당 '+j.contact].filter(Boolean).map(esc).join(' · ')}</div>
     ${j.notes?`<div style="margin-top:8px;white-space:pre-wrap">${esc(j.notes)}</div>`:''}${(j.events||[]).filter(e=>e.note).map(e=>`<div class="sub" style="margin-top:4px">📝 ${esc(e.type)}: ${esc(e.note)}</div>`).join('')}
     ${revForJob(j.id,j.company).slice(0,2).map(r=>`<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><b>📝 지난 면접 ${fullDate(r.date)} ${esc(r.round||'')}</b> ${r.mood!=null&&RV_MOOD[r.mood]?RV_MOOD[r.mood][0]:''}${r.improve?`<div style="white-space:pre-wrap">🛠️ ${esc(r.improve)}</div>`:''}${(r.qas||[]).length?`<div class="sub" style="font-size:.88rem">받은 질문: ${r.qas.map(x=>esc(x.q)).join(' / ')}</div>`:''} <button class="btn s" onclick="viewRev('${r.id}')">자세히</button></div>`).join('')}
-    ${(()=>{const a=anaFor(j.id,j.company);if(!a)return `<div style="margin-top:8px" class="sub">🔍 회사 분석이 아직 없어요.</div>`;const R=anaRatios(a);return `<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><b>🔍 회사 분석</b> ${esc(a.info.biz||'')}${R?` · ${R.y}년 영업이익률 ${f1(R.opm)}% · 부채비율 ${f1(R.debt)}%`:''}${a.pitch?`<div style="white-space:pre-wrap;margin-top:4px">🗣️ ${esc(a.pitch)}</div>`:''}</div>`})()}
+    ${(()=>{const a=anaFor(j.id,j.company);if(!a)return `<div style="margin-top:8px" class="sub">🔍 회사 분석이 아직 없어요.</div>`;const R=anaRatios(a);const ix=IND.find(i=>i.k===a.ind);return `${ix?`<div style="margin-top:10px"><b>${ix.e} ${ix.n}</b> — ${ix.one}<div class="sub" style="font-size:.88rem">💪 ${ix.mine.replace(/<[^>]+>/g,'')}</div></div>`:''}<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><b>🔍 회사 분석</b> ${esc(a.info.biz||'')}${R?` · ${R.y}년 영업이익률 ${f1(R.opm)}% · 부채비율 ${f1(R.debt)}%`:''}${a.pitch?`<div style="white-space:pre-wrap;margin-top:4px">🗣️ ${esc(a.pitch)}</div>`:''}</div>`})()}
     <div style="margin-top:8px"><button class="btn s" onclick="openAnaFor('${j.id}')">🔍 회사 분석</button> <button class="btn s" onclick="openJob('${j.id}')">공고 열어서 메모하기</button>${j.url?` <a class="btn s" href="${esc(j.url)}" target="_blank" rel="noopener">공고 보기 ↗</a>`:''}</div></div>`:'<div class="sub">면접 볼 회사를 고르면 일정·연봉·메모가 여기 모여요.</div>'}</div>
   <div class="card wide"><div class="cs-h">🔢 숫자로 말하기</div><div class="nums">
    <div><b>${cs.total?fmtM(cs.total):'-'}</b><span>총 회계 경력</span></div><div><b>${tax?fmtM(tax):'-'}</b><span>세무사무실</span></div>
@@ -1657,13 +1671,16 @@ const ACCT=[
  ['ar','외상 매출 많음 · 채권 관리','매출채권 비중이 커서 미수금 관리가 중요한 업무일 것 같았습니다.'],
  ['rnd','정부과제·R&D · 보조금 정산','연구개발과 정부과제가 있으면 보조금 회계처리와 연구비 정산이 꼼꼼해야 한다고 알고 있습니다.'],
  ['project','프로젝트·수주형 매출 · 매출 인식','수주·프로젝트 단위 매출이라 매출을 언제 인식하는지가 중요한 회사로 보였습니다.'],
- ['audit','외부감사 대상 · 감사 대응','외부감사 대상이라 감사 일정에 맞춰 자료를 준비하는 게 중요한 회사로 보였습니다.']];
+ ['audit','외부감사 대상 · 감사 대응','외부감사 대상이라 감사 일정에 맞춰 자료를 준비하는 게 중요한 회사로 보였습니다.'],
+ ['inv','매입·재고 · 거래처 대사','매입과 재고, 거래처별 외상 잔액이 많아서 매입매출 대사와 재고 관리가 중요한 회사로 보였습니다.'],
+ ['ecom','판매 채널 정산 · 매출 대사','판매 채널마다 정산 시기와 수수료가 달라서, 채널별 매출과 정산금을 맞추는 일이 중요해 보였습니다.'],
+ ['payroll','인건비 비중 큼 · 급여·원천세','인건비 비중이 큰 업종이라 급여, 4대보험, 원천세를 정확히 처리하는 게 가장 중요해 보였습니다.']];
 function acctSuggest(a){const R=anaRatios(a),S=new Set(),L=a.info.listed||'';
  if(/코스피|코스닥|코넥스|상장/.test(L)&&!/비상장/.test(L))S.add('listed');if(auditState(a).s==='y')S.add('audit');
  if(R){if(R.growth!=null&&R.growth>=10)S.add('grow');if(R.debt!=null&&R.debt>150)S.add('debt');if(R.ard!=null&&R.ard>75)S.add('ar');
   const F=R.F.filter(r=>r.op!=null&&r.sales);if(F.length>=2&&F[F.length-1].op/F[F.length-1].sales<F[0].op/F[0].sales-0.01)S.add('margin');if(R.opm!=null&&R.opm<0)S.add('margin')}
  if(/제조|생산|공장|부품|칩|카드|가전/.test(a.info.biz||''))S.add('mfg');if(/자회사|계열|그룹|연결/.test((a.info.biz||'')+(a.info.news||'')+(a.memo||'')))S.add('group');
- if(/해외|수출|글로벌|BMW|환율/.test((a.info.biz||'')+(a.info.news||'')))S.add('fx');return [...S]}
+ if(/해외|수출|글로벌|BMW|환율/.test((a.info.biz||'')+(a.info.news||'')))S.add('fx');const ix=IND.find(i=>i.k===a.ind);if(ix)ix.acct.forEach(k=>S.add(k));return [...S]}
 function openAnaFor(jobId){let a=D.analyses.find(x=>x.jobId===jobId);if(!a){a=blankAna(jobId);D.analyses.push(a);save()}anaOpen=a.id;show('ana')}
 function renderAna(){const a=D.analyses.find(x=>x.id===anaOpen);if(a)return renderAnaOne(a);
  D.analyses.forEach(x=>{x.ctype=x.ctype||'중소기업';x.audit=x.audit||'auto';x.firm=x.firm||{}});
@@ -1679,7 +1696,7 @@ function renderAna(){const a=D.analyses.find(x=>x.id===anaOpen);if(a)return rend
   <span class="sub">입력한 내용은 바로 내 계정에 저장되고, 아래 카드로 계속 남아요. 폰에서도 그대로 보여요.</span></div></div>
  ${D.analyses.length?`<input type="search" id="anaS" placeholder="🔎 회사명·사업·메모 검색" value="${esc(anaQ)}" style="width:100%;max-width:420px;margin-bottom:10px" oninput="anaQ=this.value;clearTimeout(window._at);window._at=setTimeout(()=>{renderAna();const e=$('anaS');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)"><br><div class="seg" style="margin-bottom:12px;flex-wrap:wrap">${F.map(t=>`<button class="${anaF===t?'on':''}" onclick="anaF='${t}';renderAna()">${t} ${t==='전체'?D.analyses.length:t==='✅ 외감'?D.analyses.filter(x=>auditState(x).s==='y').length:D.analyses.filter(x=>x.ctype===t).length}</button>`).join('')}</div>
  <div class="anagrid">${L.map(x=>{const R=anaRatios(x),fm=isFirm(x),f=x.firm||{};return `<div class="anac" role="button" tabindex="0" onclick="anaOpen='${x.id}';renderAna()" onkeydown="if(event.key==='Enter')this.click()">
-  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--acc-t)">No.${no.get(x.id)}</b><span class="chip">${esc(x.ctype)}</span>${auditBadge(x)}${x.confirmed?'<span class="res next">📁 확정</span>':''}</div>
+  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--acc-t)">No.${no.get(x.id)}</b><span class="chip">${esc(x.ctype)}</span>${(i=>i?`<span class="chip">${i.e} ${i.n}</span>`:'')(IND.find(i=>i.k===x.ind))}${auditBadge(x)}${x.confirmed?'<span class="res next">📁 확정</span>':''}</div>
   <div style="font-weight:800;font-size:1.08rem">${esc(anaCo(x))}</div><div class="sub" style="font-size:.85rem">${esc((fm?f.focus:x.info.biz)||'주요 업무 미입력')}</div>
   <div style="margin-top:6px;font-size:.88rem">${fm?[f.pros&&'세무사·회계사 '+f.pros,f.staff&&'직원 '+f.staff,f.clients&&'거래처 '+f.clients,f.program].filter(Boolean).map(esc).join(' · ')||'<span class="sub">사무소 정보 미입력</span>'
    :R?`${esc(R.y)}년 매출 ${eokTxt(R.c.sales,x.unit)}${R.opm!=null?` · 영업이익률 ${f1(R.opm)}%`:''}${R.debt!=null?` · 부채비율 ${f1(R.debt)}%`:''}`:'<span class="sub">재무 숫자 미입력</span>'}</div>
@@ -1707,8 +1724,9 @@ function renderAnaOne(a){a.ctype=a.ctype||'중소기업';a.audit=a.audit||'auto'
  <div class="card" style="margin-bottom:14px"><div class="form">
   ${!a.jobId?`<label>회사명<input value="${esc(a.company)}" onchange="anaSet('company',this.value.trim())"></label>`:`<label>회사명 (지원현황 공고)<input value="${esc(anaCo(a))}" disabled></label>`}
   <label>회사 유형<select onchange="anaSet('ctype',this.value);renderAna()">${CTYPES.map(t=>`<option ${a.ctype===t?'selected':''}>${t}</option>`).join('')}</select></label>
+  ${fm?'':`<label>업종 (회계 관점)<select onchange="anaSet('ind',this.value);renderAna()"><option value="">고르기</option>${IND.map(i=>`<option value="${i.k}" ${a.ind===i.k?'selected':''}>${i.e} ${i.n}</option>`).join('')}</select></label>`}
   ${fm?'':`<label>외부감사 여부<select onchange="anaSet('audit',this.value);renderAna()"><option value="auto" ${a.audit==='auto'?'selected':''}>자동 판단 (재무 숫자로)</option><option value="y" ${a.audit==='y'?'selected':''}>✅ 외감 대상 (직접 표시)</option><option value="n" ${a.audit==='n'?'selected':''}>비외감 (직접 표시)</option></select></label>`}
- </div></div>
+ </div>${fm?'':indMini(a)}</div>
  ${fm?`<div class="card" style="margin-bottom:14px"><h3>🧾 사무소 정보</h3><div class="form">
   ${fin('pros','세무사·회계사 수','예: 세무사 2명')}${fin('staff','직원 수','예: 8명')}${fin('clients','거래처(클라이언트) 수','예: 약 250곳')}${fin('program','사용 프로그램','예: 세무사랑 Pro')}
   ${fin('focus','주력 분야','예: 법인 기장, 양도·상속')}${fin('location','위치·출퇴근','예: 일산 백석역 도보 5분')}
@@ -1792,6 +1810,64 @@ function anaDraft(){const a=D.analyses.find(x=>x.id===anaOpen),R=anaRatios(a),I=
  if(ap){a.pitch=[s1,s2].filter(Boolean).join(' ')+`\n${ap[2]} 저는 '${kw}' 경험이 있어서 이 부분에서 바로 도움을 드릴 수 있다고 생각해 지원하게 되었습니다.`;save();renderAna();toast('초안을 만들었어요. 내 말투로 다듬어 주세요');return}
  a.pitch=[s1,s2].filter(Boolean).join(' ')+`\n그래서 이 회사에서는 ${need}이 중요하다고 생각했고, 제가 가진 '${kw}' 경험으로 바로 도움을 드릴 수 있겠다고 생각해 지원하게 되었습니다.`;
  save();renderAna();toast('초안을 만들었어요. 내 말투로 다듬어 주세요')}
+
+
+/* ============ 📚 업종별 회계 ============ */
+const IND=[
+{k:'retail',e:'🛒',n:'도소매업',one:'사서 파는 회사 — 매입·재고·외상이 핵심',acct:['inv','ar'],
+ key:['<b>매출원가 = 기초재고 + 당기매입 − 기말재고</b> → 기말 재고를 정확히 세는 게 이익을 정해요','<b>재고 관리</b>: 입출고 기록, 기말 재고실사, 재고 평가(선입선출·총평균 등)','<b>매출채권·매입채무</b>: 거래처가 많아 거래처별 원장 대사와 잔액 확인이 중요','<b>세금계산서 매입·매출 대사</b> → 부가세 신고의 기본','<b>반품·에누리·매출할인</b>, 카드·현금영수증 매출 집계'],
+ nums:['매출총이익률 (매출 − 매출원가) ÷ 매출','재고자산 회전 — 재고가 얼마나 빨리 팔리는지','매출채권 회수기간 — 외상값 받는 데 며칠'],
+ qs:['재고실사 해보셨나요?','거래처 잔액이 안 맞을 때 어떻게 맞추셨나요?','매입 세금계산서 누락은 어떻게 확인하나요?'],
+ mine:'세무사무실에서 <b>도소매업 거래처 부가세 신고</b>를 직접 했고, 매그논스튜디오에서 <b>외상매출금·외상매입금·미수금 관리</b>, 세무사무실에서 <b>외상대 확인</b>을 했어요. → "거래처 원장 대사"와 "매입매출 세금계산서 대사"로 말하기',
+ say:'도소매업은 결국 매입과 재고, 외상 잔액이 정확해야 이익이 맞는다고 생각합니다. 세무사무실에서 도소매업 거래처 부가세를 신고하면서 매입·매출 세금계산서를 대사했고, 회사에서는 거래처별 외상매출·매입 잔액을 관리해 봤습니다.'},
+{k:'mfg',e:'🏭',n:'제조업',one:'만들어서 파는 회사 — 원가계산과 재고, 설비가 핵심',acct:['mfg','fx'],
+ key:['<b>원가계산</b>: 재료비 + 노무비 + 제조경비 → 제품 원가 (제조원가명세서)','<b>재고 3종</b>: 원재료 → 재공품 → 제품. 월말·기말 재고실사','<b>유형자산·감가상각</b>: 기계장치·공장 설비 비중이 커요','<b>외주가공비</b>, 수율·불량 같은 원가 변동 요인','수출이 있으면 <b>영세율·환율(외화 채권)</b>, 수입 원자재면 환율이 원가에 바로 영향'],
+ nums:['매출원가율 — 매출 중 원가 비중','영업이익률','재고자산·유형자산 비중','부채비율 (설비 투자로 높을 수 있어요)'],
+ qs:['원가계산 해보셨나요?','재고실사나 재고 차이는 어떻게 처리했나요?','감가상각 관리는 어떻게 하셨나요?'],
+ mine:'세무사무실에서 <b>제조업 거래처 부가세 신고</b>, 크로스젠에서 <b>수출·수입신고필증 입력(영세율)</b>, 퍼시픽렌터카에서 <b>차량 감가상각</b>을 관리했어요. 원가계산을 직접 안 해봤다면 "범위는 솔직하게 + 재고·감가상각·수출입 처리 경험"으로 말하기',
+ say:'제조업은 원가와 재고가 이익을 좌우한다고 생각합니다. 원가계산 전 과정을 주도해 본 건 아니지만, 수출입신고필증 입력과 영세율 처리, 감가상각 스케줄 관리를 해봐서 제조 원가가 어디서 움직이는지 빠르게 따라갈 수 있습니다.'},
+{k:'svc',e:'🤝',n:'서비스업',one:'사람이 일해서 버는 회사 — 인건비와 원천세가 핵심',acct:['payroll','project'],
+ key:['<b>인건비 비중이 가장 커요</b> → 급여, 4대보험, 퇴직금, 연말정산이 핵심 업무','<b>원천세</b>: 프리랜서 사업소득(3.3%), 일용근로소득, 기타소득 구분','<b>일용직 신고</b>: 일용근로소득 지급명세서, 근로내용확인신고','<b>매출 인식 시점</b>: 용역을 언제 제공했는지 (선수금·계약금 처리)','<b>외주용역비</b> 증빙, 일부 서비스는 부가세 면세 여부 확인'],
+ nums:['인건비 ÷ 매출 (인건비 비중)','영업이익률','선수금 규모 (미리 받은 돈)'],
+ qs:['급여 계산과 4대보험 신고 해보셨나요?','프리랜서 원천징수는 어떻게 처리하나요?','연말정산 일정은 어떻게 챙기셨나요?'],
+ mine:'매그논스튜디오(서비스업)에서 <b>급여·퇴직금 정산, 4대보험 취득·상실·보수총액, 일용직 지급명세서·근로내용확인신고</b>, 크로스젠에서 <b>원천세·연말정산</b>을 직접 했어요. → 서비스업에서 제일 강한 카드!',
+ say:'서비스업은 인건비가 가장 큰 비용이라 급여와 원천세가 정확해야 한다고 생각합니다. 저는 급여 작성부터 4대보험 취득·상실, 보수총액 신고, 일용직 신고, 연말정산까지 한 해 사이클을 직접 담당해 봤습니다.'},
+{k:'ecom',e:'📦',n:'쇼핑몰 (이커머스)',one:'여러 채널로 파는 회사 — 채널별 정산 대사가 핵심',acct:['ecom','inv'],
+ key:['<b>판매 채널이 여러 개</b>(오픈마켓, 자사몰, PG·간편결제) → 채널마다 정산 주기·수수료가 달라요','<b>정산금 대사</b>: 주문 매출 vs 실제 입금액 차이(수수료, 반품, 쿠폰) 맞추기 → 매출 누락 방지','<b>부가세</b>: 카드·현금영수증·간편결제 매출 집계, 플랫폼 판매수수료 세금계산서','<b>반품·환불·쿠폰·적립금</b> 처리','<b>재고·택배비·광고비</b> (광고비 비중이 큰 편)'],
+ nums:['매출총이익률','광고비·판매수수료 ÷ 매출','재고 규모와 반품률'],
+ qs:['여러 판매 채널 정산을 어떻게 맞추겠어요?','매출 누락이 생기면 어떻게 찾나요?','카드·간편결제 매출은 부가세 신고 때 어떻게 반영하나요?'],
+ mine:'<b>증빙 원칙주의</b>(하나하나 맞추기), 도소매업 부가세 신고, 그리고 <b>엑셀·웹 도구를 직접 만드는 능력</b> → "채널별 정산 대사표를 만들어 매출 누락을 잡겠다"로 연결',
+ say:'쇼핑몰은 채널마다 정산 시기와 수수료가 달라서, 주문 매출과 실제 입금액을 맞추는 대사가 가장 중요하다고 생각합니다. 저는 증빙과 숫자를 하나하나 맞추는 걸 원칙으로 일해 왔고, 반복되는 대사 작업은 엑셀이나 간단한 도구로 정리해서 누락을 줄일 수 있습니다.'},
+{k:'it',e:'💻',n:'IT · 국고보조금',one:'개발하는 회사 — 매출 인식, 개발비, 정부지원금 정산이 핵심',acct:['project','rnd','payroll'],
+ key:['<b>매출 종류</b>: 프로젝트·SI(진행 정도에 따라 인식), 라이선스, 유지보수·구독(기간에 나눠 인식 → 선수수익)','<b>개발비</b>: 요건을 갖추면 자산(무형자산), 아니면 비용 — 회사 기준 확인','<b>인건비 비중</b>이 큼, 스타트업은 스톡옵션·투자 유치 회계도','<b>국고보조금(정부지원사업)</b>: 받은 돈을 바로 수익으로 잡지 않고, 산 자산에서 차감하거나 쓴 비용과 상계하는 게 기본 (일반기업회계기준)','<b>보조금 집행</b>: 전용 통장·카드, 비목별 사용 기준, 적격증빙, 정산 보고서. 기준에 안 맞으면 <b>환수</b>될 수 있어 증빙이 생명'],
+ nums:['매출 증가율 (성장 단계인지)','영업이익률 (적자일 수도 — 투자 단계)','선수수익 규모','정부보조금 규모 (주석·현금흐름표)'],
+ qs:['정부지원사업 정산 해보셨나요?','보조금으로 산 장비는 어떻게 회계처리하나요?','유지보수 매출은 언제 인식하나요?'],
+ mine:'<b>증빙 원칙주의</b>(날인·적격증빙 확인) = 보조금 정산에서 가장 필요한 성향, <b>TaxDiary를 직접 만든 IT 이해</b>, 지금 회사(동시테크)가 <b>응용 소프트웨어 업종</b>. 보조금 정산을 직접 해봤다면 꼭 사례로!',
+ say:'IT 회사의 정부지원사업은 비목별 기준과 증빙이 맞지 않으면 환수될 수 있어서, 증빙을 하나하나 확인하는 꼼꼼함이 가장 중요하다고 생각합니다. 저는 지출결의서 날인이나 세금계산서가 빠지면 그 자리에서 바로잡는 걸 원칙으로 해왔고, 직접 업무용 웹앱을 만들어 써볼 만큼 IT 쪽 흐름도 익숙합니다.'},
+{k:'rnd',e:'🔬',n:'연구비 (R&D 과제)',one:'정부 연구과제를 하는 회사 — 비목별 집행과 정산, 세액공제가 핵심',acct:['rnd','payroll','audit'],
+ key:['<b>연구비 비목</b>: 인건비(참여연구원 참여율), 연구장비·재료비, 연구활동비, 위탁연구비, 간접비 — 비목마다 쓸 수 있는 기준이 달라요','<b>연구비 관리 시스템</b>: 부처·전문기관마다 달라요 (RCMS, 이지바로 등) → 전용 카드·계좌로 집행','<b>정산</b>: 사용실적 보고, 증빙 제출, 불인정 금액은 환수. 기업 부담금(현금·현물)도 관리','<b>연구·인력개발비 세액공제</b>: 기업부설연구소·연구전담부서 인정이 있어야 인건비 등을 공제받기 쉬워요 → 연구원 인건비 집계가 중요','<b>연구비 vs 개발비</b>: 연구 단계는 비용, 개발 단계는 요건 충족 시 자산'],
+ nums:['정부보조금·연구비 규모 (주석)','연구개발비 ÷ 매출','인건비 비중'],
+ qs:['연구비 정산이나 RCMS 써보셨나요?','참여율에 따른 인건비 계산은 어떻게 하나요?','연구·인력개발비 세액공제 아세요?'],
+ mine:'<b>급여·4대보험을 직접 해본 경험</b> = 참여율 인건비 계산의 기초, <b>증빙 원칙주의</b> = 정산·환수 방지, <b>엑셀 관리</b>. 시스템을 안 써봤다면 "써본 적은 없지만 증빙·인건비 기초가 있어 빨리 익히겠다"로 솔직하게',
+ say:'연구과제 회계는 비목별 기준에 맞게 쓰고 증빙을 남기는 게 전부라고 생각합니다. 연구비 시스템을 직접 써본 적은 없지만, 급여와 4대보험을 직접 처리해 봐서 참여율에 따른 인건비 계산의 기초가 있고, 증빙을 놓치지 않는 습관이 있어 빠르게 익힐 수 있습니다.'}];
+let indK='retail';
+function renderInd(){const x=IND.find(i=>i.k===indK)||IND[0],note=D.indNotes[x.k]||'';
+ const used=D.analyses.filter(a=>a.ind===x.k);
+ $('p-ind').innerHTML=`<div class="h"><h2>📚 업종별 회계 <span class="sub" style="font-size:.9rem">그 회사 업종에 맞춰 내 경험을 꺼내기</span></h2><button class="btn" onclick="window.print()">🖨 인쇄</button></div>
+ <div class="card" style="margin-bottom:14px"><h3>🗺️ 한눈에 보기</h3><div class="tw" style="border:0"><table class="indsum"><thead><tr><th>업종</th><th>회계 핵심</th><th>내가 뽐낼 것</th></tr></thead><tbody>
+  ${IND.map(i=>`<tr class="clk" onclick="indK='${i.k}';renderInd()"><td style="white-space:nowrap"><b>${i.e} ${i.n}</b></td><td>${i.one}</td><td class="sub">${({retail:'도소매업 부가세 신고 · 외상 잔액 관리',mfg:'제조업 부가세 · 수출입 영세율 · 감가상각',svc:'급여·4대보험·원천세·일용직 직접 담당 ⭐',ecom:'증빙 대사 · 직접 만든 도구',it:'증빙 원칙주의 · TaxDiary · SW 업종 재직',rnd:'급여(참여율 기초) · 증빙 원칙주의'})[i.k]}</td></tr>`).join('')}</tbody></table></div></div>
+ <div class="indtabs">${IND.map(i=>`<button class="${i.k===x.k?'on':''}" onclick="indK='${i.k}';renderInd()"><span class="e">${i.e}</span>${i.n}</button>`).join('')}</div>
+ <div class="card" style="margin-bottom:14px"><h3 style="font-size:1.3rem">${x.e} ${x.n}</h3><div style="font-size:1.05rem;margin-bottom:12px">${x.one}</div>
+  <div class="two"><div><h4 style="margin:0 0 6px">📌 꼭 알아야 할 것</h4><ul class="ul">${x.key.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+  <div><h4 style="margin:0 0 6px">🔢 회사 분석에서 볼 숫자</h4><ul class="ul">${x.nums.map(t=>`<li>${t}</li>`).join('')}</ul>
+   <h4 style="margin:14px 0 6px">❓ 이 업종 면접에서 나올 질문</h4><ul class="ul">${x.qs.map(t=>`<li>${t}</li>`).join('')}</ul></div></div></div>
+ <div class="two" style="margin-bottom:14px"><div class="card"><h3>💪 내가 뽐낼 것</h3><div class="mine">${x.mine}</div></div>
+  <div class="card"><h3>🗣️ 면접에서 이렇게 (키워드만 기억하기)</h3><div class="say">${esc(x.say)}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" onclick="indToQA('${x.k}')">❓ 질문 은행에 담기</button><button class="btn s" onclick="copyText(${JSON.stringify(x.say).replace(/"/g,'&quot;')},'복사했어요')">📋 복사</button></div></div></div>
+ <div class="card" style="margin-bottom:14px"><h3>✏️ 내 메모 (${x.n})</h3><textarea rows="4" style="width:100%" placeholder="이 업종에서 내가 실제로 해본 일, 숫자, 사례를 적어두세요. 예: 도소매 거래처 12곳 부가세 신고" onchange="D.indNotes['${x.k}']=this.value;save()">${esc(note)}</textarea></div>
+ ${used.length?`<div class="card"><h3>🔍 이 업종으로 분석한 회사</h3>${used.map(a=>`<button class="btn s" style="margin:0 6px 6px 0" onclick="anaOpen='${a.id}';show('ana')">${esc(anaCo(a))}</button>`).join('')}</div>`:''}
+ <div class="sub" style="font-size:.8rem;margin-top:10px">※ 회계기준·세법·연구비 규정은 바뀔 수 있고 회사·과제마다 기준이 달라요. 면접 전 지원 회사 상황에 맞춰 한 번 더 확인하세요.</div>`}
+function indToQA(k){const x=IND.find(i=>i.k===k);let n=0;x.qs.forEach(q=>{if(!D.prep.qa.some(y=>y.q===q)){D.prep.qa.push({id:uid(),group:'트랙별',track:'공통',cat:x.n,q,tip:x.key.slice(0,2).map(t=>t.replace(/<[^>]+>/g,'')).join(' / '),a:'',ready:false,star:false});n++}});save();toast(n?`${n}개를 질문 은행에 담았어요`:'이미 담겨 있어요')}
+function indMini(a){const x=IND.find(i=>i.k===a.ind);if(!x)return '';return `<div class="indmini"><b>${x.e} ${x.n} 회계 포인트</b> — ${x.one}<ul class="ul" style="margin-top:4px">${x.key.slice(0,3).map(t=>`<li>${t}</li>`).join('')}</ul><div style="margin-top:6px">💪 ${x.mine}</div><button class="btn s" style="margin-top:8px" onclick="indK='${x.k}';show('ind')">📚 업종별 회계 자세히</button></div>`}
 
 /* ============ 로그인 · 클라우드 저장 ============ */
 const firebaseConfig={apiKey:"AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",authDomain:"taxdiary-calendar.firebaseapp.com",projectId:"taxdiary-calendar",storageBucket:"taxdiary-calendar.firebasestorage.app",messagingSenderId:"4033600838",appId:"1:4033600838:web:6d41b6767d129ad0845947"};
