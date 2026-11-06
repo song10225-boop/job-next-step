@@ -194,6 +194,45 @@ tr.clk{cursor:pointer}tr.clk:hover{background:var(--hover2)}
 .rs-sign{text-align:center;margin-top:34px;font-size:14px;break-inside:avoid}.rs-sign div{margin-top:6px;font-size:13px;color:#4a5872}
 @media(max-width:600px){.rs-head{flex-direction:column-reverse;align-items:flex-start}.rs-info{grid-template-columns:auto 1fr}.rs-sum{grid-template-columns:1fr 1fr}.rs-job{grid-template-columns:1fr;gap:4px}}
 @media print{body.pr .rs{padding:0;font-size:10pt}body.pr .rs-name{font-size:24pt}}
+
+/* ---- 면접 기록 ---- */
+.rvbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.rvbar input[type=search]{min-width:240px;flex:1;max-width:420px}
+.rvgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.rv{display:grid;grid-template-columns:66px minmax(0,1fr);gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;transition:transform .15s,box-shadow .15s;text-align:left;color:var(--ink);font:inherit}
+.rv:hover{transform:translateY(-2px);box-shadow:0 6px 18px color-mix(in oklab,var(--yel) 25%,transparent)}
+.day{text-align:center;border-radius:12px;background:var(--yel2);padding:7px 0 6px;line-height:1.15;align-self:start}
+.day small{display:block;font-size:.72rem;color:var(--acc-t);font-weight:700}.day b{display:block;font-size:1.75rem;font-weight:800;color:var(--navy)}.day i{display:block;font-style:normal;font-size:.78rem;color:var(--sub)}
+.day.sun i{color:#e03131}.day.sat i{color:#1c7ed6}
+.rv .co{font-weight:800;font-size:1.05rem;overflow-wrap:anywhere}
+.rv .mood{font-size:1.5rem;line-height:1;float:right;margin-left:6px}
+.rv .meta{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.rv .line{font-size:.88rem;color:var(--ink2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.res{display:inline-block;border-radius:999px;padding:1px 9px;font-size:.74rem;font-weight:800}
+.res.wait{background:var(--yel2);color:var(--acc-t)}.res.pass{background:#d3f9d8;color:#2b8a3e}.res.fail{background:#f1f3f5;color:#868e96}.res.next{background:#d0ebff;color:#1864ab}
+:root[data-theme="dark"] .res.pass{background:#1d3022;color:#8ce99a}:root[data-theme="dark"] .res.fail{background:#2f2d27;color:#adb5bd}:root[data-theme="dark"] .res.next{background:#1c2940;color:#a5d8ff}
+.feel{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--sub);margin-top:6px}
+.feel .dots{display:flex;gap:2px}.feel .dots i{width:16px;height:7px;border-radius:4px;background:var(--line)}.feel .dots i.on{background:linear-gradient(90deg,var(--leaf),var(--yel))}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px 10px;cursor:pointer;color:var(--ink);font:inherit;font-size:.88rem;display:flex;align-items:center;gap:5px}
+.pick button.on{background:var(--yel);border-color:transparent;color:var(--on-acc);font-weight:700}
+.pick button .e{font-size:1.25rem;line-height:1}
+.sigs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px}
+.sigs label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;font-weight:400!important;font-size:.88rem!important;color:var(--ink)!important}
+.qrow{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;background:var(--yel3)}
+.qrow .qtop{display:flex;gap:6px;align-items:center}
+.qrow textarea,.qrow input{width:100%}
+.selfev{display:flex;gap:4px}.selfev button{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:3px 8px;cursor:pointer;font:inherit;font-size:.8rem;color:var(--ink)}
+.selfev button.on{background:var(--yel);border-color:transparent;color:var(--on-acc)}
+.rvd h4{margin:16px 0 6px;font-size:1rem}
+.rvq{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.rvq .q{font-weight:800}.rvq .a{white-space:pre-wrap;margin-top:4px}.rvq .fx{white-space:pre-wrap;margin-top:6px;background:var(--tipbg);border-radius:9px;padding:7px 10px}
+.rvbox{white-space:pre-wrap;background:var(--yel3);border-radius:10px;padding:9px 12px}
+.rvbox.bad{background:color-mix(in oklab,var(--pop) 14%,var(--card))}.rvbox.good{background:var(--okbg)}
+.sigchip{display:inline-block;border-radius:999px;padding:2px 9px;font-size:.78rem;margin:0 4px 4px 0}
+.sigchip.p{background:#d3f9d8;color:#2b8a3e}.sigchip.n{background:#ffe3e3;color:#c92a2a}
+:root[data-theme="dark"] .sigchip.p{background:#1d3022;color:#8ce99a}:root[data-theme="dark"] .sigchip.n{background:#3b1d1d;color:#ffa8a8}
+@media(max-width:820px){.sigs{grid-template-columns:1fr}.rvbar input[type=search]{min-width:0;max-width:none}}
 /* ---- 로그인 잠금 화면 ---- */
 body.locked .top,body.locked main{display:none!important}
 #gate{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 15%,#fff3bf 0,#fffdf5 45%),#fffdf5}
@@ -306,8 +345,8 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 .anim-t{transform-box:fill-box;transform-origin:50% 80%}
 /* ---- 사이드 메뉴 묶음 ---- */
 #tabs .grp{font-size:.72rem;color:var(--sub);padding:9px 12px 2px;letter-spacing:.06em}
-@media(min-width:821px){#tabs button{padding:6px 12px}.brand-sub{padding-bottom:8px}}
-@media(min-width:821px) and (max-height:860px){.side-flower{display:none}}
+@media(min-width:821px){#tabs button{padding:5px 12px}.brand-sub{padding-bottom:6px}#tabs .grp{padding-top:7px}}
+@media(min-width:821px) and (max-height:980px){.side-flower{display:none}}
 #tabs .grp:first-child{padding-top:2px}
 /* ---- 키워드 연습 ---- */
 .formula{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--round);font-size:1.05rem}
@@ -412,6 +451,7 @@ h2{font-size:1.45rem}.card h3{font-size:1.12rem}
 
 <section class="panel" id="p-kw"></section>
 <section class="panel" id="p-cheat"></section>
+<section class="panel" id="p-rev"></section>
 <section class="panel" id="p-me"></section>
 <section class="panel" id="p-deco"></section>
 
@@ -548,9 +588,9 @@ function defaultQA(){const Q=[
 ['트랙별','회계사사무실','포부','공인회계사 시험 준비·합격 계획이 있나요?','계획이 없다면 실무 보조로서의 강점과 배우고 싶은 분야로']];
 return Q.map(([group,track,cat,q,tip])=>({id:uid(),group,track,cat,q,tip,a:'',ready:false,star:false}))}
 const qaGroup=q=>q.group||((q.track||'공통')!=='공통'?'트랙별':'공통');
-function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),myQuotes:[],updatedAt:''}}
+function blank(){return {v:3,goal:{role:'',industry:'',salaryMin:'',salaryMax:'',target:'',region:'',must:'',tracks:[]},jobs:[],events:[],todos:[],contacts:[],roadmap:{start:'',items:defaultRoadmap()},targets:{apply:5,net:3,hh:2},prep:{pitch1:'',pitch3:'',strengths:'',achv:[],strong:[],kw:[],cheat:[],kwLog:{n:0,last:''},qa:defaultQA(),cover:{growth:'',pros:'',motive:'',plan:''}},profile:{name:'',title:'',birth:'',photo:'',phone:'',email:'',area:'',summary:'',edu:[],career:[],certs:[],skills:[],comp:{}},ui:{name:'업무 노트',icon:'📒',mode:'system',pal:'yellow',anim:'bounce',pick:'flower',city:0},me:blankMe(),reviews:[],myQuotes:[],updatedAt:''}}
 function blankMe(){return {name:'',oneLine:'',typing:['오늘도 한 걸음씩, 꽃피는 중이에요 🌱'],mbti:'',mbtiName:'',mbtiDesc:'',work:[],hobbies:[],now:[],notes:[],diary:{}}}
-function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
+function norm(r){const o=Object.assign(blank(),r||{}),b=blank();o.ui=Object.assign(b.ui,(r&&r.ui)||{});o.me=Object.assign(blankMe(),(r&&r.me)||{});if(!Array.isArray(o.reviews))o.reviews=[];o.prep=Object.assign(b.prep,(r&&r.prep)||{});o.prep.cover=Object.assign({growth:'',pros:'',motive:'',plan:''},o.prep.cover||{});o.profile=Object.assign(b.profile,(r&&r.profile)||{});o.goal=Object.assign(b.goal,(r&&r.goal)||{});if(!Array.isArray(o.goal.tracks))o.goal.tracks=[];
  if((o.v||1)<2||!(r&&r.v>=2)){o.prep.qa.forEach(q=>{q.track=q.track||'공통'});const have=new Set(o.prep.qa.map(q=>q.q));defaultQA().filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=2}
  if(!(r&&r.v>=3)){const def=defaultQA(),by=new Map(def.map(q=>[q.q,q]));o.prep.qa.forEach(q=>{const d=by.get(q.q);if(d){q.tip=q.tip||d.tip;q.group=q.group||d.group;q.cat=d.cat}});const have=new Set(o.prep.qa.map(q=>q.q));def.filter(q=>!have.has(q.q)).forEach(q=>o.prep.qa.push(q));o.v=3}
  if(!Array.isArray(o.prep.strong))o.prep.strong=[];['kw','cheat'].forEach(k=>{if(!Array.isArray(o.prep[k]))o.prep[k]=[]});if(!o.prep.kwLog)o.prep.kwLog={n:0,last:''};
@@ -567,7 +607,7 @@ function setStage(j,s){j.stage=s;const i=STAGES.indexOf(s);if(s!=='종료')j.max
 
 /* ============ 탭 ============ */
 const TABS=[['dash','🌼 대시보드',()=>renderDash(),'이직 준비'],['profile','👤 내 프로필',()=>renderProfile()],['board','📋 지원현황',()=>renderBoard()],['cal','🗓️ 달력',()=>renderCal()],['road','🛣️ 로드맵',()=>renderRoad()],
- ['prep','🎤 이력서·자소서',()=>renderPrep(),'면접'],['qa','❓ 면접 질문',()=>renderQA()],['kw','🔑 키워드 연습',()=>renderKW()],['cheat','📌 면접 직전 한 장',()=>renderCheat()],
+ ['prep','🎤 이력서·자소서',()=>renderPrep(),'면접'],['qa','❓ 면접 질문',()=>renderQA()],['kw','🔑 키워드 연습',()=>renderKW()],['cheat','📌 면접 직전 한 장',()=>renderCheat()],['rev','📝 면접 기록',()=>renderRev()],
  ['people','🤝 인맥·헤드헌터',()=>renderPeople(),'기록'],['stats','📊 통계',()=>renderStats()],
  ['me','🌷 나의 공간',()=>renderMe(),'나'],['deco','🎨 꾸미기',()=>renderDeco()],['set','⚙️ 설정',()=>renderSet()]];
 let cur='dash';
@@ -921,7 +961,7 @@ function openAchv(id){const a=id?D.prep.achv.find(x=>x.id===id):{id:uid(),title:
 function saveAchv(id){const o={id,title:val('aT'),s:val('aS'),a:val('aA'),r:val('aR')};if(!o.title){toast('제목을 입력해 주세요');return}const i=D.prep.achv.findIndex(x=>x.id===id);if(i>=0)D.prep.achv[i]=o;else D.prep.achv.push(o);save();closeDlg();renderPrep()}
 function delAchv(id){if(!confirm('삭제할까요?'))return;D.prep.achv=D.prep.achv.filter(x=>x.id!==id);save();renderPrep()}
 const qaItem=id=>D.prep.qa.find(x=>x.id===id);
-const QG=[['전체','전체'],['공통','🙂 공통'],['실무','📒 회계·세무 실무'],['내 경력','👤 내 경력 맞춤'],['트랙별','🏢 트랙별']];
+const QG=[['전체','전체'],['공통','🙂 공통'],['실무','📒 회계·세무 실무'],['내 경력','👤 내 경력 맞춤'],['트랙별','🏢 트랙별'],['기출','🎯 실제 받은 질문']];
 function qaList(){const q=qaQ.toLowerCase();return D.prep.qa.filter(x=>(qaGrp==='전체'||qaGroup(x)===qaGrp)&&(qaTrack==='전체'||(x.track||'공통')==='공통'||x.track===qaTrack)&&(!qaTodo||!x.ready)&&(!qaStar||x.star)&&(!q||(x.q+' '+(x.a||'')).toLowerCase().includes(q)))}
 function renderQA(){const A=D.prep.qa,rdy=A.filter(x=>x.ready).length,p=A.length?Math.round(rdy/A.length*100):0,L=qaList();
  const cnt=g=>g==='전체'?A.length:A.filter(x=>qaGroup(x)===g).length;
@@ -1320,6 +1360,7 @@ function renderCheat(){const P=D.profile,cs=careerSummary(),C=D.prep.cheat,U=kwU
     <div style="margin-top:4px">${ne?`📅 <b>${esc(ne.type)} ${md(ne.date)} ${esc(ne.time||'')}</b> · ${dLabel(ne.date)}`:'예정된 일정 없음'}${j.location?` · 📍 ${esc(j.location)}`:''}</div>
     <div class="sub" style="margin-top:4px">${[j.salary&&'연봉 '+j.salary,j.jtype,j.scope,j.contact&&'담당 '+j.contact].filter(Boolean).map(esc).join(' · ')}</div>
     ${j.notes?`<div style="margin-top:8px;white-space:pre-wrap">${esc(j.notes)}</div>`:''}${(j.events||[]).filter(e=>e.note).map(e=>`<div class="sub" style="margin-top:4px">📝 ${esc(e.type)}: ${esc(e.note)}</div>`).join('')}
+    ${revForJob(j.id,j.company).slice(0,2).map(r=>`<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><b>📝 지난 면접 ${fullDate(r.date)} ${esc(r.round||'')}</b> ${r.mood!=null&&RV_MOOD[r.mood]?RV_MOOD[r.mood][0]:''}${r.improve?`<div style="white-space:pre-wrap">🛠️ ${esc(r.improve)}</div>`:''}${(r.qas||[]).length?`<div class="sub" style="font-size:.88rem">받은 질문: ${r.qas.map(x=>esc(x.q)).join(' / ')}</div>`:''} <button class="btn s" onclick="viewRev('${r.id}')">자세히</button></div>`).join('')}
     <div style="margin-top:8px"><button class="btn s" onclick="openJob('${j.id}')">공고 열어서 메모하기</button>${j.url?` <a class="btn s" href="${esc(j.url)}" target="_blank" rel="noopener">공고 보기 ↗</a>`:''}</div></div>`:'<div class="sub">면접 볼 회사를 고르면 일정·연봉·메모가 여기 모여요.</div>'}</div>
   <div class="card wide"><div class="cs-h">🔢 숫자로 말하기</div><div class="nums">
    <div><b>${cs.total?fmtM(cs.total):'-'}</b><span>총 회계 경력</span></div><div><b>${tax?fmtM(tax):'-'}</b><span>세무사무실</span></div>
@@ -1328,6 +1369,7 @@ function renderCheat(){const P=D.profile,cs=careerSummary(),C=D.prep.cheat,U=kwU
   <div class="card"><div class="cs-h">🔑 내 키워드 (이 순서로)</div><div class="kwmini">${U.map((k,i)=>`<div><b>${i+1}. ${esc(k.word)}</b><span class="ev2" onclick="this.classList.toggle('show')">${esc(k.proof)}</span></div>`).join('')||'<span class="sub">키워드 연습 메뉴에서 추가하세요</span>'}</div>
    <div class="sub" style="margin-top:10px;font-size:.85rem">공식: 키워드 → 숫자 하나 → 그래서 회사에 이런 도움</div></div>
   <div class="card"><div class="cs-h">💪 내 강점 <span class="sub" style="font-family:var(--soft);font-size:.8rem">${stAll.length>6?`최근 6개 · 전체 ${stAll.length}개`:''}</span></div>${st.map(x=>`<div style="padding:4px 0">🌼 ${esc(x.title)}</div>`).join('')||'<span class="sub">이력서·자소서 메뉴에서 강점을 추가하세요</span>'}</div>
+  ${D.reviews.some(r=>r.improve)?`<div class="card wide"><div class="cs-h">🛠️ 지난 면접에서 배운 것</div>${[...D.reviews].filter(r=>r.improve).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,4).map(r=>`<div class="one"><div class="q">${esc(rvCo(r))} <span class="sub" style="font-family:var(--soft)">${md(r.date)}</span></div><div class="a" onclick="this.classList.toggle('show')">${esc(r.improve)}</div></div>`).join('')}</div>`:''}
   <div class="card wide"><div class="cs-h">💬 한 줄 답변 (외우지 말고 흐름만)</div>
    ${C.map(x=>`<div class="one"><div class="q">${esc(x.q)}</div><div style="display:flex;gap:8px;align-items:flex-start;min-width:0"><div class="a" style="flex:1;min-width:0" onclick="this.classList.toggle('show')">${esc(x.a)}</div><button class="btn s noprint" onclick="editCheat('${x.id}')">수정</button></div></div>`).join('')||'<div class="sub">"＋ 한 줄 추가"로 이직 사유, 공백기, 희망 연봉 같은 답을 한 줄씩 적어두세요.</div>'}</div>
   <div class="card wide" style="background:linear-gradient(135deg,var(--yel2),color-mix(in oklab,var(--pop) 20%,var(--card)))"><div class="cs-h">🌷 들어가기 전에</div>
@@ -1337,6 +1379,105 @@ function editCheat(id){const x=id?D.prep.cheat.find(y=>y.id===id):{id:uid(),q:''
  dlg(id?'한 줄 답변 수정':'한 줄 답변 추가',`<div class="form"><label class="w">질문 (짧게)<input id="chQ" value="${esc(x.q)}" placeholder="예: 이직 사유"></label><label class="w">한 줄 답 (흐름만)<textarea id="chA" rows="3" placeholder="예: 대체 자리 → 오래 일하며 결산·세무까지 책임지고 싶음">${esc(x.a)}</textarea></label></div>
  <div style="display:flex;justify-content:space-between;margin-top:12px">${id?`<button class="btn d" onclick="D.prep.cheat=D.prep.cheat.filter(y=>y.id!=='${x.id}');save();closeDlg();renderCheat()">삭제</button>`:'<span></span>'}<button class="btn p" onclick="saveCheat('${x.id}',${id?1:0})">저장</button></div>`)}
 function saveCheat(id,ex){if(!val('chQ')){toast('질문을 적어주세요');return}const o=ex?D.prep.cheat.find(y=>y.id===id):{id};Object.assign(o,{q:val('chQ'),a:$('chA').value.trim()});if(!ex)D.prep.cheat.push(o);save();closeDlg();renderCheat()}
+
+
+/* ============ 📝 면접 기록 ============ */
+const RV_MOOD=[['😊','화기애애'],['🙂','편안'],['😐','무난'],['😬','긴장됨'],['🧊','딱딱함'],['😰','압박']];
+const RV_FEEL=[['🌱','글쎄…'],['🌿','반반'],['🌷','괜찮았어'],['🌼','좋았어'],['🌻','느낌 좋아!']];
+const RV_RES=[['wait','⏳ 결과 대기'],['next','➡️ 다음 전형'],['pass','🎉 합격'],['fail','🍂 불합격']];
+const RV_ROUND=['1차','2차','임원','최종','실무진','대표','전화','화상','인적성·필기'];
+const RV_POS=['다음 단계·일정을 언급함','입사 가능일을 물어봄','연봉·처우 이야기를 함','회사·업무 설명을 길게 해줌','내 답에 꼬리질문이 많았음','고개 끄덕임·메모를 많이 함','예정보다 길게 진행됨','웃으며 마무리함'];
+const RV_NEG=['예정보다 일찍 끝남','형식적인 질문만 함','내 경력에 관심이 적어 보임','다른 지원자 이야기를 함'];
+const RV_SELF=[['good','😊 잘함'],['soso','😐 보통'],['bad','😓 아쉬움']];
+const WDK='일월화수목금토';
+function dayBox(d){if(!d)return '<div class="day"><b>?</b></div>';const t=new Date(d+'T00:00'),w=t.getDay();return `<div class="day ${w===0?'sun':w===6?'sat':''}"><small>${t.getFullYear()}.${t.getMonth()+1}월</small><b>${t.getDate()}</b><i>${WDK[w]}요일</i></div>`}
+const fullDate=d=>{if(!d)return '';const t=new Date(d+'T00:00');return `${t.getFullYear()}년 ${t.getMonth()+1}월 ${t.getDate()}일 (${WDK[t.getDay()]})`};
+const rvCo=r=>{const j=r.jobId&&D.jobs.find(x=>x.id===r.jobId);return j?j.company:(r.company||'회사 미입력')};
+const rvRole=r=>{const j=r.jobId&&D.jobs.find(x=>x.id===r.jobId);return r.role||(j&&j.role)||''};
+const feelDots=n=>`<span class="dots">${[1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</span>`;
+let rvQ='',rvRes='전체',rvView='card',rvBadOnly=false;
+function rvText(r){return [rvCo(r),rvRole(r),r.round,r.regret,r.improve,r.good,r.memo,...(r.qas||[]).flatMap(x=>[x.q,x.a,x.fix])].join(' ').toLowerCase()}
+function renderRev(){const A=[...D.reviews].sort((a,b)=>(b.date||'').localeCompare(a.date||'')),q=rvQ.toLowerCase().trim();
+ const L=A.filter(r=>(rvRes==='전체'||r.result===rvRes)&&(!q||rvText(r).includes(q)));
+ const allQ=L.flatMap(r=>(r.qas||[]).map(x=>({...x,r}))).filter(x=>(!rvBadOnly||x.self==='bad')&&(!q||[x.q,x.a,x.fix,rvCo(x.r)].join(' ').toLowerCase().includes(q)));
+ const nQ=A.reduce((n,r)=>n+(r.qas||[]).length,0);
+ $('p-rev').innerHTML=`<div class="h"><h2>📝 면접 기록</h2><span class="sub">면접 ${A.length}번 · 받은 질문 ${nQ}개</span><button class="btn" onclick="window.print()">🖨 인쇄</button><button class="btn p" onclick="openRev()">＋ 오늘 면접 기록하기</button></div>
+ <div class="rvbar"><input type="search" id="rvS" placeholder="🔎 회사·질문·답변·아쉬운 점 검색" value="${esc(rvQ)}" oninput="rvQ=this.value;clearTimeout(window._rvt);window._rvt=setTimeout(()=>{renderRev();const e=$('rvS');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)">
+  <select onchange="rvRes=this.value;renderRev()" aria-label="결과">${[['전체','결과 전체'],...RV_RES].map(([k,l])=>`<option value="${k}" ${rvRes===k?'selected':''}>${l}</option>`).join('')}</select>
+  <span class="seg"><button class="${rvView==='card'?'on':''}" onclick="rvView='card';renderRev()">🗂️ 카드</button><button class="${rvView==='q'?'on':''}" onclick="rvView='q';renderRev()">📚 질문 모아보기</button></span>
+  ${rvView==='q'?`<label class="sub" style="display:flex;gap:4px;align-items:center"><input type="checkbox" ${rvBadOnly?'checked':''} onchange="rvBadOnly=this.checked;renderRev()"> 😓 아쉬웠던 답만</label>`:''}</div>
+ ${!A.length?`<div class="card" style="text-align:center;padding:34px 20px"><div style="font-size:2.4rem">🌱</div><div style="font-weight:700;font-size:1.1rem;margin:6px 0">면접 보고 온 날, 기억이 생생할 때 적어두세요</div><div class="sub">받은 질문, 내 답변, 아쉬웠던 점을 남기면 다음 면접에서 훨씬 잘할 수 있어요.<br>질문을 한 줄씩 붙여넣기만 해도 돼요.</div><button class="btn p" style="margin-top:14px" onclick="openRev()">＋ 첫 면접 기록하기</button></div>`
+ :rvView==='card'?(L.length?`<div class="rvgrid">${L.map(r=>{const pos=(r.signals||[]).filter(x=>RV_POS.includes(x)).length,rs=RV_RES.find(x=>x[0]===r.result);
+  return `<button class="rv" onclick="viewRev('${r.id}')">${dayBox(r.date)}<div style="min-width:0">${r.mood!=null&&RV_MOOD[r.mood]?`<span class="mood" title="${RV_MOOD[r.mood][1]}">${RV_MOOD[r.mood][0]}</span>`:''}
+   <div class="co">${esc(rvCo(r))}</div><div class="sub" style="font-size:.85rem">${esc([rvRole(r),r.round].filter(Boolean).join(' · '))}${r.time?' · '+esc(r.time):''}</div>
+   <div class="meta">${rs?`<span class="res ${rs[0]}">${rs[1]}</span>`:''}${(r.qas||[]).length?`<span class="chip">질문 ${(r.qas||[]).length}개</span>`:''}${pos?`<span class="chip">👍 좋은 신호 ${pos}</span>`:''}</div>
+   ${r.feel?`<div class="feel">합격 예감 ${feelDots(r.feel)} ${RV_FEEL[r.feel-1][0]}</div>`:''}
+   ${r.improve?`<div class="line" style="margin-top:6px">🛠️ ${esc(r.improve)}</div>`:r.regret?`<div class="line" style="margin-top:6px">💭 ${esc(r.regret)}</div>`:''}</div></button>`}).join('')}</div>`:'<div class="card sub">검색 결과가 없어요.</div>')
+ :(allQ.length?allQ.map(x=>{const inBank=D.prep.qa.some(y=>y.q===x.q);return `<div class="rvq" style="background:var(--card)"><div style="display:flex;gap:8px;align-items:flex-start"><div class="q" style="flex:1">${esc(x.q)}</div>${x.self?`<span class="chip">${RV_SELF.find(s=>s[0]===x.self)?.[1]||''}</span>`:''}</div>
+  <div class="sub" style="font-size:.8rem">${esc(rvCo(x.r))} · ${fullDate(x.r.date)}</div>${x.a?`<div class="a"><span class="sub">내 답변</span><br>${esc(x.a)}</div>`:''}${x.fix?`<div class="fx">✨ 다음엔 이렇게<br>${esc(x.fix)}</div>`:''}
+  <div style="text-align:right;margin-top:6px">${inBank?'<span class="sub" style="font-size:.8rem">✔ 질문 은행에 있음</span>':`<button class="btn s" onclick="rvToBank('${x.r.id}','${x.id}')">❓ 면접 질문 은행에 담기</button>`}</div></div>`}).join(''):'<div class="card sub">조건에 맞는 질문이 없어요.</div>')}`}
+function viewRev(id){const r=D.reviews.find(x=>x.id===id);if(!r)return;const rs=RV_RES.find(x=>x[0]===r.result),sg=r.signals||[];
+ dlg(`📝 ${esc(rvCo(r))} 면접`,`<div class="rvd"><div style="display:flex;gap:14px;align-items:flex-start">${dayBox(r.date)}<div style="flex:1;min-width:0">
+  <div style="font-weight:800;font-size:1.2rem">${esc(rvCo(r))} <span class="sub" style="font-size:.95rem;font-weight:400">${esc(rvRole(r))}</span></div>
+  <div class="sub">${fullDate(r.date)}${r.time?' '+esc(r.time):''}${r.round?' · '+esc(r.round):''}${r.who?' · 면접관 '+esc(r.who):''}</div>
+  <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${rs?`<span class="res ${rs[0]}">${rs[1]}</span>`:''}${r.mood!=null&&RV_MOOD[r.mood]?`<span>${RV_MOOD[r.mood][0]} 분위기: ${RV_MOOD[r.mood][1]}</span>`:''}${r.feel?`<span class="feel" style="margin:0">합격 예감 ${feelDots(r.feel)} ${RV_FEEL[r.feel-1].join(' ')}</span>`:''}</div></div></div>
+  ${sg.length?`<h4>👀 면접관 반응</h4>${sg.map(x=>`<span class="sigchip ${RV_POS.includes(x)?'p':'n'}">${RV_POS.includes(x)?'👍':'🤔'} ${esc(x)}</span>`).join('')}`:''}
+  ${(r.qas||[]).length?`<h4>❓ 받은 질문 · 내 답변 (${r.qas.length})</h4>${r.qas.map((x,i)=>`<div class="rvq"><div style="display:flex;gap:8px"><div class="q" style="flex:1">Q${i+1}. ${esc(x.q)}</div>${x.self?`<span class="chip">${RV_SELF.find(s=>s[0]===x.self)?.[1]||''}</span>`:''}</div>${x.a?`<div class="a">${esc(x.a)}</div>`:''}${x.fix?`<div class="fx">✨ 다음엔 이렇게<br>${esc(x.fix)}</div>`:''}</div>`).join('')}`:''}
+  ${r.good?`<h4>🌼 잘한 점</h4><div class="rvbox good">${esc(r.good)}</div>`:''}
+  ${r.regret?`<h4>💭 아쉬웠던 점</h4><div class="rvbox bad">${esc(r.regret)}</div>`:''}
+  ${r.improve?`<h4>🛠️ 다음엔 이렇게 보완</h4><div class="rvbox">${esc(r.improve)}</div>`:''}
+  ${r.memo?`<h4>📎 메모 (회사 분위기, 사무실, 들은 정보)</h4><div class="rvbox">${esc(r.memo)}</div>`:''}
+  <div style="display:flex;gap:6px;justify-content:space-between;flex-wrap:wrap;margin-top:16px"><button class="btn d" onclick="delRev('${r.id}')">삭제</button>
+  <span style="display:flex;gap:6px;flex-wrap:wrap">${(r.qas||[]).some(x=>x.q&&!D.prep.qa.some(y=>y.q===x.q))?`<button class="btn" onclick="rvAllToBank('${r.id}')">❓ 질문 전부 질문 은행에 담기</button>`:''}<button class="btn p" onclick="openRev('${r.id}')">✏️ 수정</button></span></div></div>`);
+ $('dlg').querySelector('.mc').style.width='min(760px,100%)'}
+let RV=null;
+function openRev(id){const src=id&&D.reviews.find(x=>x.id===id);
+ const near=D.jobs.filter(j=>j.stage!=='종료').map(j=>({j,e:(j.events||[]).filter(e=>/면접/.test(e.type)&&e.date<=today()).sort((a,b)=>b.date.localeCompare(a.date))[0]})).filter(x=>x.e).sort((a,b)=>b.e.date.localeCompare(a.e.date))[0];
+ RV=src?JSON.parse(JSON.stringify(src)):{id:uid(),date:near?near.e.date:today(),time:near?near.e.time||'':'',jobId:near?near.j.id:'',company:'',role:'',round:near?(near.e.type.match(/\d차|임원|최종/)||[''])[0]:'1차',who:'',mood:null,feel:0,signals:[],result:'wait',qas:[],good:'',regret:'',improve:'',memo:''};
+ if(!RV.qas.length)RV.qas.push({id:uid(),q:'',a:'',self:'',fix:''});
+ rvForm(src?'면접 기록 수정':'오늘 면접 기록하기')}
+function rvSync(){if(!RV||!$('rvD'))return;Object.assign(RV,{date:val('rvD'),time:val('rvT'),jobId:val('rvJ'),company:val('rvC'),role:val('rvRl'),round:val('rvR'),who:val('rvW'),result:val('rvRes'),good:$('rvG').value,regret:$('rvB').value,improve:$('rvI').value,memo:$('rvM').value});
+ RV.signals=[...document.querySelectorAll('.rvsig:checked')].map(x=>x.value)}
+function rvForm(title){const r=RV,jobs=[...D.jobs].sort((a,b)=>(a.stage==='종료')-(b.stage==='종료')||a.company.localeCompare(b.company));
+ dlg(title,`<div class="form">
+ <label>면접 날짜<input type="date" id="rvD" value="${esc(r.date)}"></label><label>시간<input type="time" id="rvT" value="${esc(r.time)}"></label>
+ <label>지원한 공고에서 고르기<select id="rvJ" onchange="rvSync();rvForm('${title}')"><option value="">직접 입력</option>${jobs.map(j=>`<option value="${j.id}" ${j.id===r.jobId?'selected':''}>${esc(j.company)}${j.role?' · '+esc(j.role):''}</option>`).join('')}</select></label>
+ <label>회사명${r.jobId?' (공고에서 가져옴)':''}<input id="rvC" value="${esc(r.jobId?rvCo(r):r.company)}" ${r.jobId?'disabled':''}></label>
+ <label>직무<input id="rvRl" value="${esc(r.role||(r.jobId?rvRole(r):''))}"></label>
+ <label>전형<input id="rvR" list="rvRL" value="${esc(r.round)}"><datalist id="rvRL">${RV_ROUND.map(x=>`<option value="${x}">`).join('')}</datalist></label>
+ <label class="w">면접관 (몇 명, 누구)<input id="rvW" value="${esc(r.who)}" placeholder="예: 3명 — 재무팀장, 대표, 인사담당"></label>
+ <label class="w">그날 분위기<div class="pick">${RV_MOOD.map(([e,l],i)=>`<button type="button" class="${r.mood===i?'on':''}" onclick="rvSync();RV.mood=${i};rvForm('${title}')"><span class="e">${e}</span>${l}</button>`).join('')}</div></label>
+ <label class="w">합격 예감<div class="pick">${RV_FEEL.map(([e,l],i)=>`<button type="button" class="${r.feel===i+1?'on':''}" onclick="rvSync();RV.feel=${i+1};rvForm('${title}')"><span class="e">${e}</span>${l}</button>`).join('')}</div></label>
+ <label class="w">면접관 반응 (해당하는 것 체크)<div class="sigs">${[...RV_POS.map(x=>[x,'👍']),...RV_NEG.map(x=>[x,'🤔'])].map(([x,e])=>`<label><input type="checkbox" class="rvsig" value="${esc(x)}" ${r.signals.includes(x)?'checked':''}> ${e} ${esc(x)}</label>`).join('')}</div></label>
+ <label>결과<select id="rvRes">${RV_RES.map(([k,l])=>`<option value="${k}" ${r.result===k?'selected':''}>${l}</option>`).join('')}</select></label><span></span>
+ </div>
+ <h4 style="margin:18px 0 8px">❓ 받은 질문 · 내 답변 <button class="btn s" onclick="rvSync();RV.qas.push({id:uid(),q:'',a:'',self:'',fix:''});rvForm('${title}')">＋ 질문</button> <button class="btn s" onclick="rvBulk('${title}')">📋 여러 개 한 번에</button></h4>
+ <div style="display:flex;flex-direction:column;gap:8px">${r.qas.map((x,i)=>`<div class="qrow"><div class="qtop"><b style="white-space:nowrap">Q${i+1}</b><input placeholder="받은 질문" value="${esc(x.q)}" oninput="RV.qas[${i}].q=this.value"><button class="btn s d" onclick="rvSync();RV.qas.splice(${i},1);rvForm('${title}')" aria-label="질문 삭제">✕</button></div>
+  <textarea rows="2" placeholder="내가 한 답변 (기억나는 만큼)" oninput="RV.qas[${i}].a=this.value">${esc(x.a)}</textarea>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="sub" style="font-size:.8rem">내 답 평가</span><span class="selfev">${RV_SELF.map(([k,l])=>`<button type="button" class="${x.self===k?'on':''}" onclick="rvSync();RV.qas[${i}].self=RV.qas[${i}].self==='${k}'?'':'${k}';rvForm('${title}')">${l}</button>`).join('')}</span></div>
+  <textarea rows="2" placeholder="✨ 다음엔 이렇게 답하기 (보완 답변)" oninput="RV.qas[${i}].fix=this.value">${esc(x.fix)}</textarea></div>`).join('')}</div>
+ <div class="form" style="margin-top:14px"><label class="w">🌼 잘한 점<textarea id="rvG" rows="2">${esc(r.good)}</textarea></label>
+ <label class="w">💭 아쉬웠던 점<textarea id="rvB" rows="3">${esc(r.regret)}</textarea></label>
+ <label class="w">🛠️ 다음엔 이렇게 보완<textarea id="rvI" rows="3">${esc(r.improve)}</textarea></label>
+ <label class="w">📎 메모 (사무실 분위기, 들은 정보, 연봉·근무 조건 이야기)<textarea id="rvM" rows="3">${esc(r.memo)}</textarea></label></div>
+ <div style="display:flex;justify-content:space-between;gap:8px;margin-top:14px;flex-wrap:wrap"><label class="sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="rvBank" checked> 받은 질문을 면접 질문 은행에도 담기</label><button class="btn p" onclick="saveRev()">저장</button></div>`);
+ $('dlg').querySelector('.mc').style.width='min(820px,100%)'}
+function rvBulk(title){rvSync();dlg('📋 질문 여러 개 한 번에',`<div class="sub" style="margin-bottom:8px">면접 끝나고 폰 메모장에 적어둔 질문을 그대로 붙여넣으세요. 한 줄이 질문 하나가 돼요. 번호나 '-' 기호는 알아서 지워요.</div>
+ <textarea id="rvBulkT" rows="9" style="width:100%" placeholder="1. 이직 사유가 뭔가요?&#10;2. 결산은 몇 일 걸렸나요?&#10;3. 더존 아마란스 써봤나요?"></textarea>
+ <div style="display:flex;justify-content:space-between;margin-top:12px"><button class="btn" onclick="rvForm('${title}')">← 돌아가기</button><button class="btn p" onclick="rvBulkAdd('${title}')">질문 넣기</button></div>`);setTimeout(()=>$('rvBulkT')?.focus(),50)}
+function rvBulkAdd(title){const t=$('rvBulkT').value;RV.qas=RV.qas.filter(x=>x.q||x.a);
+ t.split('\n').map(x=>x.replace(/^\s*(Q?\d+\s*[.):]|[-•·*▶])\s*/i,'').trim()).filter(Boolean).forEach(q=>RV.qas.push({id:uid(),q,a:'',self:'',fix:''}));
+ if(!RV.qas.length)RV.qas.push({id:uid(),q:'',a:'',self:'',fix:''});rvForm(title)}
+function saveRev(){rvSync();if(!RV.date){toast('면접 날짜를 넣어주세요');return}if(!RV.jobId&&!RV.company.trim()){toast('회사를 고르거나 적어주세요');return}
+ if(RV.jobId)RV.company=rvCo(RV);RV.qas=RV.qas.filter(x=>x.q.trim()||x.a.trim());const bank=$('rvBank')?.checked;
+ const i=D.reviews.findIndex(x=>x.id===RV.id);if(i>=0)D.reviews[i]=RV;else D.reviews.push(RV);
+ let n=0;if(bank)n=rvPush(RV);save();const id=RV.id;RV=null;closeDlg();renderRev();viewRev(id);toast(n?`저장했어요 · 질문 ${n}개를 질문 은행에 담았어요`:'저장했어요 🌼')}
+function rvPush(r,only){let n=0;(r.qas||[]).forEach(x=>{if(!x.q||(only&&x.id!==only))return;const ex=D.prep.qa.find(y=>y.q===x.q);
+ if(ex){if(x.fix&&!String(ex.a||'').trim())ex.a=x.fix;return}D.prep.qa.push({id:uid(),group:'기출',track:'공통',cat:rvCo(r),q:x.q,tip:`${fullDate(r.date)} ${rvCo(r)} ${r.round||''} 면접에서 받은 질문`+(x.a?`\n그때 내 답: ${x.a}`:''),a:x.fix||x.a||'',ready:false,star:x.self==='bad'});n++});return n}
+function rvToBank(rid,qid){const r=D.reviews.find(x=>x.id===rid);if(!r)return;const n=rvPush(r,qid);save();renderRev();toast(n?'질문 은행 🎯 실제 받은 질문에 담았어요':'이미 있어요')}
+function rvAllToBank(id){const r=D.reviews.find(x=>x.id===id);const n=rvPush(r);save();viewRev(id);toast(`${n}개 담았어요`)}
+function delRev(id){if(!confirm('이 면접 기록을 삭제할까요?'))return;D.reviews=D.reviews.filter(x=>x.id!==id);save();closeDlg();renderRev()}
+function revForJob(jobId,company){return D.reviews.filter(r=>(jobId&&r.jobId===jobId)||(company&&coMatch(rvCo(r),company)===2)).sort((a,b)=>(b.date||'').localeCompare(a.date||''))}
 
 /* ============ 로그인 · 클라우드 저장 ============ */
 const firebaseConfig={apiKey:"AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",authDomain:"taxdiary-calendar.firebaseapp.com",projectId:"taxdiary-calendar",storageBucket:"taxdiary-calendar.firebasestorage.app",messagingSenderId:"4033600838",appId:"1:4033600838:web:6d41b6767d129ad0845947"};
